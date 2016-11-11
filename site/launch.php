@@ -21,7 +21,11 @@ if($hash !== null) {
    $location = 'index.php';
 }
 $_SESSION['fluv_login_fail'] = ($hash === null);
-$location = 'http://' . $_SERVER['HTTP_HOST'] . '/' . $location;
+$path = dirname($_SERVER['REQUEST_URI']);
+if($path !== '/') {
+   $path .= '/';
+}
+$location = 'http://' . $_SERVER['HTTP_HOST'] . $path . $location;
 header("Location: {$location}");
 ?>
 <html>
