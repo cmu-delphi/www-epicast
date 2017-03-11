@@ -2,10 +2,18 @@
 $skipLogin = true;
 $fullHeader = true;
 require_once('common/header.php');
+require_once('/var/www/html/secrets.php');
 if($error) {
    return;
 }
+function checkCaptcha($captcha, $ip) {
+   $key = Secrets::$epicast['captcha_key'];
+   $resp = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=" . $key . "&response=" . $captcha . "&remoteip=" . $ip);
+   $obj = json_decode($resp);
+   return $obj->success === true ? 1 : 0;
+}
 ?>
+<script src='https://www.google.com/recaptcha/api.js'></script>
 <div class="box_article">
    <div class="centered">
       <?php
@@ -30,6 +38,8 @@ if($error) {
                <?php button('fa-arrow-left', 'Back', "navigate('signup.php')"); ?>
             </p>
             <?php
+         } else if(checkCaptcha($_REQUEST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']) != 1) {
+            fail('Uh oh, could not verify captcha. Please try again later.');
          } else if(registerUser($output, $name, $email) != 1) {
             fail('Uh oh, something went wrong on our end. Please try again later.');
          } else {
@@ -69,6 +79,8 @@ if($error) {
                   <div style="height: 32px;"><input type="text" name="email" value="" maxlength="64" /></div>
                   <div style="height: 32px;"><input type="text" name="name" value="" maxlength="32" /></div>
                </div>
+               <div style="height: 1px;"></div>
+               <div class="g-recaptcha" data-sitekey="6Lc4fBgUAAAAACYFwGhajRyg6LPwC03A5BdwJ_vF" style="display: inline-block;"></div>
             </form>
             <?php button('fa-arrow-circle-right', 'Email My User ID', "submit('signup')"); ?>
          </div>
