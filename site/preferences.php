@@ -85,18 +85,34 @@ $account_fields = array();
          $value = intval(mysql_real_escape_string($_REQUEST[$f]));
          $preferences['advanced_' . $f] = ($value === 1) ? $value : 0;
       }
+
+      // set or clear the "hide" bit for each season
+      $changedPrior = intval($_REQUEST['prior']) !== getPreference($output, 'advanced_prior', 'int');
+      $changedPandemic = intval($_REQUEST['pandemic']) !== getPreference($output, 'advanced_pandemic', 'int');
       $hiddenSeasons = getPreference($output, 'hidden_seasons');
       $seasonBit = 1;
-      for($s = 1997; $s < $current_season; $s++) {
-         $name = "season_{$s}";
+      for($season = 1997; $season < $current_season; $season++) {
+         $name = "season_{$season}";
+         // hide the season if it's not checked
          $hide = !isset($_REQUEST[$name]);
+         // unhide prior seasons if that setting changed
+         if($s < 2004 && $changedPrior) {
+            $hide = false;
+         }
+         // unhide pandemic seasons if that setting changed
+         if($s === 2009 && $changedPandemic) {
+            $hide = false;
+         }
+         // set or clear the bit for this season
          if($hide) {
             $preferences['hidden_seasons'] |= $seasonBit;
          } else {
             $preferences['hidden_seasons'] &= ~$seasonBit;
          }
+         // move to the bit over to the next season
          $seasonBit <<= 1;
       }
+
       $initials = '';
       for($i = 0; $i < min(strlen($_REQUEST['initials']), 3); $i++) {
          $ch = $_REQUEST['initials'][$i];
@@ -312,12 +328,12 @@ $account_fields = array();
                   <?php
                   $prefix = 'season_';
                   $hiddenSeasons = getPreference($output, 'hidden_seasons', 'int');
-                  for($s = 1997; $s < $current_season; $s++) {
+                  for($season = 1997; $season < $current_season; $season++) {
                      $show = true;
-                     if($s < 2004 && getPreference($output, 'advanced_prior', 'int') !== 1) {
+                     if($season < 2004 && getPreference($output, 'advanced_prior', 'int') !== 1) {
                        $show = false;
                      }
-                     if($s == 2009 && getPreference($output, 'advanced_pandemic', 'int') !== 1) {
+                     if($season == 2009 && getPreference($output, 'advanced_pandemic', 'int') !== 1) {
                        $show = false;
                      }
                      if($show) {
