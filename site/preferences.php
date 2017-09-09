@@ -96,11 +96,11 @@ $account_fields = array();
          // hide the season if it's not checked
          $hide = !isset($_REQUEST[$name]);
          // unhide prior seasons if that setting changed
-         if($s < 2004 && $changedPrior) {
+         if($season < 2004 && $changedPrior) {
             $hide = false;
          }
          // unhide pandemic seasons if that setting changed
-         if($s === 2009 && $changedPandemic) {
+         if($season === 2009 && $changedPandemic) {
             $hide = false;
          }
          // set or clear the bit for this season
