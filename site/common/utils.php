@@ -142,17 +142,4 @@ function addEpiweeks($ew, $i) {
    return $year * 100 + $week;
 }
 
-function getPartialEmail($email) {
-   $a = substr($email, 0, 1);
-   $b = '...';
-   $c = strstr($email, '+');
-   if($c === false) {
-      $c = '';
-   } else {
-      $c = strstr($c, '@', true);
-   }
-   $d = strstr($email, '@');
-   return strtolower($a . $b . $c . $d);
-}
-
 ?>

@@ -158,7 +158,7 @@ if(isAdmin($output)) {
                ?>
                <tr>
                   <td><?= htmlspecialchars($u['name']) ?></td>
-                  <td><?= getPartialEmail($u['email']) ?></td>
+                  <td><?= htmlspecialchars($u['email']) ?></td>
                   <td><?= implode('<br />', explode(' ', $u['first_seen'])) ?></td>
                   <td><?= implode('<br />', explode(' ', $u['last_seen'])) ?></td>
                   <td class="any_extrasmall"><?php
