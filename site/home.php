@@ -117,7 +117,6 @@ if($_offline) {
       </div>
       <!-- news -->
       <div class="center" style="width: 75%; margin-left: auto; margin-right: auto;">
-        <!--<iframe src="http://www.google.com/uds/modules/elements/newsshow/iframe.html?format=300x250&q=Flu+News" frameborder="0" width="300" height="250" marginwidth="0" marginheight="0"></iframe>-->
         <a target="_blank" href="https://www.google.com/search?hl=en&gl=us&tbm=nws&q=flu+news">Google News</a>
       </div>
       <!-- /news -->
@@ -131,7 +130,7 @@ if($_offline) {
       </div>
       <div>
          <!-- Twitter: https://about.twitter.com/resources/buttons#tweet -->
-         <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://epicast.org" data-text="Your help is needed this flu season! Submit forecasts for science, and be featured on the leaderboard!" data-hashtags="flu,forecast">Tweet</a>
+         <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://epicast.org" data-text="Your help is needed this flu season! Submit forecasts for science, and be featured on the leaderboard!" data-hashtags="flu,forecast">Tweet</a>
          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
       </div>
       <div>
@@ -141,7 +140,7 @@ if($_offline) {
       </div>
       <div>
          <!-- Google+: https://developers.google.com/+/web/+1button/ -->
-         <div class="g-plusone" data-href="http://epicast.org"></div>
+         <div class="g-plusone" data-href="https://epicast.org"></div>
          <script type="text/javascript">
             (function() {
                var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
@@ -167,7 +166,7 @@ if($_offline) {
          <div class="box_decision_title centered" style="width: 100%"><i class="fa fa-info-circle"></i> Information</div>
          <div>
             <i class="fa fa-external-link"></i>
-            <a target="_blank" href="http://www.cdc.gov/flu/index.htm">CDC's Flu Portal</a>
+            <a target="_blank" href="https://www.cdc.gov/flu/index.htm">CDC's Flu Portal</a>
          </div>
          <div>
             <i class="fa fa-external-link"></i>
@@ -175,7 +174,7 @@ if($_offline) {
          </div>
          <div>
             <i class="fa fa-external-link"></i>
-            <a target="_blank" href="http://www.cdc.gov/flu/weekly/overview.htm">CDC's definition of ILI</a>
+            <a target="_blank" href="https://www.cdc.gov/flu/weekly/overview.htm">CDC's definition of ILI</a>
          </div>
          <div>
             <i class="fa fa-external-link"></i>
@@ -186,15 +185,15 @@ if($_offline) {
          <div class="box_decision_title centered" style="width: 100%"><i class="fa fa-line-chart"></i> Data</div>
          <div>
             <i class="fa fa-external-link"></i>
-            <a target="_blank" href="http://gis.cdc.gov/grasp/fluview/fluportaldashboard.html">CDC's FluView WebApp</a>
+            <a target="_blank" href="https://gis.cdc.gov/grasp/fluview/fluportaldashboard.html">CDC's FluView WebApp</a>
          </div>
          <div>
             <i class="fa fa-external-link"></i>
-            <a target="_blank" href="http://www.ncdc.noaa.gov/">NOAA's Climate Normals</a>
+            <a target="_blank" href="https://www.ncdc.noaa.gov/">NOAA's Climate Normals</a>
          </div>
          <div>
             <i class="fa fa-external-link"></i>
-            <a target="_blank" href="http://www.google.org/flutrends/us/#US">Google Flu Trends</a>
+            <a target="_blank" href="https://www.google.org/flutrends/us/#US">Google Flu Trends</a>
          </div>
          <div>
             <i class="fa fa-external-link"></i>
@@ -205,7 +204,7 @@ if($_offline) {
          <div class="box_decision_title centered" style="width: 100%"><i class="fa fa-book"></i> Literature</div>
          <div>
             <i class="fa fa-external-link"></i>
-            <a target="_blank" href="http://delphi.midas.cs.cmu.edu/bibliography.html">The Delphi Bibliography</a>
+            <a target="_blank" href="https://delphi.midas.cs.cmu.edu/bibliography.html">The Delphi Bibliography</a>
          </div>
       </div>
    </div>

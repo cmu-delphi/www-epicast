@@ -27,17 +27,6 @@ function checkCaptcha($captcha, $ip) {
             fail('Sorry, we need you to indicate your agreement with the research terms and verify that you are old enough to participate. Please try again.');
          } else if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             fail('Uh oh, that email address doesn\'t look right. Please try again.');
-         } else if(substr(strtolower($email), -strlen('pitt.edu')) === 'pitt.edu') {
-            ?>
-            <p style="width: 400px; margin-left: auto; margin-right: auto; color: #800; font-style: italic; text-align: left;">
-               It seems that we are unable to deliver email to pitt.edu addresses.
-               We are working to resolve this issue, but in the meantime please use an alternate email if you have one.
-               If you only have a pitt.edu email, please email dfarrow0@gmail.com directly to have an account created manually.
-               Sorry for the inconvenience.
-               <br />
-               <?php button('fa-arrow-left', 'Back', "navigate('signup.php')"); ?>
-            </p>
-            <?php
          } else if(checkCaptcha($_REQUEST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']) != 1) {
             fail('Uh oh, could not verify captcha. Please try again later.');
          } else if(registerUser($output, $name, $email) != 1) {
@@ -59,7 +48,7 @@ function checkCaptcha($captcha, $ip) {
          <div class="box_decision" style="width: 80%;">
             <div class="box_decision_title">Research Overview</div>
             <p style="text-align: left;">
-               In this research study, being conducted by Carnegie Mellon University, we ask you each Friday during the 2016-2017 flu season to predict current and future flu activity within one or more Health and Human Services regions of the United States. You will be able to enter and submit your predictions online using any modern web browser, and we expect that the entire process will take no more than two minutes per region. There are no expected risks or benefits to participants in this study.
+               In this research study, being conducted by Carnegie Mellon University, we ask you each Friday during the flu season to predict current and future flu activity within one or more Health and Human Services regions of the United States. You will be able to enter and submit your predictions online using any modern web browser, and we expect that the entire process will take no more than two minutes per region. There are no expected risks or benefits to participants in this study.
             </p><p style="text-align: left;">
                Your privacy and the confidentiality of your predictions will be strictly protected; we will not share your email address or your individual predictions without your prior written consent. The study is entirely voluntary, and you are free to stop participating or withdraw entirely at any time.
             </p><p style="text-align: left;">

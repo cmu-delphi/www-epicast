@@ -3,7 +3,11 @@ require_once('common/header.php');
 if($error) {
    return;
 }
-$current_season = 2016;
+if(getYearForCurrentSeason($output) !== 1) {
+   die('unable to get year for current season');
+} else {
+   $current_season = $output['season_year'];
+}
 function createPreference(&$output, $label, $prefix, $name, $type) {
    ?>
    <tr>
@@ -81,24 +85,17 @@ $account_fields = array();
          $value = intval(mysql_real_escape_string($_REQUEST[$f]));
          $preferences['advanced_' . $f] = ($value === 1) ? $value : 0;
       }
+      $hiddenSeasons = getPreference($output, 'hidden_seasons');
+      $seasonBit = 1;
       for($s = 1997; $s < $current_season; $s++) {
-        $prefix = 'season_';
-        $name = "{$s}";
-        $f = $prefix . $name;
-        $before = getPreference($output, $f, 'int') === 1;
-        $after = isset($_REQUEST[$f]);
-        if($s < 2004 && getPreference($output, 'advanced_prior', 'int') !== 1) {
-          $after = true;
-          //print($s);
-          //print($before);
-          //print($after . '   ');
-        }
-        if($s == 2009 && getPreference($output, 'advanced_pandemic', 'int') !== 1) {
-          $after = true;
-        }
-        if($before != $after) {
-          $preferences[$f] = $after ? 1 : 0;
-        }
+         $name = "season_{$s}";
+         $hide = !isset($_REQUEST[$name]);
+         if($hide) {
+            $preferences['hidden_seasons'] |= $seasonBit;
+         } else {
+            $preferences['hidden_seasons'] &= ~$seasonBit;
+         }
+         $seasonBit <<= 1;
       }
       $initials = '';
       for($i = 0; $i < min(strlen($_REQUEST['initials']), 3); $i++) {
@@ -314,6 +311,7 @@ $account_fields = array();
                <table cellspacing="0">
                   <?php
                   $prefix = 'season_';
+                  $hiddenSeasons = getPreference($output, 'hidden_seasons', 'int');
                   for($s = 1997; $s < $current_season; $s++) {
                      $show = true;
                      if($s < 2004 && getPreference($output, 'advanced_prior', 'int') !== 1) {
@@ -323,16 +321,17 @@ $account_fields = array();
                        $show = false;
                      }
                      if($show) {
-                       $name = "{$s}";
-                       if(getPreference($output, $prefix . $name, 'int') === 1) {
-                          $selected = 'checked="checked"';
-                       } else {
-                          $selected = '';
-                       }
-                       ?>
-                       <div style="display: inline-block; margin-right: 8px;"><label><?= $name ?><input type="checkbox" name="<?= $prefix . $name ?>" <?= $selected ?> /></label></div>
-                       <?php
+                        if(($hiddenSeasons & 1) === 0) {
+                           $selected = 'checked="checked"';
+                        } else {
+                           $selected = '';
+                        }
+                        $name = strval($season);
+                        ?>
+                        <div style="display: inline-block; margin-right: 8px;"><label><?= $name ?><input type="checkbox" name="<?= $prefix . $name ?>" <?= $selected ?> /></label></div>
+                        <?php
                      }
+                     $hiddenSeasons >>= 1;
                   }
                   ?>
                </table>

@@ -1,8 +1,6 @@
 <?php
 session_start();
 $_SESSION['hash_fluv'] = null;
-//header('Location: http://delphi.midas.cs.cmu.edu/epicast-fluv/index.php');
-//return;
 $skipLogin = true;
 $fullHeader = true;
 require_once('common/header.php');

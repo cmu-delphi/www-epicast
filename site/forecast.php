@@ -4,6 +4,11 @@ require_once('common/navigation.php');
 if($error) {
    return;
 }
+if(getYearForCurrentSeason($output) !== 1) {
+   die('unable to get year for current season');
+} else {
+   $current_season = $output['season_year'];
+}
 function getColor($regionID, $seasonID) {
    $r = intval((sin(($seasonID - 2004) * 0.4 + 0) + 1) / 2 * 15);
    $g = intval((sin(($seasonID - 2004) * 0.5 + 2) + 1) / 2 * 15);
@@ -117,41 +122,7 @@ if(getPreference($output, 'skip_instructions', 'int') !== 1) {
    <?php
 } else {
 ?>
-<!--<div class="box_article centered">
-   <div class="box_section">
-      <div class="box_section_title">
-         <?= htmlspecialchars($region['name']) ?>
-         <div class="box_section_subtitle">
-            <?= htmlspecialchars($region['states']) ?>
-         </div>
-      </div>
-      <div class="box_stat">
-         <div class="bot_stat_value"><img class="img_flag_large" src="images/flags/icon_<?= sprintf('%02d', $region['id']) ?>.png"></img></div>
-         <div class="bot_stat_description">region minimap</div>
-      </div>
-      <div class="box_stat">
-         <div class="bot_stat_value"><?= number_format($region['population']) ?></div>
-         <div class="bot_stat_description">estimated population</div>
-      </div>
-      <div class="box_stat">
-         <div class="bot_stat_value"><?= formatEpiweek($region['history']['date'][count($region['history']['date']) - 1]) ?></div>
-         <div class="bot_stat_description">most recent report</div>
-      </div>
-      <div class="box_stat">
-         <div class="bot_stat_value"><?= sprintf('%.3f', $region['history']['wili'][count($region['history']['wili']) - 1]) ?></div>
-         <div class="bot_stat_description">most recent wILI</div>
-      </div>
-      <div class="box_stat">
-         <div class="bot_stat_value"><span id="stat_completed" class="<?= ($region['completed'] ? 'any_success' : 'any_failure') ?>"><?= ($region['completed'] ? 'Submitted' : 'Missing') ?></span></div>
-         <div class="bot_stat_description">your forecast past <?= formatEpiweek($output['epiweek']['round_epiweek']) ?></div>
-      </div>
-   </div>
-</div>
-<div class="box_article centered">
-   <?php showNavigation($output, $regionID); ?>
-</div>-->
 <?php
-//Since I removed the navigation call the regional forms need to be created manually
 foreach($output['regions'] as $r) {
    createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
 }
@@ -998,10 +969,12 @@ foreach($output['regions'] as $r) {
       });
       toggleSeasonList(regionID);
       <?php
-      for($s = 1997; $s < 2016; $s++) {
-        if(getPreference($output, "season_{$s}", 'int') === 1) {
-          ?>toggleSeason(regionID, <?= $s ?>);<?php
-        }
+      $hiddenSeasons = getPreference($output, 'hidden_seasons', 'int');
+      for($season = 1997; $season < $current_season; $season++) {
+         if(($hiddenSeasons & 1) === 0) {
+            ?>toggleSeason(regionID, <?= $season ?>);<?php
+         }
+         $hiddenSeasons >>= 1;
       }
       ?>
       resize();

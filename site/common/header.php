@@ -46,7 +46,7 @@ if(!$dbh) {
                <span class="effect_fluv">&lt;Influenza Edition&gt;</span>
             </a>
          </div>
-         <div class="box_subtitle">Epidemiological Forecasting by <span class="effect_delphi"><a class="delphi" target="_blank" href="http://delphi.midas.cs.cmu.edu/">DELPHI</a></span></div>
+         <div class="box_subtitle">Epidemiological Forecasting by <span class="effect_delphi"><a class="delphi" target="_blank" href="https://delphi.midas.cs.cmu.edu/">DELPHI</a></span></div>
       </div>
       <?php
       if(!isset($skipLogin) || !$skipLogin) {
@@ -90,7 +90,7 @@ if(!$dbh) {
                createDivider('|');
             }
             print('<span class="effect_delphi">');
-            createLink('DELPHI', 'http://delphi.midas.cs.cmu.edu/', true, 'delphi');
+            createLink('DELPHI', 'https://delphi.midas.cs.cmu.edu/', true, 'delphi');
             print('</span>');
             ?>
          </div>
@@ -103,6 +103,5 @@ if(!$dbh) {
          fail('Uh oh, your account is currently deactivated. Please visit the <a href="preferences.php">preferences</a> page to reactivate it!', 'account_deactivated_warning');
       }
    }
-   //fail('David is working right now, so things may or may not be (temporarily) horribly broken.<br />Please check back later, or continue at your own risk!');
 }
 ?>
