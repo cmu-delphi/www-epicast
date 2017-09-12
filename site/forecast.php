@@ -7,7 +7,7 @@ if($error) {
 if(getYearForCurrentSeason($output) !== 1) {
    die('unable to get year for current season');
 } else {
-   $current_season = $output['season_year'];
+   $current_season = $output['season']['year'];
 }
 function getColor($regionID, $seasonID) {
    $r = intval((sin(($seasonID - 2004) * 0.4 + 0) + 1) / 2 * 15);

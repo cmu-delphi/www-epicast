@@ -128,11 +128,11 @@ Output:
    $output['result'] will contain the following values:
       1 - Success
       2 - Failure
-   $output['round_epiweek'] - This round's identifier (can be ahead of data_epiweek)
-   $output['data_epiweek'] - The most recently published issue (from epidata.fluview)
-   $output['deadline'] - Deadline timestamp as a string (YYYY-MM-DD HH:MM:SS)
-   $output['deadline_timestamp'] - Unix timestamp of deadline
-   $output['remaining'] - An array containing days/hours/minutes/seconds remaining
+   $output['epiweek']['round_epiweek'] - This round's identifier (can be ahead of data_epiweek)
+   $output['epiweek']['data_epiweek'] - The most recently published issue (from epidata.fluview)
+   $output['epiweek']['deadline'] - Deadline timestamp as a string (YYYY-MM-DD HH:MM:SS)
+   $output['epiweek']['deadline_timestamp'] - Unix timestamp of deadline
+   $output['epiweek']['remaining'] - An array containing days/hours/minutes/seconds remaining
 */
 function getEpiweekInfo(&$output) {
    $result = mysql_query('SELECT yearweek(now(), 6) `current_epiweek`, x.`round_epiweek`, x.`data_epiweek`, x.`deadline`, unix_timestamp(x.`deadline`) `deadline_timestamp`, unix_timestamp(x.`deadline`) - unix_timestamp(now()) `remaining` FROM (SELECT `round_epiweek`, `data_epiweek`, date_sub(`deadline`, INTERVAL 12 HOUR) `deadline` FROM ec_fluv_round) x');
@@ -632,16 +632,103 @@ Output:
    $output['result'] will contain the following values:
       1 - Success
       2 - Failure
-   $output['season_year'] will contain the year
+   $output['season']['year'] - The year of the season start
+   $output['season']['first_epiweek'] - The first epiweek of the contest
+   $output['season']['last_epiweek'] - The last epiweek of the contest
 */
 function getYearForCurrentSeason(&$output) {
-   $result = mysql_query("SELECT `year` FROM `ec_fluv_season`");
+   $result = mysql_query("SELECT `year`, `first_round_epiweek`, `last_round_epiweek` FROM `ec_fluv_season`");
    if($row = mysql_fetch_array($result)) {
-      $output['season_year'] = intval($row['year']);
+      $output['season'] = array(
+         'year' => intval($row['year']),
+         'first_epiweek' => intval($row['first_round_epiweek']),
+         'last_epiweek' => intval($row['last_round_epiweek'])
+      );
       setResult($output, 1);
    } else {
       setResult($output, 2);
    }
+   return getResult($output);
+}
+
+/*
+===== getTaskDate =====
+Purpose:
+   Get the datetime when the given task is scheduled to run next.
+Input:
+   $output - The array of return values (array reference)
+   $taskId - The ID of the task
+Output:
+   $output['result'] will contain the following values:
+      1 - Success
+      2 - Failure
+   $output['task'][<$taskId>] - The datetime when the task will be executed
+*/
+function getTaskDate(&$output, $taskId) {
+   $result = mysql_query("SELECT `date` FROM `automation`.`tasks` WHERE `id` = {$taskId}");
+   if($row = mysql_fetch_array($result)) {
+      if(!isset($output['task'])) {
+         $output['task'] = array();
+      }
+      $output['task'][$taskId] = $row['date'];
+      setResult($output, 1);
+   } else {
+      setResult($output, 2);
+   }
+   return getResult($output);
+}
+
+/*
+===== updateSeason =====
+Purpose:
+   Update epiweek range of the current flu contest.
+Input:
+   $output - The array of return values (array reference)
+   $firstWeek - The first epiweek of the contest
+   $lastWeek - The last epiweek of the contest
+Output:
+   $output['result'] will contain the following values:
+      1 - Success
+*/
+function updateSeason(&$output, $firstWeek, $lastWeek) {
+   mysql_query("UPDATE `ec_fluv_season` SET `first_round_epiweek` = {$firstWeek}, `last_round_epiweek` = {$lastWeek}");
+   setResult($output, 1);
+   return getResult($output);
+}
+
+/*
+===== updateRound =====
+Purpose:
+   Update epiweek and deadline of the current forecasting round.
+Input:
+   $output - The array of return values (array reference)
+   $epiweek - The epiweek of the current round
+   $deadline - The deadline for the current round
+Output:
+   $output['result'] will contain the following values:
+      1 - Success
+*/
+function updateRound(&$output, $epiweek, $deadline) {
+   mysql_query("UPDATE `ec_fluv_round` SET `round_epiweek` = {$epiweek}, `deadline` = '{$deadline}'");
+   setResult($output, 1);
+   return getResult($output);
+}
+
+/*
+===== setTaskDate =====
+Purpose:
+   Sets the datetime when the given task is scheduled to run next.
+Input:
+   $output - The array of return values (array reference)
+   $taskId - The ID of the task
+   $date - The datetime when the task should be executed
+Output:
+   $output['result'] will contain the following values:
+      1 - Success
+*/
+function setTaskDate(&$output, $taskId, $date) {
+   mysql_query("UPDATE `automation`.`tasks` SET `date` = '{$date}' WHERE `id` = {$taskId}");
+   setResult($output, 1);
    return getResult($output);
 }
 

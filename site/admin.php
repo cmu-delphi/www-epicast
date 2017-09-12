@@ -206,6 +206,15 @@ if(isAdmin($output)) {
          </table>
       </div>
    </div>
+   <div class="box_section">
+      <div class="box_section_title">
+         Control Interface
+         <div class="box_section_subtitle">
+            Update user and system settings.
+         </div>
+      </div>
+      <p>The control interface is <a href="control.php">here</a>.</p>
+   </div>
 </div>
 <?php
 }

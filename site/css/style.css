@@ -436,6 +436,10 @@ th {
    background-color: #ccc;
    font-size: 1.2em;
 }
+input.padded {
+   margin: 4px;
+   margin-bottom: 12px;
+}
 .centered {
    text-align: center;
 }
@@ -474,6 +478,10 @@ th {
 }
 .any_extrasmall {
    font-size: 0.65em;
+}
+.any_warning {
+   font-weight: bold;
+   color: #c22;
 }
 #box_main_ui {
    margin: 12px;
