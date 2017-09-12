@@ -383,6 +383,7 @@ Input:
    $output - The array of return values (array reference)
    $name - The user's (nick)name
    $email - The user's email
+   $adminEmail - The email to which replies should be directed
 Output:
    $output['result'] will contain the following values:
       1 - Success
@@ -390,7 +391,7 @@ Output:
    $output['user_new'] - Whether or not the user is a new user (as determined by email address)
    $output['user_id'] - The user's ID, whether nascent or pre-existing
 */
-function registerUser(&$output, $name, $email) {
+function registerUser(&$output, $name, $email, $adminEmail) {
    //Find, or create, the user
    if(getUserByEmail($output, $email) === 1) {
       $output['user_new'] = false;
@@ -404,7 +405,7 @@ function registerUser(&$output, $name, $email) {
    //Send an email to the user
    $hash = strtoupper(substr($output['user_hash'], 0, 8));
    $subject = mysql_real_escape_string('Welcome to Epicast');
-   $body = mysql_real_escape_string(sprintf("Hi %s,\r\n\r\nWelcome to Epicast! Here's your User ID: %s\r\nYou can login and begin forecasting here: https://epicast.org/launch.php?user=%s\r\n\r\nThank you,\r\nThe Delphi Team\r\n\r\n[This is an automated message. Please direct all replies to: %s. Unsubscribe: https://epicast.org/preferences.php?user=%s]", $name, $hash, $hash, $epicastAdmin['email'], $hash));
+   $body = mysql_real_escape_string(sprintf("Hi %s,\r\n\r\nWelcome to Epicast! Here's your User ID: %s\r\nYou can login and begin forecasting here: https://epicast.org/launch.php?user=%s\r\n\r\nThank you,\r\nThe Delphi Team\r\n\r\n[This is an automated message. Please direct all replies to: %s. Unsubscribe: https://epicast.org/preferences.php?user=%s]", $name, $hash, $hash, $adminEmail, $hash));
    mysql_query("INSERT INTO automation.email_queue (`from`, `to`, `subject`, `body`) VALUES ('delphi@epicast.net', '{$email}', '{$subject}', '{$body}')");
    mysql_query("CALL automation.RunStep(2)");
    setResult($output, 1);
@@ -728,6 +729,43 @@ Output:
 */
 function setTaskDate(&$output, $taskId, $date) {
    mysql_query("UPDATE `automation`.`tasks` SET `date` = '{$date}' WHERE `id` = {$taskId}");
+   setResult($output, 1);
+   return getResult($output);
+}
+
+/*
+===== resetEpicast =====
+Purpose:
+   Resets Epicast for a new forecasing season.
+Input:
+   $output - The array of return values (array reference)
+   $year - The year of the *new* season (e.g. 2017 for 2017--2018)
+   $firstEpiweek - The first epiweek of the contest
+   $lastEpiweek - The last epiweek of the contest
+   $deadline - The first deadline
+   $admin - The admin name and email, as an array with those keys
+Output:
+   $output['result'] will contain the following values:
+      1 - Success
+      2 - Failure
+*/
+function resetEpicast(&$output, $year, $firstEpiweek, $lastEpiweek, $deadline, $admin) {
+   $tbl_old = ($year - 1) . "_ec_fluv_";
+   $tbl_new = 'ec_fluv_';
+   $tables = array('defaults', 'foreacst', 'history', 'regions', 'round', 'scores', 'season', 'submissions', 'user_preferences', 'users');
+   foreach($tables as $name) {
+      mysql_query("CREATE TABLE {$tbl_old}{$name} AS SELECT * FROM {$tbl_new}{$name}");
+   }
+   $tables = array('foreacst', 'scores', 'submissions', 'user_preferences', 'users');
+   foreach($tables as $name) {
+      mysql_query("TRUNCATE TABLE {$tbl_new}{$name}");
+   }
+   mysql_query("UPDATE `ec_fluv_season` SET `year` = {$year}, `first_round_epiweek` = {$firstEpiweek}, `last_round_epiweek` = {$lastEpiweek}");
+   mysql_query("UPDATE `ec_fluv_round` SET `round_epiweek` = {$firstEpiweek}, `deadline` = '{$deadline}'");
+   $temp = array();
+   registerUser($temp, $admin['name'], $admin['email'], $admin['email']);
+   $preferences = array('_admin' => 1, '_delphi' => 1);
+   saveUserPreferences($temp, $temp['user_id'], $preferences);
    setResult($output, 1);
    return getResult($output);
 }

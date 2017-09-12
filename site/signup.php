@@ -29,7 +29,7 @@ function checkCaptcha($captcha, $ip) {
             fail('Uh oh, that email address doesn\'t look right. Please try again.');
          } else if(checkCaptcha($_REQUEST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']) != 1) {
             fail('Uh oh, could not verify captcha. Please try again later.');
-         } else if(registerUser($output, $name, $email) != 1) {
+         } else if(registerUser($output, $name, $email, $epicastAdmin['email']) != 1) {
             fail('Uh oh, something went wrong on our end. Please try again later.');
          } else {
             ?>

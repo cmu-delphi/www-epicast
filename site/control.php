@@ -224,8 +224,33 @@ if(isAdmin($output)) {
          </div>
       </div>
       <?php
+      $year1 = $output['season']['year'] + 1;
+      $year2 = $output['season']['year'] + 2;
       if(hasSubmission('reset_epicast')) {
-         fail('Not implemented.');
+         $firstEpiweek = intval(getSafeValue('first_contest_round'));
+         $lastEpiweek = intval(getSafeValue('last_contest_round'));
+         $deadline = getSafeValue('round_deadline');
+         $minEpiweek = $year1 * 100 + 30;
+         $maxEpiweek = $year2 * 100 + 29;
+         $ok = true;
+         if($firstEpiweek < $minEpiweek || $firstEpiweek > $maxEpiweek) {
+            fail('First epiweek was not in the season.');
+            $ok = false;
+         }
+         if($lastEpiweek < $minEpiweek || $lastEpiweek > $maxEpiweek) {
+            fail('Last epiweek was not in the season.');
+            $ok = false;
+         }
+         if($lastEpiweek < $firstEpiweek) {
+            fail('First epiweek was after last epiweek.');
+            $ok = false;
+         }
+         $temp = array();
+         if(!$ok || resetEpicast($temp, $year1, $firstEpiweek, $lastEpiweek, $deadline, $epicastAdmin) !== 1) {
+            fail('Unable to reset Epicast.');
+         } else {
+            success('Epicast has been reset.');
+         }
       }
       ?>
       <div>
@@ -233,17 +258,13 @@ if(isAdmin($output)) {
             <span class="any_warning">This effectively wipes the database. All
             forecasts and users will be lost. This should only be done once, at
             the start of each season.</span> A single user account will be
-            created&mdash;yours&mdash;and it'll have the admin bit set. Note
-            that your user ID will change, so you'll have to wait for your
-            activation email before you can login again.
+            created&mdash;<?= $epicastAdmin['email'] ?> as specified <a href="https://github.com/cmu-delphi/www-epicast/blob/master/site/common/settings.php#L10" target="_blank">here</a>&mdash;and
+            it'll have the admin and delphi bits set. Note
+            that the new user ID will be sent to <?= $epicastAdmin['email'] ?> in a normal activation email.
             The existing database will be backed up, and a new one will be
             created. It is not easy to restore this backup, so make sure you
             really, really want to do this. Good luck!
          </p><p>
-            <?php
-            $year1 = $output['season']['year'] + 1;
-            $year2 = $output['season']['year'] + 2;
-            ?>
             This will reset Epicast for the <?php printf('%d&ndash;%d', $year1, $year2); ?> season.
          </p><?php
             createInput('First Contest Round', 'first_contest_round', $year1 . '??');
