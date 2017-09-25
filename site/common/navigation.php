@@ -23,6 +23,7 @@ function showRegion($r) {
    </div>
    <?php
 }
+
 function showNavigation($output, $regionID=-1) {
    $missing = 0;
    $submitted = 0;
@@ -43,7 +44,11 @@ function showNavigation($output, $regionID=-1) {
       foreach($output['regions'] as $r) {
          createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
       }
+   
+      createForm('forecast_' . $r[0], 'forecast.php#top', array('region_id', $r[0]));
+   
       ?>
+      
       <div class="centered">
          <?php
          foreach($output['regions'] as $r) {
@@ -51,10 +56,7 @@ function showNavigation($output, $regionID=-1) {
          }
          ?>
       </div>
-      
-      
-      
-      
+        
    </div>
    <?php
 }
