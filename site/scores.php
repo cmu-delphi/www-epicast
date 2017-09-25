@@ -72,7 +72,7 @@ $limit = 10;
       <div class="box_section_title">
          Get to Know Your Contributions To the World!
          <?php
-            $ok_button = newt_button(5, 12, "Run Tool");
+            newt_button(5, 12, "Run Tool");
          ?>
       </div>
       
