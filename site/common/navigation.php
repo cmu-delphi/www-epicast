@@ -50,6 +50,27 @@ function showNavigation($output, $regionID=-1) {
          }
          ?>
       </div>
+      
+      
+      <div class="bot_stat_value centered">
+         <i class="fa fa-check"></i> Submitted: <?= $submitted ?>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-question"></i> Still Missing: <?= $missing ?>
+      </div>
+      <?php
+      foreach($output['regions'] as $r) {
+         createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
+      }
+      ?>
+      <div class="centered">
+         <?php
+         foreach($output['regions'] as $r) {
+            showRegion($r);
+         }
+         ?>
+      </div>
+      
+      
+      
+      
    </div>
    <?php
 }
