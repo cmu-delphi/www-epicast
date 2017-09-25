@@ -44,9 +44,6 @@ function showNavigation($output, $regionID=-1) {
       foreach($output['regions'] as $r) {
          createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
       }
-   
-      createForm('forecast_' . $r[0], 'forecast.php#top', array('region_id', $r[0]));
-   
       ?>
       
       <div class="centered">
