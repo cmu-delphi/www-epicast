@@ -69,12 +69,9 @@ $limit = 10;
       </div>
       
       
-      <div class="box_section_title">
+<!--       <div class="box_section_title">
          Get to Know Your Contributions To the World!
-         <?php
-            newt_button(5, 12, "Run Tool");
-         ?>
-      </div>
+      </div> -->
       
    </div>
 </div>
