@@ -29,7 +29,7 @@ if($_offline) {
    ?>
    <div class="box_section">
       <div class="box_section_title">
-         Post <?= formatEpiweek($output['epiweek']['round_epiweek']) ?> 's Forecast
+         Post <?= formatEpiweek($output['epiweek']['round_epiweek']) ?> Forecast
          <div class="box_section_subtitle">
             Due by noon (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
          </div>
