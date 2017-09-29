@@ -752,11 +752,11 @@ Output:
 function resetEpicast(&$output, $year, $firstEpiweek, $lastEpiweek, $deadline, $admin) {
    $tbl_old = ($year - 1) . "_ec_fluv_";
    $tbl_new = 'ec_fluv_';
-   $tables = array('defaults', 'foreacst', 'history', 'regions', 'round', 'scores', 'season', 'submissions', 'user_preferences', 'users');
+   $tables = array('defaults', 'forecast', 'history', 'regions', 'round', 'scores', 'season', 'submissions', 'user_preferences', 'users');
    foreach($tables as $name) {
       mysql_query("CREATE TABLE {$tbl_old}{$name} AS SELECT * FROM {$tbl_new}{$name}");
    }
-   $tables = array('foreacst', 'scores', 'submissions', 'user_preferences', 'users');
+   $tables = array('forecast', 'scores', 'submissions', 'user_preferences', 'users');
    foreach($tables as $name) {
       mysql_query("TRUNCATE TABLE {$tbl_new}{$name}");
    }
