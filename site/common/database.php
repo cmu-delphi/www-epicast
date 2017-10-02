@@ -756,7 +756,7 @@ function resetEpicast(&$output, $year, $firstEpiweek, $lastEpiweek, $deadline, $
    foreach($tables as $name) {
       mysql_query("CREATE TABLE {$tbl_old}{$name} AS SELECT * FROM {$tbl_new}{$name}");
    }
-   $tables = array('forecast', 'scores', 'submissions', 'user_preferences', 'users');
+   $tables = array('forecast', 'scores', 'submissions', 'user_preferences', 'users', 'forecast_hosp', 'submissions_hosp');
    foreach($tables as $name) {
       mysql_query("TRUNCATE TABLE {$tbl_new}{$name}");
    }
