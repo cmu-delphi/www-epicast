@@ -106,6 +106,16 @@ if($_offline) {
    }
    ?>
    <?php showNavigation($output); ?>
+   
+   
+   <?php 
+      $groupID = array(array('id' => '0-5', 'imageURL' => 0), array('id' => '6-65', 'imageURL' => 1))
+      $getURL = 'https://delphi.midas.cs.cmu.edu/'
+   
+      showNavigation_hosp($groupID,$getURL); 
+   ?>
+   
+   
    <p class="centered"><i>Hover a region above to see which states are in that region in the map below.</i></p>
    <div id="map_container"></div>
    <div class="box_section">
