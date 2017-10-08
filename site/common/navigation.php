@@ -1,3 +1,10 @@
+<script>
+  function redirect(url) {
+    window.location.href = url;
+  }
+</script>
+
+
 <?php
 function showRegion($r) {
    if($r['completed']) {
