@@ -31,7 +31,7 @@ function showRegion($r) {
 function showNavigation_hosp($input, $getUrl) {
   foreach ($input as $ageGroup) {
     ?>
-      <img onclick="redirect('<?= ($getUrl + "?id=" + $ageGroup['id']) ?>')" src="images/flags/icon_<?= ('%02d', $ageGroup['imageURL']) ?>.png" />
+      <img onclick="redirect('<?= ($getUrl . "?id=" . $ageGroup['id']) ?>')" src="images/flags/icon_<?= ('%02d', $ageGroup['imageURL']) ?>.png" />
     <?php
   }
 }
