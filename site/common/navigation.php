@@ -24,6 +24,18 @@ function showRegion($r) {
    <?php
 }
 
+/**
+ * $input: array of (id, imageUrl)
+ * $getUrl
+ */
+function showNavigation_hosp($input, $getUrl) {
+  foreach ($input as $ageGroup) {
+    ?>
+      <img onclick="redirect('<?= ($getUrl + "?id=" + $input['id']) ?>')" src="images/flags/icon_<?= ('%02d', $input['id']) ?>.png" />
+    <?php
+  }
+}
+
 function showNavigation($output, $regionID=-1) {
    $missing = 0;
    $submitted = 0;
