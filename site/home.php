@@ -109,8 +109,8 @@ if($_offline) {
    
    
    <?php 
-      $groupID = array(array('id' => '0-5', 'imageURL' => 0), array('id' => '6-65', 'imageURL' => 1))
-      $getURL = 'https://delphi.midas.cs.cmu.edu/'
+      $groupID = array(array('id' => '0-5', 'imageURL' => 0), array('id' => '6-65', 'imageURL' => 1));
+      $getURL = 'https://delphi.midas.cs.cmu.edu/';
    
       showNavigation_hosp($groupID,$getURL); 
    ?>
