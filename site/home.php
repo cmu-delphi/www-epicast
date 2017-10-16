@@ -106,18 +106,17 @@ if($_offline) {
    }
    ?>
    <?php showNavigation($output); ?>
-   
-   
-   <?php 
-      $groupID = array(array('id' => '0-5', 'imageURL' => 0), array('id' => '6-65', 'imageURL' => 1));
-      $getURL = 'https://delphi.midas.cs.cmu.edu/';
-   
-      showNavigation_hosp($groupID,$getURL); 
-   ?>
-   
-   
+
    <p class="centered"><i>Hover a region above to see which states are in that region in the map below.</i></p>
    <div id="map_container"></div>
+
+   <?php 
+      $ageGroups = listAgeGroups();
+      $getUrl = 'https://delphi.midas.cs.cmu.edu/';
+   
+      showNavigationToHospByAgeGroup($ageGroups, $getUrl);
+   ?>
+
    <div class="box_section">
       <div class="box_section_title">
          Flu in the News
@@ -131,6 +130,7 @@ if($_offline) {
       </div>
       <!-- /news -->
    </div>
+
    <div class="box_section">
       <div class="box_section_title">
          Help Spread The Word

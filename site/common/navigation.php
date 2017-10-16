@@ -32,15 +32,30 @@ function showRegion($r) {
 }
 
 /**
- * $input: array of (id, imageUrl)
- * $getUrl
+ * Create buttons to navigate to per-age group hospitalization pages
+ * @param $input Array of (flusurv_name, name, ages) tuples
  */
-function showNavigation_hosp($input, $getUrl) {
+function showNavigationToHospByAgeGroup($input, $getUrl) {
+  // Print container for per-age group buttons
+  ?>
+  <div class="box_section">
+  
+  <div class="bot_stat_value centered">
+     Per Age Group Hospitalization
+  </div>
+  
+  <?php 
   foreach ($input as $ageGroup) {
     ?>
-      <img onclick="redirect('<?= ($getUrl . "?id=" . $ageGroup['id']) ?>')" src="images/flags/icon_<?= $ageGroup['imageURL'] ?>.png" />
+      <button onclick="redirect('<?= ($getUrl . "?id=" . $ageGroup['flusurv_name']) ?>')"><?= $ageGroup['name'] ?></button>
+      <?= $ageGroup['ages'] ?>
+      <br />
     <?php
   }
+
+  ?>
+  </div>
+  <?php
 }
 
 function showNavigation($output, $regionID=-1) {

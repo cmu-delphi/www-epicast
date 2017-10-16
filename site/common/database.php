@@ -340,6 +340,22 @@ Output:
 //    return getResult($output);
 // }
 
+/**
+ * Returns an array of age groups in the form of (flusurv_name, name, ages) where
+ * - flusurv_name is the name by which db identifies the age group,
+ * - name is a succinct name of the age group (such as age group #2), and
+ * - ages is the more detailed description of the age group (such as "18-30 years old")
+ */
+function listAgeGroups() {
+  $returnAgeGroups = array();
+  $result = mysql_query("SELECT * FROM ec_fluv_age_groups");
+
+  while ($row = mysql_fetch_assoc($result)) {
+    $returnAgeGroups[] = $row;
+  }
+  return $returnAgeGroups;
+}
+
 /*
 ===== saveForecast =====
 Purpose:
