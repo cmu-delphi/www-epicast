@@ -112,7 +112,7 @@ if($_offline) {
 
    <?php 
       $ageGroups = listAgeGroups();
-      $getUrl = 'https://delphi.midas.cs.cmu.edu/';
+      $getUrl = 'age_group_hospitalization.php';
    
       showNavigationToHospByAgeGroup($ageGroups, $getUrl);
    ?>

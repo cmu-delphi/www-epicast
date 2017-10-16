@@ -356,6 +356,20 @@ function listAgeGroups() {
   return $returnAgeGroups;
 }
 
+/**
+ * Get hospitalization data for the given age group.
+ * Each age group is identified by the flusurv_name field in ec_fluv_age_groups table.
+ */
+function getHospitalizationForAgeGroup($ageGroup) {
+  $returnAgeGroupHosp = array();
+  $result = mysql_query("SELECT * FROM ec_fluv_forecast_hosp");
+
+  while ($row = mysql_fetch_assoc($result)) {
+    $returnAgeGroupHosp[] = $row;
+  }
+  return $returnAgeGroupHosp;
+}
+
 /*
 ===== saveForecast =====
 Purpose:
