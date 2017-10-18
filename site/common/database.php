@@ -362,7 +362,18 @@ function listAgeGroups() {
  */
 function getHospitalizationForAgeGroup($ageGroup) {
   $returnAgeGroupHosp = array();
-  $result = mysql_query("SELECT * FROM ec_fluv_forecast_hosp");
+  // $result = mysql_query("SELECT * FROM epidata.flusurv WHERE issue = 201710 and epiweek = issue and location = 'network_all';"); 
+   
+//   $result = mysql_query("SELECT `epidata.flusurv`.`issue`, 
+//                           `epidata.flusurv`.`epiweek`, 
+//                           `flusurv`.`rate_age_3` AS `rate` FROM 
+//                           (SELECT `epiweek`, max(`issue`) AS `latest` FROM `epidata.flusurv` WHERE 
+//                            `location` = 'network_all' AND `epiweek` >= 201710 GROUP BY `epiweek`) 
+//                           AS `issues` JOIN `epidata.flusurv` ON `epidata.flusurv`.`issue` = `issues`.`latest` 
+//                           AND `epidata.flusurv`.`epiweek` = `issues`.`epiweek` WHERE `location` = 'network_all' 
+//                           ORDER BY `epidata.flusurv`.`epiweek` ASC");
+   
+  $result = mysql_query("SELECT * FROM epidata.flusurv WHERE issue >= 201710 and epiweek = issue and location = 'network_all'");
 
   while ($row = mysql_fetch_assoc($result)) {
     $returnAgeGroupHosp[] = $row;

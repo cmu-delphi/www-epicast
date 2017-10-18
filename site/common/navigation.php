@@ -35,7 +35,7 @@ function showRegion($r) {
  * Create buttons to navigate to per-age group hospitalization pages
  * @param $input Array of (flusurv_name, name, ages) tuples
  */
-function showNavigationToHospByAgeGroup($input, $getUrl) {
+function showNavigation_hosp($input, $getUrl) {
   // Print container for per-age group buttons
   ?>
   <div class="box_section">

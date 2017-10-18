@@ -107,14 +107,14 @@ if($_offline) {
    ?>
    <?php showNavigation($output); ?>
 
-   <p class="centered"><i>Hover a region above to see which states are in that region in the map below.</i></p>
+   <p class="centered"><i>Hover a button above to see which states are in that region or the location of the state in the map below.</i></p>
    <div id="map_container"></div>
 
    <?php 
       $ageGroups = listAgeGroups();
       $getUrl = 'age_group_hospitalization.php';
    
-      showNavigationToHospByAgeGroup($ageGroups, $getUrl);
+      showNavigation_hosp($ageGroups, $getUrl);
    ?>
 
    <div class="box_section">
