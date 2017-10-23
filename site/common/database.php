@@ -1,6 +1,8 @@
 <?php
 require_once('utils.php');
 
+define("NUM_REGIONS", 15);
+
 function getResult(&$output) {
    return $output['result'][count($output['result']) - 1];
 }
@@ -217,7 +219,7 @@ function getRegions(&$output, $userID) {
       $regions[$region['id']] = $region;
    }
    $output['regions'] = &$regions;
-   setResult($output, count($regions) == 11 ? 1 : 2);
+   setResult($output, count($regions) == NUM_REGIONS ? 1 : 2);
    return getResult($output);
 }
 
