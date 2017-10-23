@@ -10,4 +10,4 @@ if($error) {
 
 // Store the age group id as in the age_groups table
 $ageGroupId = $_GET['id'];
-var_dump(getHospitalizationForAgeGroup($ageGroupId));
+var_dump(getHistory_Hosp($ageGroupId, 201710));

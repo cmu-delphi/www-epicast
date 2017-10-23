@@ -306,41 +306,39 @@ function getHistory(&$output, $regionID, $firstWeek) {
 Purpose:
    Returns history for an ageGroup
 Input:
-   $output - The array of return values (array reference)
    $ageGroup - The age group's ID
    $firstWeek - The first epiweek
 Output:
-   $output['result'] will contain the following values:
-      1 - Success
-      2 - Failure
    $output['history'] - Arrays of epiweeks and historical incidence (wILI) for the region
 */
-// function getHistory_Hosp(&$output, $ageGroup, $firstWeek) {
-//    $result = mysql_query(SELECT `flusurv`.`issue`, 
-//                          `flusurv`.`epiweek`, 
-//                          `flusurv`.`rate_age_3` AS `rate` FROM 
-//                          (SELECT `epiweek`, max(`issue`) AS `latest` FROM `flusurv` WHERE 
-//                           `location` = 'network_all' AND `epiweek` >= 201710 GROUP BY `epiweek`) 
-//                          AS `issues` JOIN `flusurv` ON `flusurv`.`issue` = `issues`.`latest` 
-//                          AND `flusurv`.`epiweek` = `issues`.`epiweek` WHERE `location` = 'network_all' 
-//                          ORDER BY `flusurv`.`epiweek` ASC;);
-//    $date = array();
-//    $rate = array();
-//    while($row = mysql_fetch_array($result)) {
-//       $ew = intval($row['epiweek']);
-//       while($firstWeek < $ew) {
-//         array_push($date, $firstWeek);
-//         array_push($wili, -1);
-//         $firstWeek = addEpiweeks($firstWeek, 1);
-//       }
-//       array_push($date, $ew);
-//       array_push($rate, floatval($row['rate']));
-//       $firstWeek = addEpiweeks($firstWeek, 1);
-//    }
-//    $output['history'] = array('date' => &$date, 'rate' => &$rate);
-//    setResult($output, 1);
-//    return getResult($output);
-// }
+function getHistory_Hosp($ageGroup, $firstWeek) {
+   $result = mysql_query("SELECT `flusurv`.`issue`, `flusurv`.`epiweek`, `flusurv`.`rate_age_3` AS `rate` " .
+   "FROM (SELECT `epiweek`, max(`issue`) AS `latest` " .
+   "FROM `flusurv` WHERE `location` = 'network_all' AND `epiweek` >= 201710 GROUP BY `epiweek`) AS `issues` " .
+   "JOIN `flusurv` ON `flusurv`.`issue` = `issues`.`latest` AND `flusurv`.`epiweek` = `issues`.`epiweek` " .
+   "WHERE `location` = 'network_all' ORDER BY `flusurv`.`epiweek` ASC");
+
+   $dateArr = array();
+   $rateArr = array();
+
+   $currentWeek = $firstWeek;
+   while ($row = mysql_fetch_array($result)) {
+      $currentEpiweek = intval($row['epiweek']);
+
+      // Push -1 for all weeks with no data
+      while ($currentWeek < $currentEpiweek) {
+        array_push($dateArr, $currentWeek);
+        array_push($rateArr, -1);
+        $currentWeek = addEpiweeks($currentWeek, 1);
+      }
+      array_push($dateArr, $currentEpiweek);
+      array_push($rateArr, floatval($row['rate']));
+      $currentWeek = addEpiweeks($currentWeek, 1);
+   }
+   $history = array('date' => $dateArr, 'rate' => $rateArr);
+
+   return $history;
+}
 
 /**
  * Returns an array of age groups in the form of (flusurv_name, name, ages) where
