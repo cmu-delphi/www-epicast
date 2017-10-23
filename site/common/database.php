@@ -312,11 +312,11 @@ Output:
    $output['history'] - Arrays of epiweeks and historical incidence (wILI) for the region
 */
 function getHistory_Hosp($ageGroup, $firstWeek) {
-   $result = mysql_query("SELECT `flusurv`.`issue`, `flusurv`.`epiweek`, `flusurv`.`rate_age_3` AS `rate` " .
+   $result = mysql_query("SELECT `epidata`.`flusurv`.`issue`, `epidata`.`flusurv`.`epiweek`, `epidata`.`flusurv`.`rate_age_3` AS `rate` " .
    "FROM (SELECT `epiweek`, max(`issue`) AS `latest` " .
-   "FROM `flusurv` WHERE `location` = 'network_all' AND `epiweek` >= 201710 GROUP BY `epiweek`) AS `issues` " .
-   "JOIN `flusurv` ON `flusurv`.`issue` = `issues`.`latest` AND `flusurv`.`epiweek` = `issues`.`epiweek` " .
-   "WHERE `location` = 'network_all' ORDER BY `flusurv`.`epiweek` ASC");
+   "FROM `epidata`.`flusurv` WHERE `location` = 'network_all' AND `epiweek` >= 201710 GROUP BY `epiweek`) AS `issues` " .
+   "JOIN `epidata`.`flusurv` ON `epidata`.`flusurv`.`issue` = `issues`.`latest` AND `epidata`.`flusurv`.`epiweek` = `issues`.`epiweek` " .
+   "WHERE `location` = 'network_all' ORDER BY `epidata`.`flusurv`.`epiweek` ASC");
 
    $dateArr = array();
    $rateArr = array();
