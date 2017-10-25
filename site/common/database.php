@@ -282,7 +282,7 @@ Output:
    $output['history'] - Arrays of epiweeks and historical incidence (wILI) for the region
 */
 function getHistory(&$output, $regionID, $firstWeek) {
-   $result = mysql_query("SELECT `epiweek`, `wili` FROM ec_fluv_history WHERE `region_id` = {$regionID} AND `epiweek` >= {$firstWeek} ORDER BY `epiweek` ASC");
+   $result = mysql_query("SELECT fv.`epiweek`, fv.`wili` FROM epidata.`fluview` AS fv JOIN ( SELECT `epiweek`, max(`issue`) AS `latest` FROM epidata.`fluview` AS fv JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} GROUP BY fv.`epiweek` ) AS issues ON fv.`epiweek` = issues.`epiweek` AND fv.`issue` = issues.`latest` JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} ORDER BY fv.`epiweek` ASC");
    $date = array();
    $wili = array();
    while($row = mysql_fetch_array($result)) {
@@ -362,17 +362,17 @@ function listAgeGroups() {
  */
 function getHospitalizationForAgeGroup($ageGroup) {
   $returnAgeGroupHosp = array();
-  // $result = mysql_query("SELECT * FROM epidata.flusurv WHERE issue = 201710 and epiweek = issue and location = 'network_all';"); 
-   
-//   $result = mysql_query("SELECT `epidata.flusurv`.`issue`, 
-//                           `epidata.flusurv`.`epiweek`, 
-//                           `flusurv`.`rate_age_3` AS `rate` FROM 
-//                           (SELECT `epiweek`, max(`issue`) AS `latest` FROM `epidata.flusurv` WHERE 
-//                            `location` = 'network_all' AND `epiweek` >= 201710 GROUP BY `epiweek`) 
-//                           AS `issues` JOIN `epidata.flusurv` ON `epidata.flusurv`.`issue` = `issues`.`latest` 
-//                           AND `epidata.flusurv`.`epiweek` = `issues`.`epiweek` WHERE `location` = 'network_all' 
+  // $result = mysql_query("SELECT * FROM epidata.flusurv WHERE issue = 201710 and epiweek = issue and location = 'network_all';");
+
+//   $result = mysql_query("SELECT `epidata.flusurv`.`issue`,
+//                           `epidata.flusurv`.`epiweek`,
+//                           `flusurv`.`rate_age_3` AS `rate` FROM
+//                           (SELECT `epiweek`, max(`issue`) AS `latest` FROM `epidata.flusurv` WHERE
+//                            `location` = 'network_all' AND `epiweek` >= 201710 GROUP BY `epiweek`)
+//                           AS `issues` JOIN `epidata.flusurv` ON `epidata.flusurv`.`issue` = `issues`.`latest`
+//                           AND `epidata.flusurv`.`epiweek` = `issues`.`epiweek` WHERE `location` = 'network_all'
 //                           ORDER BY `epidata.flusurv`.`epiweek` ASC");
-   
+
   $result = mysql_query("SELECT * FROM epidata.flusurv WHERE issue >= 201710 and epiweek = issue and location = 'network_all'");
 
   while ($row = mysql_fetch_assoc($result)) {
