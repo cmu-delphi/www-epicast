@@ -16,7 +16,7 @@ function getStates(region) {
       ['MD']
    ];
    var style = {};
-   for(var i = 0; i < 14; i++) {
+   for(var i = 0; i < 13; i++) {
       if(region === 0 || region === i + 1) {
          for(var j = 0; j < regionStates[i].length; j++) {
             style[regionStates[i][j]] = {fill: regionColors[i]};
