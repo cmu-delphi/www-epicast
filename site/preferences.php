@@ -303,24 +303,24 @@ $account_fields = array();
                   createPreference($output, 'Show the 2009 pandemic', $prefix, 'pandemic', 'bool');
                   ?>
                </table>
-               <p class="text_title left">Additional Seasons</p>
+               <p class="text_title left">Additional Seasons for National and Regional Forecasts</p>
                <p class="text_body left">
                   The flu sentinel surveillance network (ILINet) has been growing and evolving since its inception in 1997.
-                  However, due to the small size of the network initially, the earliest data is noisy and is not available during the summer months.
+                  However, due to the small size of the network initially, the earliest data for the U.S. nation and the 10 HHS regions is noisy and is not available during the summer months.
                   Starting around the 2004-2005 flu season, the data becomes much more stable and is available year-round.
-                  For these reasons, seasons from 1997 through 2003 are hidden by default.
+                  For these reasons, seasons from 1997 through 2003 for national and regional level forecasts are hidden by default.
                   However, forecasters who have experience in influenza epidemiology may find it helpful to display these additional seasons.
                   Here you have the option to display the 1997-2003 seasons on the chart alongside the later seasons for which we have more reliable data.
                </p>
                <table cellspacing="0">
                   <?php
                   $prefix = 'advanced_';
-                  createPreference($output, 'Show seasons prior to 2004', $prefix, 'prior', 'bool');
+                  createPreference($output, 'Show seasons prior to 2004 for U.S. nation and regions', $prefix, 'prior', 'bool');
                   ?>
                </table>
-               <p class="text_title left">Default Seasons</p>
+               <p class="text_title left">Default Seasons for National and Regional Forecasts</p>
                <p class="text_body left">
-                  By default, all seasons (respectful of your preferences above) are shown on the forecasting chart.
+                  By default, for national and regional level forecasts, all seasons (respectful of your preferences above) are shown on the forecasting chart.
                   If you prefer to only show a certain subset of the available seasons, you can override the default selection here.
                   This may be useful, for example, if you only want to display seasons having a strain makeup similar to that of the current season.
                 </p>
