@@ -303,7 +303,7 @@ $account_fields = array();
                   createPreference($output, 'Show the 2009 pandemic', $prefix, 'pandemic', 'bool');
                   ?>
                </table>
-               <p class="text_title left">Additional Seasons for National and Regional Forecasts</p>
+               <p class="text_title left">Additional Seasons --- for National and Regional Forecasts</p>
                <p class="text_body left">
                   The flu sentinel surveillance network (ILINet) has been growing and evolving since its inception in 1997.
                   However, due to the small size of the network initially, the earliest data for the U.S. nation and the 10 HHS regions is noisy and is not available during the summer months.
@@ -318,7 +318,7 @@ $account_fields = array();
                   createPreference($output, 'Show seasons prior to 2004 for U.S. nation and regions', $prefix, 'prior', 'bool');
                   ?>
                </table>
-               <p class="text_title left">Default Seasons for National and Regional Forecasts</p>
+               <p class="text_title left">Default Seasons --- for National and Regional Forecasts</p>
                <p class="text_body left">
                   By default, for national and regional level forecasts, all seasons (respectful of your preferences above) are shown on the forecasting chart.
                   If you prefer to only show a certain subset of the available seasons, you can override the default selection here.
