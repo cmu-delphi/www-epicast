@@ -204,26 +204,7 @@ foreach($output['regions'] as $r) {
                   }
                }
             }
-            
-            
-//             foreach($seasonYears as $year) {
-//                if($year == 2009 && $showPandemic !== 1) {
-//                   continue;
-//                }
-//                if($r['id'] == $regionID && $year == $currentYear) {
-//                   ?>
-//                   <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
-//                      <span class="effect_tiny"><?= sprintf('%d-now', $year) ?></span>
-//                   </div>
-//                   <?php
-//                } else {
-//                   ?>
-//                   <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer" onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o" style="color: <?= getColor($r['id'], $year) ?>"></i>
-//                      <span class="effect_tiny"><?= sprintf('%d-%s', $year, ($year == $currentYear) ? 'now' : '' . ($year + 1)) ?><?= ($year == 2009 ? ' pdm' : '')?></span>
-//                   </div>
-//                   <?php
-//                }
-//             }
+          
          }
          ?>
       </div></div><div id="box_canvas"><canvas id="canvas" width="800" height="400"></canvas></div>
