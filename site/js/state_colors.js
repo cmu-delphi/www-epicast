@@ -13,10 +13,10 @@ function getStates(region) {
       ['AK', 'ID', 'OR', 'WA', ],
       ['PA'],
       ['GA'],
-      ['VA']
+      ['MD']
    ];
    var style = {};
-   for(var i = 0; i < 13; i++) {
+   for(var i = 0; i < 14; i++) {
       if(region === 0 || region === i + 1) {
          for(var j = 0; j < regionStates[i].length; j++) {
             style[regionStates[i][j]] = {fill: regionColors[i]};
