@@ -129,7 +129,8 @@ Input:
 Output:
    $output['result'] will contain the following values:
       1 - Success
-      2 - Failure
+      2 - Failure (table ec_fluv_round)
+      3 - Failure (table epidata.fluview)
    $output['epiweek']['round_epiweek'] - This round's identifier (can be ahead of data_epiweek)
    $output['epiweek']['data_epiweek'] - The most recently published issue (from epidata.fluview)
    $output['epiweek']['deadline'] - Deadline timestamp as a string (YYYY-MM-DD HH:MM:SS)
@@ -137,7 +138,7 @@ Output:
    $output['epiweek']['remaining'] - An array containing days/hours/minutes/seconds remaining
 */
 function getEpiweekInfo(&$output) {
-   $result = mysql_query('SELECT yearweek(now(), 6) `current_epiweek`, x.`round_epiweek`, x.`data_epiweek`, x.`deadline`, unix_timestamp(x.`deadline`) `deadline_timestamp`, unix_timestamp(x.`deadline`) - unix_timestamp(now()) `remaining` FROM (SELECT `round_epiweek`, `data_epiweek`, date_sub(`deadline`, INTERVAL 12 HOUR) `deadline` FROM ec_fluv_round) x');
+   $result = mysql_query('SELECT yearweek(now(), 6) `current_epiweek`, x.`round_epiweek`, x.`deadline`, unix_timestamp(x.`deadline`) `deadline_timestamp`, unix_timestamp(x.`deadline`) - unix_timestamp(now()) `remaining` FROM (SELECT `round_epiweek`, date_sub(`deadline`, INTERVAL 12 HOUR) `deadline` FROM ec_fluv_round) x');
    if($row = mysql_fetch_array($result)) {
       $output['epiweek'] = array();
       $output['epiweek']['current_epiweek'] = intval($row['current_epiweek']);
@@ -157,7 +158,6 @@ function getEpiweekInfo(&$output) {
         );
       }
       $output['epiweek']['round_epiweek'] = intval($row['round_epiweek']);
-      $output['epiweek']['data_epiweek'] = intval($row['data_epiweek']);
       $output['epiweek']['deadline'] = $row['deadline'];
       $output['epiweek']['deadline_timestamp'] = intval($row['deadline_timestamp']);
       $seconds = intval($row['remaining']);
@@ -183,6 +183,14 @@ function getEpiweekInfo(&$output) {
       setResult($output, 1);
    } else {
       setResult($output, 2);
+      return getResult($output);
+   }
+   $result = mysql_query('SELECT max(`issue`) AS `data_epiweek` FROM epidata.`fluview`');
+   if($row = mysql_fetch_array($result)) {
+      $output['epiweek']['data_epiweek'] = intval($row['data_epiweek']);
+      setResult($output, 1);
+   } else {
+      setResult($output, 3);
       return getResult($output);
    }
    return getResult($output);
