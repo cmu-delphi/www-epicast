@@ -90,16 +90,27 @@ function showNavigation($output, $regionID=-1) {
          <i class="fa fa-check"></i> Submitted: <?= $submitted ?>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-question"></i> Still Missing: <?= $missing ?>
       </div>
       <?php
-      foreach($output['regions'] as $r) {
-         createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
-      }
+      $defaultNumRegion = 14;
+//       foreach($output['regions'] as $r) {
+//          createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
+//       }
+      for ($i = 0; $i < $defaultNumRegion; $i++) {
+        $r = $output['regions'][$i];
+        print $r['id'];
+        createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
+      } 
       ?>
       
       <div class="centered">
          <?php
-         foreach($output['regions'] as $r) {
+         $defaultNumRegion = 14;
+         for ($i = 0; $i < $defaultNumRegion; $i++) {
+            $r = $output['regions'][$i];
             showRegion($r);
          }
+//          foreach($output['regions'] as $r) {
+//             showRegion($r);
+//          }
          ?>
       </div>
         
