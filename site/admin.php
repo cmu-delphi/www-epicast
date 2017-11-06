@@ -143,6 +143,15 @@ if(isAdmin($output)) {
          </div>
       </div>
    </div>
+   
+<!--    <div class="box_section">
+      <div class="box_section_title">
+         Historical Data for All Locations
+      </div>
+   </div> -->
+   
+<!--    <?php showNavigation($output); ?> -->
+   
    <div class="box_section">
       <div class="box_section_title">
          Userbase
