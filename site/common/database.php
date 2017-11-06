@@ -1,7 +1,7 @@
 <?php
 require_once('utils.php');
 
-define("NUM_REGIONS", 15);
+define("NUM_REGIONS", 17);
 
 function getResult(&$output) {
    return $output['result'][count($output['result']) - 1];
