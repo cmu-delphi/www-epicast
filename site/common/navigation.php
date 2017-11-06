@@ -61,13 +61,23 @@ function showNavigation_hosp($input, $getUrl) {
 function showNavigation($output, $regionID=-1) {
    $missing = 0;
    $submitted = 0;
-   foreach($output['regions'] as $r) {
+   $defaultNumRegion = 14;
+   for ($i = 1; $i <= $defaultNumRegion; $i++) {
+      $r = $output['regions'][$i];
       if($r['completed']) {
          $submitted++;
       } else {
          $missing++;
       }
    }
+  
+//    foreach($output['regions'] as $r) {
+//       if($r['completed']) {
+//          $submitted++;
+//       } else {
+//          $missing++;
+//       }
+//    }
    ?>
    <div class="box_section">
      
@@ -90,7 +100,6 @@ function showNavigation($output, $regionID=-1) {
          <i class="fa fa-check"></i> Submitted: <?= $submitted ?>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-question"></i> Still Missing: <?= $missing ?>
       </div>
       <?php
-      $defaultNumRegion = 14;
 //       foreach($output['regions'] as $r) {
 //          createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
 //       }
@@ -103,7 +112,6 @@ function showNavigation($output, $regionID=-1) {
       
       <div class="centered">
          <?php
-         $defaultNumRegion = 14;
          for ($i = 1; $i <= $defaultNumRegion; $i++) {
             $r = $output['regions'][$i];
             showRegion($r);
