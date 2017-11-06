@@ -105,16 +105,8 @@ if($_offline) {
       <?php
    }
    ?>
-   <?php 
-      showNavigation($output); 
-      $ifAllLocation = getPreference($output, 'allLocation', 'int');
-      if ($ifAllLocation) {
-         print "showing all locations";
-      }
-      else {
-         print "default 14 locations";
-      }
-   ?>
+   <?php showNavigation($output); ?>
+
 
    <p class="centered"><i>Hover a button above to see which states are in that region or the location of the state in the map below.</i></p>
    <div id="map_container"></div>
