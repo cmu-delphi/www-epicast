@@ -147,27 +147,6 @@ if(isAdmin($output)) {
    
    <div class="box_section">
       <div class="box_section_title">
-         Historical Data for All Locations
-      </div>
-      <?php
-         foreach($output['regions'] as $r) {
-            print "1";
-            createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
-         }
-       ?>
-   </div>
-   
-   <div class="centered">
-         <?php
-         print "2";
-         foreach($output['regions'] as $r) {
-            showRegion($r);
-         }
-         ?>
-    </div>
-   
-   <div class="box_section">
-      <div class="box_section_title">
          Userbase
          <div class="box_section_subtitle">
             Hopefully some day this will be too long to display on a single page.
