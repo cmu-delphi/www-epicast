@@ -149,13 +149,14 @@ if(isAdmin($output)) {
       <div class="box_section_title">
          Historical Data for All Locations
       </div>
+      <?php
+         foreach($output['regions'] as $r) {
+            print "1";
+            createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
+         }
+       ?>
    </div>
-   <?php
-      foreach($output['regions'] as $r) {
-         print "1";
-         createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
-      }
-    ?>
+   
    <div class="centered">
          <?php
          print "2";
