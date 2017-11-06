@@ -62,6 +62,7 @@ function showNavigation($output, $regionID=-1) {
    $missing = 0;
    $submitted = 0;
    $defaultNumRegion = 14;
+   $ifAllLocation = getPreference($output, 'allLocation', 'int');
    for ($i = 1; $i <= $defaultNumRegion; $i++) {
       $r = $output['regions'][$i];
       if($r['completed']) {
@@ -87,7 +88,6 @@ function showNavigation($output, $regionID=-1) {
      } -->
      
       <?php
-      $ifAllLocation = getPreference($output, 'allLocation', 'int');
       if ($ifAllLocation) {
          print "showing all locations";
       }
@@ -99,26 +99,38 @@ function showNavigation($output, $regionID=-1) {
       <div class="bot_stat_value centered">
          <i class="fa fa-check"></i> Submitted: <?= $submitted ?>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-question"></i> Still Missing: <?= $missing ?>
       </div>
+     
+     
+     
       <?php
-//       foreach($output['regions'] as $r) {
-//          createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
-//       }
-      for ($i = 1; $i <= $defaultNumRegion; $i++) {
-        $r = $output['regions'][$i];
-//         print $r['id'];
-        createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
-      } 
+      if ($ifAllLocation) {
+        foreach($output['regions'] as $r) {
+           createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
+        }
+      }
+        
+      else {
+          for ($i = 1; $i <= $defaultNumRegion; $i++) {
+            $r = $output['regions'][$i];
+            createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
+          }
+      }
       ?>
-      
+     
       <div class="centered">
          <?php
-         for ($i = 1; $i <= $defaultNumRegion; $i++) {
-            $r = $output['regions'][$i];
+         if ($ifAllLocation) {
+            foreach($output['regions'] as $r) {
             showRegion($r);
+            }
          }
-//          foreach($output['regions'] as $r) {
-//             showRegion($r);
-//          }
+         else {
+            for ($i = 1; $i <= $defaultNumRegion; $i++) {
+                $r = $output['regions'][$i];
+                showRegion($r);
+             }
+         }
+         
          ?>
       </div>
         
