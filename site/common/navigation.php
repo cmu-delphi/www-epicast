@@ -96,7 +96,7 @@ function showNavigation($output, $regionID=-1) {
 //       }
       for ($i = 1; $i <= $defaultNumRegion; $i++) {
         $r = $output['regions'][$i];
-        print $r['id'];
+//         print $r['id'];
         createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
       } 
       ?>
