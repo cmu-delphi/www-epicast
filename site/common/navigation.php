@@ -94,7 +94,7 @@ function showNavigation($output, $regionID=-1) {
 //       foreach($output['regions'] as $r) {
 //          createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
 //       }
-      for ($i = 0; $i < $defaultNumRegion; $i++) {
+      for ($i = 1; $i <= $defaultNumRegion; $i++) {
         $r = $output['regions'][$i];
         print $r['id'];
         createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
@@ -104,7 +104,7 @@ function showNavigation($output, $regionID=-1) {
       <div class="centered">
          <?php
          $defaultNumRegion = 14;
-         for ($i = 0; $i < $defaultNumRegion; $i++) {
+         for ($i = 1; $i <= $defaultNumRegion; $i++) {
             $r = $output['regions'][$i];
             showRegion($r);
          }
