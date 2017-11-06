@@ -70,6 +70,11 @@ function showNavigation($output, $regionID=-1) {
    }
    ?>
    <div class="box_section">
+     
+<!--      $showAllLocations = getPreference($output, 'allLocation', 'int');
+     if ($showAllLocations) {
+     
+     } -->
       
       <div class="bot_stat_value centered">
          <i class="fa fa-check"></i> Submitted: <?= $submitted ?>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-question"></i> Still Missing: <?= $missing ?>
