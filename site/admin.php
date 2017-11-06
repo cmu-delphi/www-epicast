@@ -1,5 +1,6 @@
 <?php
 require_once('common/header.php');
+require('common/navigation.php');
 if($error) {
    return;
 }
@@ -144,13 +145,12 @@ if(isAdmin($output)) {
       </div>
    </div>
    
-<!--    <div class="box_section">
+   <div class="box_section">
       <div class="box_section_title">
          Historical Data for All Locations
       </div>
-   </div> -->
-   
-<!--    <?php showNavigation($output); ?> -->
+   </div>
+    <?php showNavigation($output); ?>
    
    <div class="box_section">
       <div class="box_section_title">
