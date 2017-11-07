@@ -81,26 +81,9 @@ function showNavigation($output, $regionID=-1) {
 //    }
    ?>
    <div class="box_section">
-     
-<!--      $showAllLocations = getPreference($output, 'allLocation', 'int');
-     if ($showAllLocations) {
-     
-     } -->
-     
-<!--       <?php
-      if ($ifAllLocation) {
-         print "showing all locations";
-      }
-      else {
-         print "default 14 locations";
-      }
-      ?> -->
-      
       <div class="bot_stat_value centered">
          <i class="fa fa-check"></i> Submitted: <?= $submitted ?>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-question"></i> Still Missing: <?= $missing ?>
       </div>
-     
-     
      
       <?php
       if ($ifAllLocation) {
