@@ -60,7 +60,7 @@ $limit = 10;
                fail('Error loading epiweek info');
             } else {
                ?>
-               <h1 style="margin-bottom: 0px;"><?= formatEpiweek($output['epiweek']['data_epiweek']) ?> Score</h1>
+               <h1 style="margin-bottom: 0px;"><?= formatEpiweek(add_epiweeks($output['epiweek']['data_epiweek'],-1)) ?> Score</h1>
                <?php
                createTable($output['leaderboard']);
             }
