@@ -353,7 +353,7 @@ $account_fields = array();
                </table>
                
                
-               <p class="text_title left">View All States</p>
+<!--                <p class="text_title left">View All States</p>
                <p class="text_body left">
                   By selecting yes in this option, you can view the historical and current curves for all locations: 11 HHS regions and
                   54 states.
@@ -363,7 +363,7 @@ $account_fields = array();
                   $prefix = 'advanced_';
                   createPreference($output, 'Show All Locations', $prefix, 'allLocation', 'bool');
                   ?>
-               </table>
+               </table> -->
                
                
             </form>
