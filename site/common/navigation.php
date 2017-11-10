@@ -61,7 +61,7 @@ function showNavigation_hosp($input, $getUrl) {
 function showNavigation($output, $regionID=-1) {
    $missing = 0;
    $submitted = 0;
-   $defaultNumRegion = 14;
+   $defaultNumRegion = 16;
    $ifAllLocation = getPreference($output, 'allLocation', 'int');
    for ($i = 1; $i <= $defaultNumRegion; $i++) {
       $r = $output['regions'][$i];
