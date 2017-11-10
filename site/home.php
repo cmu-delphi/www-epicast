@@ -92,7 +92,7 @@ if($_offline) {
       </div>
    </div>
    <?php
-   $defaultNumRegion = 14;
+   $defaultNumRegion = 16;
    if($output['stat_completed'] === $defaultNumRegion) {
       ?>
       <div class="box_section">
