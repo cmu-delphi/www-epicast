@@ -140,6 +140,7 @@ foreach($output['regions'] as $r) {
          <div style="float: right;">
             <?php button('fa-upload', 'Save &amp; Continue', "submitForecast(true)", '', 'button_submit'); ?>
             <?php 
+               $ifAllLocation = getPreference($output, 'allLocation', 'int');
                if ($ifAllLocation) print "admin";
             ?>
          </div>
