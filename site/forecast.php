@@ -139,6 +139,9 @@ foreach($output['regions'] as $r) {
          </div>
          <div style="float: right;">
             <?php button('fa-upload', 'Save &amp; Continue', "submitForecast(true)", '', 'button_submit'); ?>
+            <?php 
+               if ($ifAllLocation) print "admin";
+            ?>
          </div>
          <div class="box_status_info">
             <span id="status_message">Draw your forecast by clicking and dragging across the chart below.</span>
