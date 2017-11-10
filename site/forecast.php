@@ -784,7 +784,7 @@ foreach($output['regions'] as $r) {
       $.get("api.php", params, handleResponse, 'json');
    }
    function updateStatus() {
-      $defaultNumRegion = 14;
+      $defaultNumRegion = 16;
       $('#box_status').removeClass('any_success any_failure any_neutral');
       if(submitStatus == SubmitStatus.sent) {
          $('#status_icon').html('<i class="fa fa-cog fa-spin"></i>');
