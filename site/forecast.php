@@ -139,10 +139,6 @@ foreach($output['regions'] as $r) {
          </div>
          <div style="float: right;">
             <?php button('fa-upload', 'Save &amp; Continue', "submitForecast(true)", '', 'button_submit'); ?>
-            <?php 
-               $ifAllLocation = getPreference($output, 'allLocation', 'int');
-               if ($ifAllLocation) print "admin";
-            ?>
          </div>
          <div class="box_status_info">
             <span id="status_message">Draw your forecast by clicking and dragging across the chart below.</span>
@@ -788,6 +784,7 @@ foreach($output['regions'] as $r) {
       $.get("api.php", params, handleResponse, 'json');
    }
    function updateStatus() {
+      $defaultNumRegion = 14;
       $('#box_status').removeClass('any_success any_failure any_neutral');
       if(submitStatus == SubmitStatus.sent) {
          $('#status_icon').html('<i class="fa fa-cog fa-spin"></i>');
@@ -800,12 +797,18 @@ foreach($output['regions'] as $r) {
          //Move to the next missing region, or go home
          <?php
          $next = null;
-         foreach($output['regions'] as $r) {
+         
+         for ($i = 1; $i <= $defaultNumRegion; $i++) {
+            $r = $output['regions'][$i];
+         //foreach($output['regions'] as $r) {
             if($r['id'] > $region['id'] && !$r['completed'] && $next === null) {
                $next = $r['id'];
             }
          }
-         foreach($output['regions'] as $r) {
+   
+         for ($i = 1; $i <= $defaultNumRegion; $i++) {
+            $r = $output['regions'][$i];
+         //foreach($output['regions'] as $r) {
             if($r['id'] < $region['id'] && !$r['completed'] && $next === null) {
                $next = $r['id'];
             }
