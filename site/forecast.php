@@ -798,7 +798,7 @@ foreach($output['regions'] as $r) {
          <?php
          $next = null;
          
-         for ($i = 1; $i <= $defaultNumRegion; $i++) {
+         for ($i = 1; $i <= 16; $i++) {
             $r = $output['regions'][$i];
          //foreach($output['regions'] as $r) {
             if($r['id'] > $region['id'] && !$r['completed'] && $next === null) {
@@ -806,7 +806,7 @@ foreach($output['regions'] as $r) {
             }
          }
    
-         for ($i = 1; $i <= $defaultNumRegion; $i++) {
+         for ($i = 1; $i <= 16; $i++) {
             $r = $output['regions'][$i];
          //foreach($output['regions'] as $r) {
             if($r['id'] < $region['id'] && !$r['completed'] && $next === null) {
