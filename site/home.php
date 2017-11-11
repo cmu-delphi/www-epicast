@@ -93,7 +93,7 @@ if($_offline) {
    </div>
    <?php
    $defaultNumRegion = 16;
-   if($output['stat_completed'] === $defaultNumRegion) {
+   if($output['stat_completed'] >= $defaultNumRegion) {
       ?>
       <div class="box_section">
          <div class="box_section_title">
