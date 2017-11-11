@@ -784,7 +784,6 @@ foreach($output['regions'] as $r) {
       $.get("api.php", params, handleResponse, 'json');
    }
    function updateStatus() {
-      $defaultNumRegion = 16;
       $('#box_status').removeClass('any_success any_failure any_neutral');
       if(submitStatus == SubmitStatus.sent) {
          $('#status_icon').html('<i class="fa fa-cog fa-spin"></i>');
@@ -797,8 +796,8 @@ foreach($output['regions'] as $r) {
          //Move to the next missing region, or go home
          <?php
          $next = null;
-         
-         for ($i = 1; $i <= 16; $i++) {
+         $defaultNumRegion = 16;
+         for ($i = 1; $i <= $defaultNumRegion; $i++) {
             $r = $output['regions'][$i];
          //foreach($output['regions'] as $r) {
             if($r['id'] > $region['id'] && !$r['completed'] && $next === null) {
@@ -806,7 +805,7 @@ foreach($output['regions'] as $r) {
             }
          }
    
-         for ($i = 1; $i <= 16; $i++) {
+         for ($i = 1; $i <= $defaultNumRegion; $i++) {
             $r = $output['regions'][$i];
          //foreach($output['regions'] as $r) {
             if($r['id'] < $region['id'] && !$r['completed'] && $next === null) {
