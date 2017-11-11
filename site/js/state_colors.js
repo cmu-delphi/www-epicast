@@ -1,5 +1,5 @@
 function getStates(region) {
-   var regionColors = ['#5c7981', '#643c18', '#b2721a', '#dbd543', '#679a61', '#e28e45', '#508dac', '#a48f70', '#9dcbdb', '#d99b9c', '#b2721a', '#dbd543', '#b2721a'];
+   var regionColors = ['#5c7981', '#643c18', '#b2721a', '#dbd543', '#679a61', '#e28e45', '#508dac', '#a48f70', '#9dcbdb', '#d99b9c', '#b2721a', '#dbd543', '#b2721a', '#e28e45', '#d99b9c'];
    var regionStates = [
       ['CT', 'MA', 'ME', 'NH', 'RI', 'VT', ],
       ['NJ', 'NY', ],
@@ -13,10 +13,12 @@ function getStates(region) {
       ['AK', 'ID', 'OR', 'WA', ],
       ['PA'],
       ['GA'],
-      ['MD']
+      ['MD'],
+      ['TX'],
+      ['OR']
    ];
    var style = {};
-   for(var i = 0; i < 12; i++) {
+   for(var i = 0; i < 14; i++) {
       if(region === 0 || region === i + 1) {
          for(var j = 0; j < regionStates[i].length; j++) {
             style[regionStates[i][j]] = {fill: regionColors[i]};
