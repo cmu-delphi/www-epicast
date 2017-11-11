@@ -18,7 +18,8 @@ function getStates(region) {
       ['OR']
    ];
    var style = {};
-   for(var i = 0; i < 15; i++) {
+   var defaultNumRegion = 16
+   for(var i = 0; i < defaultNumRegion-1; i++) {
       if(region === 0 || region === i + 1) {
          for(var j = 0; j < regionStates[i].length; j++) {
             style[regionStates[i][j]] = {fill: regionColors[i]};
