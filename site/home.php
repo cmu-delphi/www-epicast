@@ -114,7 +114,7 @@ if($_offline) {
 
    <?php 
       $ageGroups = listAgeGroups();
-      $getUrl = 'age_group_hospitalization.php';
+      $getUrl = 'forecast_hosp.php';
    
       showNavigation_hosp($ageGroups, $getUrl);
    ?>
