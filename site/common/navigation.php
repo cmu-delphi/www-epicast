@@ -41,8 +41,8 @@ function showRegionsDropdownList($regions) {
       <option value="">All Other Historical Data </option>
       <?php 
       foreach ($regions as $region) {
-        // $completionStateStr = $r['completed'] ? "" : " (incomplete)";
-        $optionName = htmlspecialchars($region['name']);
+        $completionStateStr = $r['completed'] ? "" : " (not submitted)";
+        $optionName = htmlspecialchars($region['name']) . $completionStateStr;
         ?>
         <option value="forecast_<?= $region['id'] ?>"><?= $optionName ?></option>
         <?php
