@@ -2,11 +2,14 @@
   function redirect(url) {
     window.location.href = url;
   }
+
+  function onRegionInDropdownSelected(ev) {
+    submit(ev.value);
+  }
 </script>
 
-
 <?php
-function showRegion($r) {
+function showRegionButton($r) {
    if($r['completed']) {
       $class = 'box_region_nav_complete';
       $icon = 'fa-check';
@@ -29,6 +32,25 @@ function showRegion($r) {
       </div>
    </div>
    <?php
+}
+
+function showRegionsDropdownList($regions) {
+  ?>
+  <div>
+    <select onchange="onRegionInDropdownSelected(this)">
+      <option value="">Select a region by state...</option>
+      <?php 
+      foreach ($regions as $region) {
+        $completionStateStr = $r['completed'] ? "" : " (incomplete)";
+        $optionName = htmlspecialchars($region['name']) . $completionStateStr;
+        ?>
+        <option value="forecast_<?= $region['id'] ?>"><?= $optionName ?></option>
+        <?php
+      }
+      ?>
+    </select>
+  </div>
+  <?php
 }
 
 /**
@@ -99,22 +121,22 @@ function showNavigation($output, $regionID=-1) {
           }
       }
       ?>
-     
+    
       <div class="centered">
-         <?php
-         if ($ifAllLocation) {
-            foreach($output['regions'] as $r) {
-            showRegion($r);
-            }
-         }
-         else {
-            for ($i = 1; $i <= $defaultNumRegion; $i++) {
-                $r = $output['regions'][$i];
-                showRegion($r);
-             }
-         }
-         
-         ?>
+        <?php
+        $regionsList = $output['regions'];
+        if ($ifAllLocation) {
+          for ($i = 0; $i <= $defaultNumRegion; $i++) {
+            showRegionButton($regionsList[$i]);
+          }
+          showRegionsDropdownList(array_slice($regionsList, $defaultNumRegion + 1));
+        }
+        else {
+          for ($i = 1; $i <= $defaultNumRegion; $i++) {
+            showRegionButton($regionsList[$i]);
+          }
+        }
+        ?>
       </div>
         
    </div>
