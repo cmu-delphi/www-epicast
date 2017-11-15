@@ -126,11 +126,19 @@ function showNavigation($output, $regionID=-1) {
         <?php
         $regionsList = $output['regions'];
         if ($ifAllLocation) {
-          for ($i = 0; $i <= $defaultNumRegion; $i++) {
+          for ($i = 1; $i <= $defaultNumRegion; $i++) {
             showRegionButton($regionsList[$i]);
           }
+          
           $allOtherRegion = array_slice($regionsList, $defaultNumRegion + 1);
-          showRegionsDropdownList(sort($allOtherRegion));
+          $regionNames = array();
+          foreach ($allOtherRegion as $key => $row)
+          {
+              $regionNames[$key] = $row['name'];
+          }
+          array_multisort($regionNames, SORT_ASC, $allOtherRegion);
+          showRegionsDropdownList($allOtherRegion);
+          
         }
         else {
           for ($i = 1; $i <= $defaultNumRegion; $i++) {
