@@ -319,10 +319,10 @@ Input:
 Output:
    $output['history'] - Arrays of epiweeks and historical incidence (wILI) for the region
 */
-function getHistory_Hosp($ageGroup, $firstWeek) {
-   $result = mysql_query("SELECT `epidata`.`flusurv`.`issue`, `epidata`.`flusurv`.`epiweek`, `epidata`.`flusurv`.`rate_age_3` AS `rate` " .
+function getHistory_Hosp(&$output, $ageGroup, $firstWeek) {
+   $result = mysql_query("SELECT `epidata`.`flusurv`.`issue`, `epidata`.`flusurv`.`epiweek`, `epidata`.`flusurv`.`{$ageGroup}` AS `rate` " .
    "FROM (SELECT `epiweek`, max(`issue`) AS `latest` " .
-   "FROM `epidata`.`flusurv` WHERE `location` = 'network_all' AND `epiweek` >= 201710 GROUP BY `epiweek`) AS `issues` " .
+   "FROM `epidata`.`flusurv` WHERE `location` = 'network_all' AND `epiweek` >= {$firstWeek} GROUP BY `epiweek`) AS `issues` " .
    "JOIN `epidata`.`flusurv` ON `epidata`.`flusurv`.`issue` = `issues`.`latest` AND `epidata`.`flusurv`.`epiweek` = `issues`.`epiweek` " .
    "WHERE `location` = 'network_all' ORDER BY `epidata`.`flusurv`.`epiweek` ASC");
 
@@ -343,10 +343,11 @@ function getHistory_Hosp($ageGroup, $firstWeek) {
       array_push($rateArr, floatval($row['rate']));
       $currentWeek = addEpiweeks($currentWeek, 1);
    }
-   $history = array('date' => $dateArr, 'rate' => $rateArr);
-
-   return $history;
+   $output['history'] = array('date' => $dateArr, 'rate' => $rateArr);
+   setResult($output, 1);
+   return getResult($output);
 }
+
 
 /**
  * Returns an array of age groups in the form of (flusurv_name, name, ages) where
@@ -364,30 +365,30 @@ function listAgeGroups() {
   return $returnAgeGroups;
 }
 
-/**
- * Get hospitalization data for the given age group.
- * Each age group is identified by the flusurv_name field in ec_fluv_age_groups table.
- */
-function getHospitalizationForAgeGroup($ageGroup) {
-  $returnAgeGroupHosp = array();
-  // $result = mysql_query("SELECT * FROM epidata.flusurv WHERE issue = 201710 and epiweek = issue and location = 'network_all';");
+// /**
+//  * Get hospitalization data for the given age group.
+//  * Each age group is identified by the flusurv_name field in ec_fluv_age_groups table.
+//  */
+// function getHospitalizationForAgeGroup($ageGroup) {
+//   $returnAgeGroupHosp = array();
+//   // $result = mysql_query("SELECT * FROM epidata.flusurv WHERE issue = 201710 and epiweek = issue and location = 'network_all';");
 
-//   $result = mysql_query("SELECT `epidata.flusurv`.`issue`,
-//                           `epidata.flusurv`.`epiweek`,
-//                           `flusurv`.`rate_age_3` AS `rate` FROM
-//                           (SELECT `epiweek`, max(`issue`) AS `latest` FROM `epidata.flusurv` WHERE
-//                            `location` = 'network_all' AND `epiweek` >= 201710 GROUP BY `epiweek`)
-//                           AS `issues` JOIN `epidata.flusurv` ON `epidata.flusurv`.`issue` = `issues`.`latest`
-//                           AND `epidata.flusurv`.`epiweek` = `issues`.`epiweek` WHERE `location` = 'network_all'
-//                           ORDER BY `epidata.flusurv`.`epiweek` ASC");
+// //   $result = mysql_query("SELECT `epidata.flusurv`.`issue`,
+// //                           `epidata.flusurv`.`epiweek`,
+// //                           `flusurv`.`rate_age_3` AS `rate` FROM
+// //                           (SELECT `epiweek`, max(`issue`) AS `latest` FROM `epidata.flusurv` WHERE
+// //                            `location` = 'network_all' AND `epiweek` >= 201710 GROUP BY `epiweek`)
+// //                           AS `issues` JOIN `epidata.flusurv` ON `epidata.flusurv`.`issue` = `issues`.`latest`
+// //                           AND `epidata.flusurv`.`epiweek` = `issues`.`epiweek` WHERE `location` = 'network_all'
+// //                           ORDER BY `epidata.flusurv`.`epiweek` ASC");
 
-  $result = mysql_query("SELECT * FROM epidata.flusurv WHERE issue >= 201710 and epiweek = issue and location = 'network_all'");
+//   $result = mysql_query("SELECT * FROM epidata.flusurv WHERE issue >= 201710 and epiweek = issue and location = 'network_all'");
 
-  while ($row = mysql_fetch_assoc($result)) {
-    $returnAgeGroupHosp[] = $row;
-  }
-  return $returnAgeGroupHosp;
-}
+//   while ($row = mysql_fetch_assoc($result)) {
+//     $returnAgeGroupHosp[] = $row;
+//   }
+//   return $returnAgeGroupHosp;
+// }
 
 /*
 ===== saveForecast =====
