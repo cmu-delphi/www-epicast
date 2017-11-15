@@ -129,7 +129,8 @@ function showNavigation($output, $regionID=-1) {
           for ($i = 0; $i <= $defaultNumRegion; $i++) {
             showRegionButton($regionsList[$i]);
           }
-          showRegionsDropdownList(array_slice($regionsList, $defaultNumRegion + 1));
+          $allOtherRegion = array_slice($regionsList, $defaultNumRegion + 1);
+          showRegionsDropdownList(sort($allOtherRegion));
         }
         else {
           for ($i = 1; $i <= $defaultNumRegion; $i++) {
