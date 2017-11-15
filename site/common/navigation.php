@@ -69,7 +69,7 @@ function showNavigation_hosp($input, $getUrl) {
   <?php 
   foreach ($input as $ageGroup) {
     ?>
-      <button onclick="redirect('<?= ($getUrl . "?id=" . $ageGroup['flusurv_name']) ?>')"><?= $ageGroup['name'] ?></button>
+      <button onclick="redirect('<?= ($getUrl . "?id=" . $ageGroup['flusurv_name']) ?>')"><?= $ageGroup['ages'] ?></button>
       <?= $ageGroup['ages'] ?>
       <br />
     <?php
