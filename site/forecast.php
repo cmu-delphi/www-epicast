@@ -797,21 +797,24 @@ foreach($output['regions'] as $r) {
          <?php
          $next = null;
          $defaultNumRegion = 16;
-         for ($i = 1; $i <= $defaultNumRegion; $i++) {
+         $currentID = $region['id'];
+         if ($currentID <= $defaultNumRegion) {
+            
+            for ($i = 1; $i <= $defaultNumRegion; $i++) {
             $r = $output['regions'][$i];
-         //foreach($output['regions'] as $r) {
             if($r['id'] > $region['id'] && !$r['completed'] && $next === null) {
                $next = $r['id'];
             }
          }
    
-         for ($i = 1; $i <= $defaultNumRegion; $i++) {
-            $r = $output['regions'][$i];
-         //foreach($output['regions'] as $r) {
-            if($r['id'] < $region['id'] && !$r['completed'] && $next === null) {
-               $next = $r['id'];
+            for ($i = 1; $i <= $defaultNumRegion; $i++) {
+               $r = $output['regions'][$i];
+               if($r['id'] < $region['id'] && !$r['completed'] && $next === null) {
+                  $next = $r['id'];
+               }
             }
          }
+         
          if($next !== null) {
             ?>
             submit('forecast_<?= $next ?>');
