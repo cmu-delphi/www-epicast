@@ -420,6 +420,38 @@ function saveForecast(&$output, $userID, $regionID, $forecast, $commit) {
    setResult($output, 1);
    return getResult($output);
 }
+/*
+===== saveForecast_hosp =====
+Purpose:
+   Saves the user's forecast
+Input:
+   $output - The array of return values (array reference)
+   $userID - The user's ID
+   $group_id - The age group ID
+   $forecast - The forecast (array of values)
+   $commit - Whether or not to flag the forecast as a final submission
+Output:
+   $output['result'] will contain the following values:
+      1 - Success
+      2 - Failure
+*/
+
+function saveForecast_hosp(&$output, $userID, $group_id, $forecast, $commit) {
+   $temp = array();
+   if(getEpiweekInfo($temp) !== 1) {
+      return getResult($temp);
+   }
+   $epiweek = $temp['epiweek']['round_epiweek'];
+   foreach($forecast as $wili) {
+      $epiweek = addEpiweeks($epiweek, 1);
+      mysql_query("INSERT INTO ec_fluv_forecast_hosp (`user_id`, `group_id`, `epiweek_now`, `epiweek`, `value`, `date`) VALUES ({$userID}, {$group_id}, {$temp['epiweek']['round_epiweek']}, {$epiweek}, {$wili}, now()) ON DUPLICATE KEY UPDATE `value` = {$wili}, `date` = now()");
+   }
+   if($commit) {
+      mysql_query("INSERT INTO ec_fluv_submissions_hosp (`user_id`, `group_id`, `epiweek_now`, `date`) VALUES ({$userID}, {$group_id}, {$temp['epiweek']['round_epiweek']}, now())");
+   }
+   setResult($output, 1);
+   return getResult($output);
+}
 
 /*
 ===== loadForecast =====
@@ -463,6 +495,50 @@ function loadForecast(&$output, $userID, $regionID, $submitted=false) {
    setResult($output, 1);
    return getResult($output);
 }
+
+/*
+===== loadForecast_hosp =====
+Purpose:
+   Loads the user's forecast
+Input:
+   $output - The array of return values (array reference)
+   $userID - The user's ID
+   $group_id - The age group ID
+   $submitted - Whether or not to only load submitted forecasts (default false)
+Output:
+   $output['result'] will contain the following values:
+      1 - Success
+      2 - Failure
+   $output['forecast'] - Arrays of epiweeks and forecast (value) for the region made by the user
+*/
+function loadForecast_hosp(&$output, $userID, $group_id, $submitted=false) {
+   if($submitted) {
+      $temp = array();
+      if(getEpiweekInfo($temp) !== 1) {
+         return getResult($temp);
+      }
+      $result = mysql_query("SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_submissions_hosp WHERE `user_id` = {$userID} AND `group_id` = {$group_id} AND `epiweek_now` < {$temp['epiweek']['round_epiweek']}");
+   } else {
+      $result = mysql_query("SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_forecast_hosp WHERE `user_id` = {$userID} AND `group_id` = {$group_id}");
+   }
+   if($row = mysql_fetch_array($result)) {
+      $epiweek = intval($row['epiweek']);
+   } else {
+      setResult($output, 2);
+      return getResult($output);
+   }
+   $date = array();
+   $wili = array();
+   $result = mysql_query("SELECT `epiweek_now`, `epiweek`, `value` FROM ec_fluv_forecast_hosp f WHERE `user_id` = {$userID} AND `group_id` = {$group_id} AND `epiweek_now` = {$epiweek} ORDER BY f.`epiweek` ASC");
+   while($row = mysql_fetch_array($result)) {
+      array_push($date, intval($row['epiweek']));
+      array_push($wili, floatval($row['value']));
+   }
+   $output['forecast'] = array('date' => &$date, 'wili' => &$wili);
+   setResult($output, 1);
+   return getResult($output);
+}
+
 
 /*
 ===== registerUser =====
