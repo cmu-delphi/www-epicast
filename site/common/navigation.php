@@ -38,11 +38,11 @@ function showRegionsDropdownList($regions) {
   ?>
   <div>
     <select onchange="onRegionInDropdownSelected(this)">
-      <option value="">Select a region by state...</option>
+      <option value="">All Other Historical Data </option>
       <?php 
       foreach ($regions as $region) {
-        $completionStateStr = $r['completed'] ? "" : " (incomplete)";
-        $optionName = htmlspecialchars($region['name']) . $completionStateStr;
+        // $completionStateStr = $r['completed'] ? "" : " (incomplete)";
+        $optionName = htmlspecialchars($region['name']);
         ?>
         <option value="forecast_<?= $region['id'] ?>"><?= $optionName ?></option>
         <?php
