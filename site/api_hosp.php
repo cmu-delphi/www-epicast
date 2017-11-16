@@ -26,7 +26,7 @@ if(!$dbh) {
                //Save the forecast
                $ageGroup = intval(mysql_real_escape_string($_REQUEST['group_id']));
                $commit = ($_REQUEST['action'] == 'forecast');
-               if(saveForecast($temp, $temp['user_id'], $ageGroup, $forecast, $commit) == 1) {
+               if(saveForecast_hosp($temp, $temp['user_id'], $ageGroup, $forecast, $commit) == 1) {
                   //Success
                   $output['result'] = 1;
                } else {
