@@ -9,13 +9,6 @@ if($error) {
 // $ageGroupId = $_GET['id'];
 // var_dump(getHistory_Hosp($ageGroupId, 201710));
 
-<?php
-require_once('common/header.php');
-require_once('common/navigation.php');
-if($error) {
-   return;
-}
-
 if(getYearForCurrentSeason($output) !== 1) {
    die('unable to get year for current season');
 } else {
