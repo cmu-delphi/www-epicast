@@ -112,16 +112,16 @@ if($_offline) {
    <p class="centered"><i>Hover a button above to see which states are in that region or the location of the state in the map below.</i></p>
    <div id="map_container"></div>
 
-   <?php 
+<!--    <?php 
       $ageGroups = listAgeGroups();
       $getUrl = 'forecast_hosp.php';
    
       showNavigation_hosp($ageGroups, $getUrl);
-   ?>
+   ?> -->
    
    <div class="box_section">
       <div class="box_section_title">
-         Coming Soon --- Hospitalization Forecast, November 27th
+         Coming Soon --- Hospitalization Forecast
       </div>
 
    <div class="box_section">
