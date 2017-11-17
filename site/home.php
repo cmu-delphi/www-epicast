@@ -120,9 +120,9 @@ if($_offline) {
    ?> -->
    
    <div class="box_section">
-      <div class="box_section_title">
+<!--       <div class="box_section_title">
          Coming Soon --- Hospitalization Forecast
-      </div>
+      </div> -->
 
    <div class="box_section">
       <div class="box_section_title">
