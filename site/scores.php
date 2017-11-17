@@ -42,12 +42,12 @@ $limit = 10;
       
       
       <div>
-         <div class="box_section_title">
+<!--          <div class="box_section_title">
             We are working to fix a bug in the scoring algorithm.  We will be back soon with corrected scores!
-         </div>
+         </div> -->
          
          
-<!--          <div class="box_leaderboard">
+         <div class="box_leaderboard">
             <?php
             if(getLeaderboard($output, 'total', $limit) !== 1) {
                fail('Error loading total scores');
@@ -73,7 +73,7 @@ $limit = 10;
                createTable($output['leaderboard']);
             }
             ?>
-         </div> -->
+         </div>
          
          
       </div>
