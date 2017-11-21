@@ -2,6 +2,7 @@
 require_once('utils.php');
 
 define("NUM_REGIONS", 61);
+define("NUM_AGEGROUPS", 6);
 
 function getResult(&$output) {
    return $output['result'][count($output['result']) - 1];
@@ -232,6 +233,40 @@ function getRegions(&$output, $userID) {
 }
 
 /*
+===== getAgeGroups =====
+Purpose:
+   Returns all age groups
+Input:
+   $output - The array of return values (array reference)
+   $userID - The user's ID
+Output:
+   $output['result'] will contain the following values:
+      1 - Success
+      2 - Failure
+   $output['ageGroups'] - An array of regions, indexed by age group ID
+*/
+function getAgeGroups(&$output, $userID) {
+   $temp = array();
+   if(getEpiweekInfo($temp) !== 1) {
+      return getResult($temp);
+   }
+   $result = mysql_query("SELECT r.`id`, r.`name`, r.`ages`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM ec_fluv_age_groups r LEFT JOIN ec_fluv_submissions_hosp s ON s.`user_id` = {$userID} AND s.`group_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
+   $ageGroups = array();
+   while($row = mysql_fetch_array($result)) {
+      $ageGroup = array(
+         'id' => intval($row['id']),
+         'name' => $row['name'],
+         'ages' => $row['ages'],
+         'completed' => intval($row['completed']) === 1,
+      );
+      $ageGroups[$ageGroup['id']] = $ageGroup;
+   }
+   $output['ageGroups'] = &$ageGroups;
+   setResult($output, count($ageGroups) == NUM_AGEGROUPS ? 1 : 2);
+   return getResult($output);
+}
+
+/*
 ===== getRegionsExtended =====
 Purpose:
    Returns all regions, including historical counts and user forecasts for each region
@@ -274,6 +309,53 @@ function getRegionsExtended(&$output, $userID) {
    setResult($output, 1);
    return getResult($output);
 }
+
+/*
+===== getAgeGroupsExtended =====
+Purpose:
+   Returns all age groups, including historical counts and user forecasts for each age group
+Input:
+   $output - The array of return values (array reference)
+   $userID - The user's ID
+Output:
+   $output['result'] will contain the following values:
+      1 - Success
+      2 - Failure (other)
+      3 - Failure (history)
+      4 - Failure (forecast)
+   $output['ageGroups'] - An array of age groups
+*/
+function getAgeGroupsExtended(&$output, $userID) {
+   $temp = array();
+   if(getEpiweekInfo($temp) !== 1) {
+      return getResult($temp);
+   }
+   //Basic region information
+   if(getAgeGroups($output, $userID) !== 1) {
+      return getResult($output);
+   }
+   //History and forecast for every region
+   foreach($output['ageGroups'] as &$g) {
+      // do we still need this if statement?
+      if(getPreference($output, 'advanced_prior', 'int') === 1) {
+         $firstWeek = 199730;
+      } else {
+         $firstWeek = 200430;
+      }
+      
+      if(getHistory_Hosp($output, $g['id'], $firstWeek) !== 1) {
+         return getResult($output);
+      }
+      $g['history'] = $output['history'];
+      if(loadForecast_hosp($output, $userID, $g['id']) !== 1) {
+         return getResult($output);
+      }
+      $g['forecast'] = $output['forecast'];
+   }
+   setResult($output, 1);
+   return getResult($output);
+}
+
 
 /*
 ===== getHistory =====
