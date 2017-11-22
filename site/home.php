@@ -34,7 +34,7 @@ if($_offline) {
             Due by 10:00 AM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
          </div> -->
          <div class="box_section_subtitle">
-            Due by 10:00 AM (ET) on Wednesday, Nov 29, 2017 ?>.
+            Due by 10:00 AM (ET) on Wednesday, Nov 29, 2017.
          </div>
       </div>
       <div>
