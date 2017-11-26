@@ -169,7 +169,7 @@ foreach($output['ageGroups'] as $g) {
             ?>
 
             <div class="any_bold any_cursor_pointer" onclick="toggleSeasonList(<?= $g['id'] ?>)">
-              <i id="checkbox_region_<?= $g['id'] ?>" class="fa fa-plus-square-o"></i>&nbsp;
+              <i id="checkbox_<?= $g['id'] ?>" class="fa fa-plus-square-o"></i>&nbsp;
               <?= htmlspecialchars($g['name']) ?>
             </div>
 
@@ -856,8 +856,6 @@ foreach($output['ageGroups'] as $g) {
          checkbox.addClass(openedClass);
          $('#container_' + group_id + '_all').removeClass('any_hidden');
          for(var i = 0; i < seasonYears.length; i++) {
-            console.log(seasonYears[i]);
-            console.log(group_id);
             $('#container_' + group_id + '_' + seasonYears[i]).removeClass('any_hidden');
          }
       } else {
