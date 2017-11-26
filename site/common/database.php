@@ -2,7 +2,7 @@
 require_once('utils.php');
 
 define("NUM_REGIONS", 61);
-define("NUM_AGEGROUPS", 6);
+define("NUM_AGEGROUPS", 5);
 
 function getResult(&$output) {
    return $output['result'][count($output['result']) - 1];
@@ -250,11 +250,12 @@ function getAgeGroups(&$output, $userID) {
    if(getEpiweekInfo($temp) !== 1) {
       return getResult($temp);
    }
-   $result = mysql_query("SELECT r.`id`, r.`name`, r.`ages`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM ec_fluv_age_groups r LEFT JOIN ec_fluv_submissions_hosp s ON s.`user_id` = {$userID} AND s.`group_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
+   $result = mysql_query("SELECT r.`id`, r.`flusurv_name`, r.`name`, r.`ages`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM ec_fluv_age_groups r LEFT JOIN ec_fluv_submissions_hosp s ON s.`user_id` = {$userID} AND s.`group_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
    $ageGroups = array();
    while($row = mysql_fetch_array($result)) {
       $ageGroup = array(
          'id' => intval($row['id']),
+         'flusurv_name' => $row['flusurv_name'],
          'name' => $row['name'],
          'ages' => $row['ages'],
          'completed' => intval($row['completed']) === 1,
@@ -334,19 +335,14 @@ function getAgeGroupsExtended(&$output, $userID) {
    if(getAgeGroups($output, $userID) !== 1) {
       return getResult($output);
    }
+   $firstWeek = 200430;
    //History and forecast for every region
    foreach($output['ageGroups'] as &$g) {
-      // do we still need this if statement?
-      if(getPreference($output, 'advanced_prior', 'int') === 1) {
-         $firstWeek = 199730;
-      } else {
-         $firstWeek = 200430;
-      }
-      
-      if(getHistory_Hosp($output, $g['id'], $firstWeek) !== 1) {
+      if(getHistory_Hosp($output, $g['flusurv_name'], $firstWeek) !== 1) {
          return getResult($output);
       }
       $g['history'] = $output['history'];
+
       if(loadForecast_hosp($output, $userID, $g['id']) !== 1) {
          return getResult($output);
       }
@@ -401,8 +397,8 @@ Input:
 Output:
    $output['history'] - Arrays of epiweeks and historical incidence (wILI) for the region
 */
-function getHistory_Hosp(&$output, $ageGroup, $firstWeek) {
-   $result = mysql_query("SELECT `epidata`.`flusurv`.`issue`, `epidata`.`flusurv`.`epiweek`, `epidata`.`flusurv`.`{$ageGroup}` AS `rate` " .
+function getHistory_Hosp(&$output, $flusurv_name, $firstWeek) {
+   $result = mysql_query("SELECT `epidata`.`flusurv`.`issue`, `epidata`.`flusurv`.`epiweek`, `epidata`.`flusurv`.`{$flusurv_name}` AS `rate` " .
    "FROM (SELECT `epiweek`, max(`issue`) AS `latest` " .
    "FROM `epidata`.`flusurv` WHERE `location` = 'network_all' AND `epiweek` >= {$firstWeek} GROUP BY `epiweek`) AS `issues` " .
    "JOIN `epidata`.`flusurv` ON `epidata`.`flusurv`.`issue` = `issues`.`latest` AND `epidata`.`flusurv`.`epiweek` = `issues`.`epiweek` " .
@@ -423,6 +419,8 @@ function getHistory_Hosp(&$output, $ageGroup, $firstWeek) {
       }
       array_push($dateArr, $currentEpiweek);
       array_push($rateArr, floatval($row['rate']));
+      // print($currentEpiweek);
+      // print(floatval($row['rate']));
       $currentWeek = addEpiweeks($currentWeek, 1);
    }
    $output['history'] = array('date' => $dateArr, 'rate' => $rateArr);
@@ -446,31 +444,6 @@ function listAgeGroups() {
   }
   return $returnAgeGroups;
 }
-
-// /**
-//  * Get hospitalization data for the given age group.
-//  * Each age group is identified by the flusurv_name field in ec_fluv_age_groups table.
-//  */
-// function getHospitalizationForAgeGroup($ageGroup) {
-//   $returnAgeGroupHosp = array();
-//   // $result = mysql_query("SELECT * FROM epidata.flusurv WHERE issue = 201710 and epiweek = issue and location = 'network_all';");
-
-// //   $result = mysql_query("SELECT `epidata.flusurv`.`issue`,
-// //                           `epidata.flusurv`.`epiweek`,
-// //                           `flusurv`.`rate_age_3` AS `rate` FROM
-// //                           (SELECT `epiweek`, max(`issue`) AS `latest` FROM `epidata.flusurv` WHERE
-// //                            `location` = 'network_all' AND `epiweek` >= 201710 GROUP BY `epiweek`)
-// //                           AS `issues` JOIN `epidata.flusurv` ON `epidata.flusurv`.`issue` = `issues`.`latest`
-// //                           AND `epidata.flusurv`.`epiweek` = `issues`.`epiweek` WHERE `location` = 'network_all'
-// //                           ORDER BY `epidata.flusurv`.`epiweek` ASC");
-
-//   $result = mysql_query("SELECT * FROM epidata.flusurv WHERE issue >= 201710 and epiweek = issue and location = 'network_all'");
-
-//   while ($row = mysql_fetch_assoc($result)) {
-//     $returnAgeGroupHosp[] = $row;
-//   }
-//   return $returnAgeGroupHosp;
-// }
 
 /*
 ===== saveForecast =====
@@ -600,9 +573,11 @@ function loadForecast_hosp(&$output, $userID, $group_id, $submitted=false) {
       if(getEpiweekInfo($temp) !== 1) {
          return getResult($temp);
       }
-      $result = mysql_query("SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_submissions_hosp WHERE `user_id` = {$userID} AND `group_id` = {$group_id} AND `epiweek_now` < {$temp['epiweek']['round_epiweek']}");
+      $q = "SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_submissions_hosp WHERE `user_id` = {$userID} AND `group_id` = {$group_id} AND `epiweek_now` < {$temp['epiweek']['round_epiweek']}";
+      $result = mysql_query($q) or die($q."<br/><br/>".mysql_error());
    } else {
-      $result = mysql_query("SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_forecast_hosp WHERE `user_id` = {$userID} AND `group_id` = {$group_id}");
+      $q = "SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_forecast_hosp WHERE `user_id` = {$userID} AND `group_id` = {$group_id}";
+      $result = mysql_query($q) or die($q."<br/><br/>".mysql_error());
    }
    if($row = mysql_fetch_array($result)) {
       $epiweek = intval($row['epiweek']);
