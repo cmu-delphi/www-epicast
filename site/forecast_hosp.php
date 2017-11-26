@@ -139,7 +139,6 @@ foreach($output['ageGroups'] as $g) {
 ?>
 
 <?php fail('Whoa, your screen is too small! Please visit this site on a non-mobile device, or try to expand your browser window. Sorry about that!', 'box_nocanvas', true); ?>
-
 <div id="box_main_ui">
    <div id="box_status" class="box_status any_neutral right">
       <div class="box_status_line">
@@ -159,9 +158,6 @@ foreach($output['ageGroups'] as $g) {
          <div style="clear: both;"></div>
       </div>
    </div>
-
-
-
    <div id="box_side_bar">
       <div id="box_histories">
          <div class="box_decision_title centered" style="width: 100%;">History</div>
@@ -177,11 +173,10 @@ foreach($output['ageGroups'] as $g) {
               <?= htmlspecialchars($g['name']) ?>
             </div>
 
-            <div id="container_<?= $g['id'] ?>_all" class="any_hidden any_cursor_pointer" onclick="toggleAllSeasons(<?= $g['id'] ?>)">
+            <div id="container_<?= $g['id'] ?>_all" class="any_cursor_pointer" onclick="toggleAllSeasons(<?= $g['id'] ?>)">
               &nbsp;&nbsp;&nbsp;&nbsp;
               <i id="checkbox_<?= $g['id'] ?>_all" class="fa fa-square-o"></i>&nbsp;
               <span class="effect_tiny effect_italics">Show all</span>
-              <h1>Here She Is</h1>
             </div>
 
 
@@ -244,7 +239,7 @@ foreach($output['ageGroups'] as $g) {
       ?>];
       forecast[<?= $g['id'] ?>] = [<?php
          $offset = count($g['forecast']['date']);
-         foreach($r['forecast']['date'] as $d) {
+         foreach($g['forecast']['date'] as $d) {
             if($d > $currentWeek) {
                $offset -= 1;
             }
@@ -266,7 +261,7 @@ foreach($output['ageGroups'] as $g) {
    ?>
    var selectedSeasons = [];
    var showLastForecast = true;
-   var lastForecast = [<?php foreach($lastForecast['rate'] as $v){printf('%.3f,', $v);} ?>];
+   var lastForecast = [<?php foreach($lastForecast['wili'] as $v){printf('%.3f,', $v);} ?>];
    var timeoutID;
    var lastDrag = null;
    var tooltip = null;
@@ -854,13 +849,15 @@ foreach($output['ageGroups'] as $g) {
    function toggleSeasonList(group_id) {
       var closedClass = 'fa-plus-square-o';
       var openedClass = 'fa-minus-square-o';
-      var checkbox = $('#checkbox_hosp_' + group_id);
+      var checkbox = $('#checkbox_' + group_id);
       if(checkbox.hasClass(closedClass)) {
          //Expand age group
          checkbox.removeClass(closedClass);
          checkbox.addClass(openedClass);
          $('#container_' + group_id + '_all').removeClass('any_hidden');
          for(var i = 0; i < seasonYears.length; i++) {
+            console.log(seasonYears[i]);
+            console.log(group_id);
             $('#container_' + group_id + '_' + seasonYears[i]).removeClass('any_hidden');
          }
       } else {
