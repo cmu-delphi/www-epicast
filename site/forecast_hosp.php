@@ -4,21 +4,15 @@ require_once('common/navigation.php');
 if($error) {
    return;
 }
-
-// Store the age group id as in the age_groups table
-// $ageGroupId = $_GET['id'];
-// var_dump(getHistory_Hosp($ageGroupId, 201710));
-
 if(getYearForCurrentSeason($output) !== 1) {
    die('unable to get year for current season');
 } else {
    $current_season = $output['season']['year'];
 }
-
-function getColor($ageGroup, $seasonID) {
-   $r = intval((sin(($seasonID - 2009) * 0.4 + 0) + 1) / 2 * 15);
-   $g = intval((sin(($seasonID - 2009) * 0.5 + 2) + 1) / 2 * 15);
-   $b = intval((sin(($seasonID - 2009) * 0.6 + 4) + 1) / 2 * 15);
+function getColor($group_id, $seasonID) {
+   $r = intval((sin(($seasonID - 2004) * 0.4 + 0) + 1) / 2 * 15);
+   $g = intval((sin(($seasonID - 2004) * 0.5 + 2) + 1) / 2 * 15);
+   $b = intval((sin(($seasonID - 2004) * 0.6 + 4) + 1) / 2 * 15);
    return sprintf('#%x%x%x', $r, $g, $b);
 }
 
@@ -26,42 +20,43 @@ function getColor($ageGroup, $seasonID) {
 if(getEpiweekInfo($output) !== 1) {
    fail('Error loading epiweek info');
 }
-//List of all regions
-if(getRegionsExtended($output, $output['user_id']) !== 1) {
-   fail('Error loading region details, history, or forecast');
-}
-if(isset($_REQUEST['skip_instructions'])) {
-   $output['user_preferences']['skip_instructions'] = 1;
-   if(saveUserPreferences($output, $output['user_id'], $output['user_preferences']) !== 1) {
-      fail('Error updating preferences');
-   }
-}
-if(isset($_REQUEST['region_id'])) {
-   $regionID = intval(mysql_real_escape_string($_REQUEST['region_id']));
-} else {
-   //Default to USA National
-   $regionID = 1;
-}
-//Specific region
-if(!isset($output['regions'][$regionID])) {
-   fail('Invalid region_id');
+//List of all age groups
+if(getAgeGroupsExtended($output, $output['user_id']) !== 1) {
+   fail('Error loading age group details, history, or forecast');
 }
 
-//Forecast from last round
-if(loadForecast($output, $output['user_id'], $regionID, true) !== 1) {
+// if(isset($_REQUEST['skip_instructions'])) {
+//    $output['user_preferences']['skip_instructions'] = 1;
+//    if(saveUserPreferences($output, $output['user_id'], $output['user_preferences']) !== 1) {
+//       fail('Error updating preferences');
+//    }
+// }
+// if(isset($_REQUEST['region_id'])) {
+//    region_id = intval(mysql_real_escape_string($_REQUEST['region_id']));
+// } else {
+//    //Default to USA National
+//    region_id = 1;
+// }
+// //Specific region
+// if(!isset($output['regions'][region_id])) {
+//    fail('Invalid region_id');
+// }
+
+$group_id = $_GET["id"];
+// print($group_id);
+//Forecast from last round, particularly for this region
+// why need this when we have already called getAgeGroupsExtended
+if(loadForecast_hosp($output, $output['user_id'], $group_id, true) !== 1) {
    fail('Error loading last week forecast');
 }
 
 $lastForecast = $output['forecast'];
-$region = $output['regions'][$regionID];
-$num = count($output['regions']);
-//History for this region
-$output['history'] = &$output['regions'][$regionID]['history'];
-//User's previous forecast for this region
-$output['forecast'] = &$output['regions'][$regionID]['forecast'];
-
-//Settings
-// $showPandemic = getPreference($output, 'advanced_pandemic', 'int');
+$ageGroup = $output['ageGroups'][$group_id];
+$num = count($output['ageGroups']); // $num = 5
+//History for this group
+$output['history'] = &$ageGroup['history'];
+//User's previous forecast for this group
+$output['forecast'] = &$ageGroup['forecast'];
 
 //Calculate a few helpful stats
 $firstWeekOfChart = 30;
@@ -75,20 +70,22 @@ $seasonStart = $yearStart * 100 + $firstWeekOfChart;
 $seasonEnd = ($yearStart + 1) * 100 + ($firstWeekOfChart - 1);
 $numPastWeeks = getDeltaWeeks($seasonStart, $currentWeek);
 $numFutureWeeks = getDeltaWeeks($currentWeek, $seasonEnd);
-$maxRegionalWILI = 0;
-
-for($i = 0; $i < count($region['history']['wili']); $i++) {
-   $epiweek = $region['history']['date'][$i];
-   if($showPandemic || $epiweek < 200940 || $epiweek > 201020) {
-      $maxRegionalWILI = max($maxRegionalWILI, $region['history']['wili'][$i]);
+$maxAgeGroupRate = 0;
+for($i = 0; $i < count($ageGroup['history']['rate']); $i++) {
+   $epiweek = $ageGroup['history']['date'][$i];
+   if($epiweek < 200940 || $epiweek > 201020) {
+      $maxAgeGroupRate = max($maxAgeGroupRate, $ageGroup['history']['rate'][$i]);
    }
 }
-max($region['history']['wili']);
-$target = $seasonStart;
+// print($maxAgeGroupRate);
+
+max($ageGroup['history']['rate']);
+$target = $seasonStart; // 201730
 $seasonOffsets = array();
 $seasonYears = array();
-for($i = count($region['history']['date']) - 1; $i >= 0; $i--) {
-   if($region['history']['date'][$i] <= $target) {
+// print(count($ageGroup['history']['date'])); // 666
+for($i = count($ageGroup['history']['date']) - 1; $i >= 0; $i--) {
+   if($ageGroup['history']['date'][$i] <= $target) {
       array_push($seasonOffsets, $i);
       array_push($seasonYears, intval($target / 100));
       $target -= 100;
@@ -100,10 +97,7 @@ if($seasonOffsets[count($seasonOffsets) - 1] != 0) {
 }
 $seasonOffsets = array_reverse($seasonOffsets);
 $seasonYears = array_reverse($seasonYears);
-
-//Nowcast (may or may not be available)
-// getNowcast($output, addEpiweeks($currentWeek, 1), $regionID);
-
+// print (count($seasonYears)); // 14, 2003 ~ 2017
 
 if(getPreference($output, 'skip_instructions', 'int') !== 1) {
    ?>
@@ -127,7 +121,7 @@ if(getPreference($output, 'skip_instructions', 'int') !== 1) {
          </video>
          <p>
             <?php
-            createForm('reload', 'forecast.php#top', array('region_id', $regionID, 'skip_instructions', '1'));
+            createForm('reload', 'forecast.php#top', array('group_id', $group_id, 'skip_instructions', '1'));
             button('fa-check', 'I Understand', "submit('reload')");
             ?>
          </p>
@@ -136,19 +130,23 @@ if(getPreference($output, 'skip_instructions', 'int') !== 1) {
    <?php
 } else {
 ?>
+
+
 <?php
-foreach($output['regions'] as $r) {
-   createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
+foreach($output['ageGroups'] as $g) {
+   createForm('forecast_' . $g['id'], 'forecast_hosp.php#top', array('group_id', $g['id']));
 }
 ?>
+
 <?php fail('Whoa, your screen is too small! Please visit this site on a non-mobile device, or try to expand your browser window. Sorry about that!', 'box_nocanvas', true); ?>
+
 <div id="box_main_ui">
    <div id="box_status" class="box_status any_neutral right">
       <div class="box_status_line">
          <div class="box_region_label">
-            <?= htmlspecialchars($region['name']) ?>
+            <?= htmlspecialchars($ageGroup['name']) ?>
             <span style="font-size: 0.67em;">
-               [<?= htmlspecialchars($region['states']) ?>]
+               <?= htmlspecialchars($ageGroup['ages']) ?>
             </span>
          </div>
          <div style="float: right;">
@@ -161,130 +159,118 @@ foreach($output['regions'] as $r) {
          <div style="clear: both;"></div>
       </div>
    </div>
+
+
+
    <div id="box_side_bar">
       <div id="box_histories">
          <div class="box_decision_title centered" style="width: 100%;">History</div>
+
+
          <?php
-         foreach($output['regions'] as $r) {
-            if($r['id'] !== $regionID) continue;
-            // print $regionID;
+         foreach($output['ageGroups'] as $g) {
+            if($g['id'] !== (int)$group_id) continue;
             ?>
 
-            <div class="any_bold any_cursor_pointer" onclick="toggleSeasonList(<?= $r['id'] ?>)"><i id="checkbox_region_<?= $r['id'] ?>" class="fa fa-plus-square-o"></i>&nbsp;<?= htmlspecialchars($r['name']) ?></div>
-            <div id="container_<?= $r['id'] ?>_all" class="any_hidden any_cursor_pointer" onclick="toggleAllSeasons(<?= $r['id'] ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $r['id'] ?>_all" class="fa fa-square-o"></i>&nbsp;<span class="effect_tiny effect_italics">Show all</span></div>
+            <div class="any_bold any_cursor_pointer" onclick="toggleSeasonList(<?= $g['id'] ?>)">
+              <i id="checkbox_region_<?= $g['id'] ?>" class="fa fa-plus-square-o"></i>&nbsp;
+              <?= htmlspecialchars($g['name']) ?>
+            </div>
+
+            <div id="container_<?= $g['id'] ?>_all" class="any_hidden any_cursor_pointer" onclick="toggleAllSeasons(<?= $g['id'] ?>)">
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <i id="checkbox_<?= $g['id'] ?>_all" class="fa fa-square-o"></i>&nbsp;
+              <span class="effect_tiny effect_italics">Show all</span>
+              <h1>Here She Is</h1>
+            </div>
+
+
             <?php
             $currentYear = $seasonYears[count($seasonYears) - 1];
-            $numHHS = 11;
-            if($regionID <= $numHHS) {
-               foreach($seasonYears as $year) {
-                  if($year == 2009 && $showPandemic !== 1) {
-                     continue;
-                  }
-                  if($r['id'] == $regionID && $year == $currentYear) {
-                     ?>
-                     <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
-                        <span class="effect_tiny"><?= sprintf('%d-now', $year) ?></span>
-                     </div>
-                     <?php
-                  } else {
-                     ?>
-                     <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer" onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o" style="color: <?= getColor($r['id'], $year) ?>"></i>
-                        <span class="effect_tiny"><?= sprintf('%d-%s', $year, ($year == $currentYear) ? 'now' : '' . ($year + 1)) ?><?= ($year == 2009 ? ' pdm' : '')?></span>
-                     </div>
-                     <?php
-                  }
-               }
-            } else { // for each state, data are only available starting 2010-2011 season
-               foreach($seasonYears as $year) {
-                  if($year <= 2009) {
-                     continue;
-                  }
+            // print ("$currentYear");
+            // print ($currentYear);
 
-                  if($year == 2009 && $showPandemic !== 1) {
-                     continue;
-                  }
-                  if($r['id'] == $regionID && $year == $currentYear) {
-                     ?>
-                     <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
-                        <span class="effect_tiny"><?= sprintf('%d-now', $year) ?></span>
-                     </div>
-                     <?php
-                  } else {
-                     ?>
-                     <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer" onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o" style="color: <?= getColor($r['id'], $year) ?>"></i>
-                        <span class="effect_tiny"><?= sprintf('%d-%s', $year, ($year == $currentYear) ? 'now' : '' . ($year + 1)) ?><?= ($year == 2009 ? ' pdm' : '')?></span>
-                     </div>
-                     <?php
-                  }
+            foreach($seasonYears as $year) {
+              if($g['id'] == $group_id && $year == $currentYear) {
+                  ?>
+                  <div id="container_<?= $g['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
+                     <span class="effect_tiny"><?= sprintf('%d-now', $year) ?></span>
+                  </div>
+                  <?php
+               } else {
+                  ?>
+                  <div id="container_<?= $g['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer" onclick="toggleSeason(<?= $g['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $g['id'] ?>_<?= $year ?>" class="fa fa-square-o" style="color: <?= getColor($g['id'], $year) ?>"></i>
+                     <span class="effect_tiny"><?= sprintf('%d-%s', $year, ($year == $currentYear) ? 'now' : '' . ($year + 1)) ?><?= ($year == 2009 ? ' pdm' : '')?></span>
+                  </div>
+                  <?php
                }
             }
-
          }
          ?>
-      </div></div><div id="box_canvas"><canvas id="canvas" width="800" height="400"></canvas></div>
+      </div>
+    </div>
+    <div id="box_canvas"><canvas id="canvas" width="800" height="400"></canvas></div>
 </div>
-<script src="js/forecast.js"></script>
 
+
+
+
+<script src="js/forecast.js"></script>
 <script>
    //globals
    //var DEBUG = <?= $output['user_id'] == 9 ? 'true' : 'false' ?>;
+
    //Axis range
    var currentWeek = <?= $currentWeek ?>;
    var numPastWeeks = <?= $numPastWeeks ?>;
    var numFutureWeeks = <?= $numFutureWeeks ?>;
    var totalWeeks = (numPastWeeks + 1 + numFutureWeeks);
    var xRange = [addEpiweeks(currentWeek, -numPastWeeks), addEpiweeks(currentWeek, +numFutureWeeks)];
-   var yRange = [0, <?= ($maxRegionalWILI * 1.1) ?>];
-   var regionID = <?= $regionID ?>;
+   var yRange = [0, <?= ($maxAgeGroupRate * 1.1) ?>];
+   var group_id = <?= $group_id ?>;
    var seasonOffsets = [<?php foreach($seasonOffsets as $o){printf('%d,',$o);} ?>];
    var seasonYears = [<?php foreach($seasonYears as $y){printf('%d,',$y);} ?>];
    var seasonIndices = {<?php for($i = 0; $i < count($seasonYears); $i++){printf('\'%d\':%d,',$seasonYears[$i],$i);} ?>};
-   var regionNames = [];
-   var pastWili = [];
+   var pastRate = [];
+   var pastRate = [];
    var forecast = [];
    var curveStyles = {};
    <?php
-   foreach($output['regions'] as $r) {
+   foreach($output['ageGroups'] as $g) {
       ?>
-      regionNames[<?= $r['id'] ?>] = '<?= $r['name'] ?>';
-      pastWili[<?= $r['id'] ?>] = [<?php
-         foreach($r['history']['wili'] as $v){printf('%.2f,',$v);}
+      pastRate[<?= $g['id'] ?>] = '<?= $g['name'] ?>';
+      pastRate[<?= $g['id'] ?>] = [<?php
+         foreach($g['history']['rate'] as $v){printf('%.2f,',$v);}
       ?>];
-      forecast[<?= $r['id'] ?>] = [<?php
-         $offset = count($r['forecast']['date']);
+      forecast[<?= $g['id'] ?>] = [<?php
+         $offset = count($g['forecast']['date']);
          foreach($r['forecast']['date'] as $d) {
             if($d > $currentWeek) {
                $offset -= 1;
             }
          }
          $start = 0;
-         $middle = min(count($r['forecast']['wili']) - $offset, $numFutureWeeks);
+         $middle = min(count($g['forecast']['rate']) - $offset, $numFutureWeeks);
          $end = $numFutureWeeks;
-         for($i = $start; $i < $middle; $i++){printf('%.3f,',$r['forecast']['wili'][$offset + $i]);}
+         for($i = $start; $i < $middle; $i++){printf('%.3f,',$g['forecast']['rate'][$offset + $i]);}
          for($i = $middle; $i < $end; $i++){printf('0,');}
       ?>];
-      curveStyles[<?= $r['id'] ?>] = {};
+      curveStyles[<?= $g['id'] ?>] = {};
       <?php
       foreach($seasonYears as $year) {
          ?>
-         curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= getColor($r['id'], $year) ?>', size: 1, dash: []};
+         curveStyles[<?= $g['id'] ?>][<?= $year ?>] = {color: '<?= getColor($g['id'], $year) ?>', size: 1, dash: []};
          <?php
       }
    }
    ?>
    var selectedSeasons = [];
    var showLastForecast = true;
-   var lastForecast = [<?php foreach($lastForecast['wili'] as $v){printf('%.3f,', $v);} ?>];
+   var lastForecast = [<?php foreach($lastForecast['rate'] as $v){printf('%.3f,', $v);} ?>];
    var timeoutID;
    var lastDrag = null;
    var tooltip = null;
-   // nowcast
-   // var showNowcast = <?= (getPreference($output, '_delphi', 'int') == 1 && isset($output['nowcast'])) ? 'true' : 'false' ?>;
-   // <?php
-   // if(isset($output['nowcast'])) {
-   //    printf('var nowcast = [%.5f, %.5f];', $output['nowcast']['value'], $output['nowcast']['std']);
-   // }
-   // ?>
+
    //x-axis
    function getChartWidth() {
       return canvas.width - marginLeft() - marginRight();
@@ -409,15 +395,15 @@ foreach($output['regions'] as $r) {
          }
       }
    }
-   function stitchCurves(regionID, style) {
-      if(forecast[regionID][0] < 0) {
+   function stitchCurves(group_id, style) {
+      if(forecast[group_id][0] < 0) {
          return;
       }
-      var seasonLength = pastWili[regionID].length - seasonOffsets[seasonOffsets.length - 1];
+      var seasonLength = pastRate[group_id].length - seasonOffsets[seasonOffsets.length - 1];
       var x1 = getX(addEpiweeks(xRange[0], seasonLength - 1));
-      var y1 = getY(pastWili[regionID][pastWili[regionID].length - 1]);
+      var y1 = getY(pastRate[group_id][pastRate[group_id].length - 1]);
       var x2 = getX(addEpiweeks(currentWeek, 1));
-      var y2 = getY(forecast[regionID][0]);
+      var y2 = getY(forecast[group_id][0]);
       drawLine(x1, y1, x2, y2, style);
    }
    function drawTooltip(g, str) {
@@ -514,7 +500,7 @@ foreach($output['regions'] as $r) {
       //other regions or past seasons
       for(var i = 0; i < selectedSeasons.length; i++) {
          var isCurrentSeason = (selectedSeasons[i][1] == seasonYears[seasonYears.length - 1]);
-         if(selectedSeasons[i][0] == regionID && isCurrentSeason) {
+         if(selectedSeasons[i][0] == group_id && isCurrentSeason) {
             //Skip the current region's latest season
             continue;
          }
@@ -523,7 +509,6 @@ foreach($output['regions'] as $r) {
          var style = curveStyles[r][s];
          var start = seasonOffsets[seasonIndices[s]];
          var length = totalWeeks;
-         <?php if(!$showPandemic) { ?>if(s == 2008) { length -= 12; }<?php } ?>
          var epiweekOffset = 0;
          if(start == 0) {
             var nextStart = seasonOffsets[seasonIndices[s + 1]];
@@ -531,8 +516,8 @@ foreach($output['regions'] as $r) {
             //todo: that -1 at the end should only be there if current season has 53 weeks and past season has 52 weeks
             epiweekOffset = Math.max(0, totalWeeks - length - 1);
          }
-         var end = Math.min(pastWili[r].length, start + length);
-         drawCurve(pastWili[r], start, end, epiweekOffset, style);
+         var end = Math.min(pastRate[r].length, start + length);
+         drawCurve(pastRate[r], start, end, epiweekOffset, style);
          if(isCurrentSeason) {
             style = {color: style.color, size: style.size, dash: DASH_STYLE};
             drawCurve(forecast[r], 0, 52, numPastWeeks + 1, style);
@@ -544,28 +529,15 @@ foreach($output['regions'] as $r) {
       if(showLastForecast) {
          drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length, lfStyle);
       }
-      //current region and latest season
+      //current age group and latest season
       var style = {color: '#000', size: 2, dash: []};
       var start = seasonOffsets[seasonOffsets.length - 1];
-      var end = Math.min(pastWili[regionID].length, start + totalWeeks);
-      drawCurve(pastWili[regionID], start, end, 0, style);
+      var end = Math.min(pastRate[group_id].length, start + totalWeeks);
+      drawCurve(pastRate[group_id], start, end, 0, style);
       style.dash = DASH_STYLE;
-      drawCurve(forecast[regionID], 0, 52, numPastWeeks + 1, style);
-      stitchCurves(regionID, style);
-      //nowcast
-      // if(showNowcast) {
-      //    g.fillStyle = 'rgba(0, 0, 0, 0.5)';
-      //    var epiweek = addEpiweeks(xRange[0], numPastWeeks + 1);
-      //    var x = getX(epiweek);
-      //    var y1 = getY(nowcast[0] - 2 * nowcast[1]);
-      //    var y2 = getY(nowcast[0] + 2 * nowcast[1]);
-      //    g.fillRect(x - 2, y1, 5, y2 - y1);
-      //    y1 = getY(nowcast[0] - 1 * nowcast[1]);
-      //    y2 = getY(nowcast[0] + 1 * nowcast[1]);
-      //    g.fillRect(x - 4, y1, 9, y2 - y1);
-      //    y1 = getY(nowcast[0]);
-      //    g.fillRect(x - 5, y1, 11, 1);
-      // }
+      drawCurve(forecast[group_id], 0, 52, numPastWeeks + 1, style);
+      stitchCurves(group_id, style);
+
       //legend
       var x1 = canvas.width - marginRight();
       var x2 = canvas.width - marginRight() - (15 * uiScale);
@@ -580,7 +552,7 @@ foreach($output['regions'] as $r) {
       drawText(g, 'Your Forecast, This Week', x2 - 3, y, 0, Align.right, Align.center);
       drawLine(x1, y - 3, x2, y + 3, style);
       y += dy;
-      drawText(g, regionNames[regionID] + ', ' + Math.round(xRange[0] / 100) + '+', x2 - 3, y, 0, Align.right, Align.center);
+      drawText(g, pastRate[group_id] + ', ' + Math.round(xRange[0] / 100) + '+', x2 - 3, y, 0, Align.right, Align.center);
       style.dash = [];
       drawLine(x1, y - 3, x2, y + 3, style);
       for(var i = 0; i < selectedSeasons.length; i++) {
@@ -588,7 +560,7 @@ foreach($output['regions'] as $r) {
          var r = selectedSeasons[i][0];
          var s = selectedSeasons[i][1];
          var style = curveStyles[r][s];
-         drawText(g, regionNames[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
+         drawText(g, pastRate[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
          drawLine(x1, y - 3, x2, y + 3, style);
       }
       //tooltip
@@ -647,11 +619,11 @@ foreach($output['regions'] as $r) {
       var epiweek = getEpiweek(x);
       if(epiweek > currentWeek && epiweek <= xRange[1]) {
          var wili = Math.min(yRange[1], Math.max(yRange[0], getIncidence(y)));
-         forecast[regionID][getDeltaWeeks(currentWeek, epiweek) - 1] = wili;
+         forecast[group_id][getDeltaWeeks(currentWeek, epiweek) - 1] = wili;
          if(lastDrag != null && epiweek != lastDrag.epiweek) {
             var direction = (epiweek > lastDrag.epiweek) ? 1 : -1;
             for(var i = addEpiweeks(lastDrag.epiweek, direction); i != epiweek; i = addEpiweeks(i, direction)) {
-               forecast[regionID][getDeltaWeeks(currentWeek, i) - 1] = wili;
+               forecast[group_id][getDeltaWeeks(currentWeek, i) - 1] = wili;
             }
          }
          lastDrag = {epiweek: epiweek, wili: wili};
@@ -660,7 +632,6 @@ foreach($output['regions'] as $r) {
          lastDrag = null;
       }
    }
-
    function contains(bounds, point) {
       var x1 = bounds.x;
       var x2 = bounds.x + bounds.w;
@@ -778,7 +749,7 @@ foreach($output['regions'] as $r) {
       var foundZero = false;
       var f = [];
       for(var i = 0; i < 52; i++) {
-         f[i] = forecast[regionID][i];
+         f[i] = forecast[group_id][i];
          foundZero |= f[i] == 0;
       }
       if(commit) {
@@ -794,7 +765,7 @@ foreach($output['regions'] as $r) {
       var params = {
          'action': commit ? 'forecast' : 'autosave',
          'hash': '<?= $output['user_hash'] ?>',
-         'group_id': ageGroup,
+         'group_id': group_id,
          'f[]': f,
       };
       $.get("api_hosp.php", params, handleResponse, 'json');
@@ -809,26 +780,20 @@ foreach($output['regions'] as $r) {
          $('#status_icon').html('<i class="fa fa-check-circle"></i>');
          $('#status_message').html('Forecast submitted successfully!');
          $('#box_status').addClass('any_success');
-         //Move to the next missing region, or go home
+         //Move to the next missing age group, or go home
          <?php
          $next = null;
-         $defaultNumRegion = 16;
-         $currentID = $region['id'];
-         if ($currentID <= $defaultNumRegion) {
-
-            for ($i = 1; $i <= $defaultNumRegion; $i++) {
-            $r = $output['regions'][$i];
-            if($r['id'] > $region['id'] && !$r['completed'] && $next === null) {
-               $next = $r['id'];
-            }
+         $currentID = $ageGroup['id'];
+         foreach ($output['ageGroups'] as $g) {
+           if($r['id'] > $currentID && !$g['completed'] && $next === null) {
+              $next = $g['id'];
+           }
          }
 
-            for ($i = 1; $i <= $defaultNumRegion; $i++) {
-               $r = $output['regions'][$i];
-               if($r['id'] < $region['id'] && !$r['completed'] && $next === null) {
-                  $next = $r['id'];
-               }
-            }
+         foreach ($output['ageGroups'] as $g) {
+           if($g['id'] < $currentID && !$g['completed'] && $next === null) {
+              $next = $g['id'];
+           }
          }
 
          if($next !== null) {
@@ -886,40 +851,40 @@ foreach($output['regions'] as $r) {
       //Finally, repaint the canvas
       repaint();
    }
-   function toggleSeasonList(regionID) {
+   function toggleSeasonList(group_id) {
       var closedClass = 'fa-plus-square-o';
       var openedClass = 'fa-minus-square-o';
-      var checkbox = $('#checkbox_region_' + regionID);
+      var checkbox = $('#checkbox_hosp_' + group_id);
       if(checkbox.hasClass(closedClass)) {
-         //Expand region
+         //Expand age group
          checkbox.removeClass(closedClass);
          checkbox.addClass(openedClass);
-         $('#container_' + regionID + '_all').removeClass('any_hidden');
+         $('#container_' + group_id + '_all').removeClass('any_hidden');
          for(var i = 0; i < seasonYears.length; i++) {
-            $('#container_' + regionID + '_' + seasonYears[i]).removeClass('any_hidden');
+            $('#container_' + group_id + '_' + seasonYears[i]).removeClass('any_hidden');
          }
       } else {
-         //Shrink region
+         //Shrink age group
          checkbox.removeClass(openedClass);
          checkbox.addClass(closedClass);
-         $('#container_' + regionID + '_all').addClass('any_hidden');
+         $('#container_' + group_id + '_all').addClass('any_hidden');
          for(var i = 0; i < seasonYears.length; i++) {
-            $('#container_' + regionID + '_' + seasonYears[i]).addClass('any_hidden');
+            $('#container_' + group_id + '_' + seasonYears[i]).addClass('any_hidden');
          }
       }
       repaint();
    }
-   function toggleAllSeasons(regionID) {
+   function toggleAllSeasons(group_id) {
       var uncheckedClass = 'fa-square-o';
       var checkedClass = 'fa-check-square-o';
-      var checkbox = $('#checkbox_' + regionID + '_all');
+      var checkbox = $('#checkbox_' + group_id + '_all');
       if(checkbox.hasClass(uncheckedClass)) {
          //Enable history
          checkbox.removeClass(uncheckedClass);
          checkbox.addClass(checkedClass);
          for(var i = 0; i < seasonYears.length; i++) {
-            if($('#checkbox_' + regionID + '_' + seasonYears[i]).hasClass(uncheckedClass)) {
-               toggleSeason(regionID, seasonYears[i]);
+            if($('#checkbox_' + group_id + '_' + seasonYears[i]).hasClass(uncheckedClass)) {
+               toggleSeason(group_id, seasonYears[i]);
             }
          }
       } else {
@@ -927,29 +892,29 @@ foreach($output['regions'] as $r) {
          checkbox.removeClass(checkedClass);
          checkbox.addClass(uncheckedClass);
          for(var i = 0; i < seasonYears.length; i++) {
-            if($('#checkbox_' + regionID + '_' + seasonYears[i]).hasClass(checkedClass)) {
-               toggleSeason(regionID, seasonYears[i]);
+            if($('#checkbox_' + group_id + '_' + seasonYears[i]).hasClass(checkedClass)) {
+               toggleSeason(group_id, seasonYears[i]);
             }
          }
       }
       repaint();
    }
-   function toggleSeason(regionID, seasonID) {
+   function toggleSeason(group_id, seasonID) {
       var uncheckedClass = 'fa-square-o';
       var checkedClass = 'fa-check-square-o';
-      var checkbox = $('#checkbox_' + regionID + '_' + seasonID);
+      var checkbox = $('#checkbox_' + group_id + '_' + seasonID);
       if(checkbox.hasClass(uncheckedClass)) {
          //Enable history
          checkbox.removeClass(uncheckedClass);
          checkbox.addClass(checkedClass);
-         selectedSeasons.push([regionID, seasonID]);
+         selectedSeasons.push([group_id, seasonID]);
       } else {
          //Disable history
          checkbox.removeClass(checkedClass);
          checkbox.addClass(uncheckedClass);
          var index = -1;
          for(var i = 0; i < selectedSeasons.length; i++) {
-            if(selectedSeasons[i][0] == regionID && selectedSeasons[i][1] == seasonID) {
+            if(selectedSeasons[i][0] == group_id && selectedSeasons[i][1] == seasonID) {
                index = i;
                break;
             }
@@ -961,9 +926,9 @@ foreach($output['regions'] as $r) {
       repaint();
    }
    function snapToLastForecast() {
-      var extra = lastForecast.length - forecast[regionID].length;
-      for(var i = 0; i < Math.min(forecast[regionID].length, lastForecast.length - extra); i++) {
-         forecast[regionID][i] = lastForecast[i + extra];
+      var extra = lastForecast.length - forecast[group_id].length;
+      for(var i = 0; i < Math.min(forecast[group_id].length, lastForecast.length - extra); i++) {
+         forecast[group_id][i] = lastForecast[i + extra];
       }
       repaint();
       ++modifyCounter;
@@ -979,15 +944,15 @@ foreach($output['regions'] as $r) {
       $(window).resize(function() {
          resize();
       });
-      toggleSeasonList(regionID);
+      toggleSeasonList(group_id);
       <?php
 
       // all seasons are shown by default, so hide the ones the user doesn't want to see
       $hiddenSeasons = getPreference($output, 'hidden_seasons', 'int');
       // toggle every season that has the "hide" bit set
-      for($season = 1997; $season < $current_season; $season++) {
+      for($season = 2003; $season < $current_season; $season++) {
          if(($hiddenSeasons & 1) === 0) {
-            ?>toggleSeason(regionID, <?= $season ?>);<?php
+            ?>toggleSeason(group_id, <?= $season ?>);<?php
          }
          $hiddenSeasons >>= 1;
       }
