@@ -39,7 +39,7 @@ function showRegionsDropdownList($regions) {
   <div>
     <select onchange="onRegionInDropdownSelected(this)">
       <option value="">All Other Historical Data </option>
-      <?php 
+      <?php
       foreach ($regions as $region) {
 //         $completionStateStr = $r['completed'] ? "" : " (not submitted)";
         $optionName = htmlspecialchars($region['name']);
@@ -61,19 +61,20 @@ function showNavigation_hosp($input, $getUrl) {
   // Print container for per-age group buttons
   ?>
   <div class="box_section">
-  
+
   <div class="bot_stat_value centered">
      Per Age Group Hospitalization
   </div>
-  
-  <?php 
+
+  <?php
   foreach ($input as $ageGroup) {
     ?>
-      <button onclick="redirect('<?= ($getUrl . "?id=" . $ageGroup['flusurv_name']) ?>')"><?= $ageGroup['ages'] ?></button>
-      <?= $ageGroup['ages'] ?>
+      <button onclick="redirect('<?= ($getUrl . "?id=" . $ageGroup['id']) ?>')"><?= $ageGroup['ages'] ?></button>
+      <!-- <?= $ageGroup['ages'] ?> -->
       <br />
     <?php
   }
+
 
   ?>
   </div>
@@ -93,7 +94,7 @@ function showNavigation($output, $regionID=-1) {
          $missing++;
       }
    }
-  
+
 //    foreach($output['regions'] as $r) {
 //       if($r['completed']) {
 //          $submitted++;
@@ -106,14 +107,14 @@ function showNavigation($output, $regionID=-1) {
       <div class="bot_stat_value centered">
          <i class="fa fa-check"></i> Submitted: <?= $submitted ?>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-question"></i> Still Missing: <?= $missing ?>
       </div>
-     
+
       <?php
       if ($ifAllLocation) {
         foreach($output['regions'] as $r) {
            createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
         }
       }
-        
+
       else {
           for ($i = 1; $i <= $defaultNumRegion; $i++) {
             $r = $output['regions'][$i];
@@ -121,7 +122,7 @@ function showNavigation($output, $regionID=-1) {
           }
       }
       ?>
-    
+
       <div class="centered">
         <?php
         $regionsList = $output['regions'];
@@ -129,7 +130,7 @@ function showNavigation($output, $regionID=-1) {
           for ($i = 1; $i <= $defaultNumRegion; $i++) {
             showRegionButton($regionsList[$i]);
           }
-          
+
           $allOtherRegion = array_slice($regionsList, $defaultNumRegion + 1);
           $regionNames = array();
           foreach ($allOtherRegion as $key => $row)
@@ -138,7 +139,7 @@ function showNavigation($output, $regionID=-1) {
           }
           array_multisort($regionNames, SORT_ASC, $allOtherRegion);
           showRegionsDropdownList($allOtherRegion);
-          
+
         }
         else {
           for ($i = 1; $i <= $defaultNumRegion; $i++) {
@@ -147,7 +148,7 @@ function showNavigation($output, $regionID=-1) {
         }
         ?>
       </div>
-        
+
    </div>
    <?php
 }
