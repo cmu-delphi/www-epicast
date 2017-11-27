@@ -70,7 +70,6 @@ function showNavigation_hosp($input, $getUrl) {
   foreach ($input as $ageGroup) {
     ?>
       <button onclick="redirect('<?= ($getUrl . "?id=" . $ageGroup['id']) ?>')"><?= $ageGroup['ages'] ?></button>
-      <!-- <?= $ageGroup['ages'] ?> -->
       <br />
     <?php
   }
