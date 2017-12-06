@@ -24,9 +24,9 @@ if(!$dbh) {
          if(getEpiweekInfo($temp) == 1) {
             if(count($forecast) >= 1 && count($forecast) <= 53) {
                //Save the forecast
-               $ageGroup = intval(mysql_real_escape_string($_REQUEST['group_id']));
+               $group_id = intval(mysql_real_escape_string($_REQUEST['group_id']));
                $commit = ($_REQUEST['action'] == 'forecast');
-               if(saveForecast_hosp($temp, $temp['user_id'], $ageGroup, $forecast, $commit) == 1) {
+               if(saveForecast_hosp($temp, $temp['user_id'], $group_id, $forecast, $commit) == 1) {
                   //Success
                   $output['result'] = 1;
                } else {

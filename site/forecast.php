@@ -155,7 +155,7 @@ foreach($output['regions'] as $r) {
             if($r['id'] !== $regionID) continue;
             // print $regionID;
             ?>
-           
+
             <div class="any_bold any_cursor_pointer" onclick="toggleSeasonList(<?= $r['id'] ?>)"><i id="checkbox_region_<?= $r['id'] ?>" class="fa fa-plus-square-o"></i>&nbsp;<?= htmlspecialchars($r['name']) ?></div>
             <div id="container_<?= $r['id'] ?>_all" class="any_hidden any_cursor_pointer" onclick="toggleAllSeasons(<?= $r['id'] ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $r['id'] ?>_all" class="fa fa-square-o"></i>&nbsp;<span class="effect_tiny effect_italics">Show all</span></div>
             <?php
@@ -185,7 +185,7 @@ foreach($output['regions'] as $r) {
                   if($year <= 2009) {
                      continue;
                   }
-                  
+
                   if($year == 2009 && $showPandemic !== 1) {
                      continue;
                   }
@@ -204,12 +204,12 @@ foreach($output['regions'] as $r) {
                   }
                }
             }
-          
+
          }
          ?>
       </div></div><div id="box_canvas"><canvas id="canvas" width="800" height="400"></canvas></div>
 </div>
-<script src="js/forecast.js"></script> 
+<script src="js/forecast.js"></script>
 <script>
    //globals
    //var DEBUG = <?= $output['user_id'] == 9 ? 'true' : 'false' ?>;
@@ -799,14 +799,14 @@ foreach($output['regions'] as $r) {
          $defaultNumRegion = 16;
          $currentID = $region['id'];
          if ($currentID <= $defaultNumRegion) {
-            
+
             for ($i = 1; $i <= $defaultNumRegion; $i++) {
             $r = $output['regions'][$i];
             if($r['id'] > $region['id'] && !$r['completed'] && $next === null) {
                $next = $r['id'];
             }
          }
-   
+
             for ($i = 1; $i <= $defaultNumRegion; $i++) {
                $r = $output['regions'][$i];
                if($r['id'] < $region['id'] && !$r['completed'] && $next === null) {
@@ -814,7 +814,7 @@ foreach($output['regions'] as $r) {
                }
             }
          }
-         
+
          if($next !== null) {
             ?>
             submit('forecast_<?= $next ?>');
