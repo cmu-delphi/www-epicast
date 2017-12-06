@@ -21,6 +21,7 @@ if(getEpiweekInfo($output) !== 1) {
    fail('Error loading epiweek info');
 }
 //List of all age groups
+
 if(getAgeGroupsExtended($output, $output['user_id']) !== 1) {
    fail('Error loading age group details, history, or forecast');
 }
@@ -43,9 +44,12 @@ if(getAgeGroupsExtended($output, $output['user_id']) !== 1) {
 // }
 
 $group_id = $_GET["id"];
-// print($group_id);
+// if (count($group_id) == 0) {
+//   $group_id = 1;
+// }
 //Forecast from last round, particularly for this region
 // why need this when we have already called getAgeGroupsExtended
+print ("$group_id from GET<br/>");
 if(loadForecast_hosp($output, $output['user_id'], $group_id, true) !== 1) {
    fail('Error loading last week forecast');
 }
@@ -59,7 +63,7 @@ $output['history'] = &$ageGroup['history'];
 $output['forecast'] = &$ageGroup['forecast'];
 
 //Calculate a few helpful stats
-$firstWeekOfChart = 30;
+$firstWeekOfChart = 40;
 $currentWeek = $output['epiweek']['round_epiweek'];
 if(($currentWeek % 100) >= $firstWeekOfChart) {
    $yearStart = intval($currentWeek / 100);
@@ -67,7 +71,7 @@ if(($currentWeek % 100) >= $firstWeekOfChart) {
    $yearStart = intval($currentWeek / 100) - 1;
 }
 $seasonStart = $yearStart * 100 + $firstWeekOfChart;
-$seasonEnd = ($yearStart + 1) * 100 + ($firstWeekOfChart - 1);
+$seasonEnd = ($yearStart + 1) * 100 + ($firstWeekOfChart - 23);
 $numPastWeeks = getDeltaWeeks($seasonStart, $currentWeek);
 $numFutureWeeks = getDeltaWeeks($currentWeek, $seasonEnd);
 $maxAgeGroupRate = 0;
@@ -97,7 +101,7 @@ if($seasonOffsets[count($seasonOffsets) - 1] != 0) {
 }
 $seasonOffsets = array_reverse($seasonOffsets);
 $seasonYears = array_reverse($seasonYears);
-// print (count($seasonYears)); // 14, 2003 ~ 2017
+// print (count($seasonYears)); // 14, 2004 ~ now (2018)
 
 if(getPreference($output, 'skip_instructions', 'int') !== 1) {
    ?>
@@ -121,7 +125,7 @@ if(getPreference($output, 'skip_instructions', 'int') !== 1) {
          </video>
          <p>
             <?php
-            createForm('reload', 'forecast.php#top', array('group_id', $group_id, 'skip_instructions', '1'));
+            createForm('reload', 'forecast_hosp.php#top', array('group_id', $group_id, 'skip_instructions', '1'));
             button('fa-check', 'I Understand', "submit('reload')");
             ?>
          </p>
@@ -165,7 +169,7 @@ foreach($output['ageGroups'] as $g) {
 
          <?php
          foreach($output['ageGroups'] as $g) {
-            if($g['id'] !== (int)$group_id) continue;
+            // if($g['id'] !== (int)$group_id) continue;
             ?>
 
             <div class="any_bold any_cursor_pointer" onclick="toggleSeasonList(<?= $g['id'] ?>)">
@@ -181,21 +185,35 @@ foreach($output['ageGroups'] as $g) {
 
 
             <?php
-            $currentYear = $seasonYears[count($seasonYears) - 1];
-            // print ("$currentYear");
-            // print ($currentYear);
+            $currentYear = $seasonYears[count($seasonYears) - 1]; // $currentYear = 2017
 
             foreach($seasonYears as $year) {
+              if($year == 2009 && $showPandemic !== 1) {
+                 continue;
+              }
               if($g['id'] == $group_id && $year == $currentYear) {
+                // Display if group is current group and year is current year
                   ?>
-                  <div id="container_<?= $g['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
-                     <span class="effect_tiny"><?= sprintf('%d-now', $year) ?></span>
+                  <div id="container_<?= $g['id'] ?>_<?= $year ?>"
+                    class="any_hidden any_cursor_pointer">
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <i class="fa fa-check-square"></i>
+                    <span class="effect_tiny"><?= sprintf('%d-now', $year) ?></span>
                   </div>
                   <?php
                } else {
+                 // Else load the checkbox list and collapse
                   ?>
-                  <div id="container_<?= $g['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer" onclick="toggleSeason(<?= $g['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $g['id'] ?>_<?= $year ?>" class="fa fa-square-o" style="color: <?= getColor($g['id'], $year) ?>"></i>
-                     <span class="effect_tiny"><?= sprintf('%d-%s', $year, ($year == $currentYear) ? 'now' : '' . ($year + 1)) ?><?= ($year == 2009 ? ' pdm' : '')?></span>
+                  <div id="container_<?= $g['id'] ?>_<?= $year ?>"
+                    class="any_hidden any_cursor_pointer"
+                    onclick="toggleSeason(<?= $g['id'] ?>, <?= $year ?>)">
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <i id="checkbox_<?= $g['id'] ?>_<?= $year ?>"
+                      class="fa fa-square-o" style="color: <?= getColor($g['id'], $year) ?>">
+                    </i>
+                    <span class="effect_tiny">
+                      <?= sprintf('%d-%s', $year, ($year == $currentYear) ? 'now' : '' . ($year + 1)) ?><?= ($year == 2009 ? ' pdm' : '')?>
+                    </span>
                   </div>
                   <?php
                }
@@ -206,8 +224,6 @@ foreach($output['ageGroups'] as $g) {
     </div>
     <div id="box_canvas"><canvas id="canvas" width="800" height="400"></canvas></div>
 </div>
-
-
 
 
 <script src="js/forecast.js"></script>
@@ -226,30 +242,32 @@ foreach($output['ageGroups'] as $g) {
    var seasonOffsets = [<?php foreach($seasonOffsets as $o){printf('%d,',$o);} ?>];
    var seasonYears = [<?php foreach($seasonYears as $y){printf('%d,',$y);} ?>];
    var seasonIndices = {<?php for($i = 0; $i < count($seasonYears); $i++){printf('\'%d\':%d,',$seasonYears[$i],$i);} ?>};
-   var pastRate = [];
+   var groupNames = [];
    var pastRate = [];
    var forecast = [];
    var curveStyles = {};
    <?php
    foreach($output['ageGroups'] as $g) {
       ?>
-      pastRate[<?= $g['id'] ?>] = '<?= $g['name'] ?>';
+      groupNames[<?= $g['id'] ?>] = '<?= $g['ages'] ?>';
       pastRate[<?= $g['id'] ?>] = [<?php
          foreach($g['history']['rate'] as $v){printf('%.2f,',$v);}
       ?>];
-      forecast[<?= $g['id'] ?>] = [<?php
+
+      forecast[<?= $g['id'] ?>] = [
+        <?php
          $offset = count($g['forecast']['date']);
          foreach($g['forecast']['date'] as $d) {
-            if($d > $currentWeek) {
-               $offset -= 1;
-            }
+            if($d > $currentWeek) {$offset -= 1;}
          }
          $start = 0;
-         $middle = min(count($g['forecast']['rate']) - $offset, $numFutureWeeks);
+         $middle = min(count($g['forecast']['wili']) - $offset, $numFutureWeeks);
          $end = $numFutureWeeks;
-         for($i = $start; $i < $middle; $i++){printf('%.3f,',$g['forecast']['rate'][$offset + $i]);}
+         for($i = $start; $i < $middle; $i++){printf('%.3f,',$g['forecast']['wili'][$offset + $i]);}
          for($i = $middle; $i < $end; $i++){printf('0,');}
-      ?>];
+      ?>
+      ];
+
       curveStyles[<?= $g['id'] ?>] = {};
       <?php
       foreach($seasonYears as $year) {
@@ -528,8 +546,13 @@ foreach($output['ageGroups'] as $g) {
       var style = {color: '#000', size: 2, dash: []};
       var start = seasonOffsets[seasonOffsets.length - 1];
       var end = Math.min(pastRate[group_id].length, start + totalWeeks);
+      // left half of the current season (the groupnd truth we have sofar for this season)
       drawCurve(pastRate[group_id], start, end, 0, style);
       style.dash = DASH_STYLE;
+
+      // draw forecast enetered this week (if any, else = last week's forecast)
+      // this part is going wrong **********************
+      console.log("drawing forecast");
       drawCurve(forecast[group_id], 0, 52, numPastWeeks + 1, style);
       stitchCurves(group_id, style);
 
@@ -547,7 +570,7 @@ foreach($output['ageGroups'] as $g) {
       drawText(g, 'Your Forecast, This Week', x2 - 3, y, 0, Align.right, Align.center);
       drawLine(x1, y - 3, x2, y + 3, style);
       y += dy;
-      drawText(g, pastRate[group_id] + ', ' + Math.round(xRange[0] / 100) + '+', x2 - 3, y, 0, Align.right, Align.center);
+      drawText(g, groupNames[group_id] + ', ' + Math.round(xRange[0] / 100) + '+', x2 - 3, y, 0, Align.right, Align.center);
       style.dash = [];
       drawLine(x1, y - 3, x2, y + 3, style);
       for(var i = 0; i < selectedSeasons.length; i++) {
@@ -555,7 +578,7 @@ foreach($output['ageGroups'] as $g) {
          var r = selectedSeasons[i][0];
          var s = selectedSeasons[i][1];
          var style = curveStyles[r][s];
-         drawText(g, pastRate[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
+         drawText(g, groupNames[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
          drawLine(x1, y - 3, x2, y + 3, style);
       }
       //tooltip
@@ -737,6 +760,7 @@ foreach($output['ageGroups'] as $g) {
          submitForecast(false);
       }
    }
+
    function submitForecast(commit) {
       if(commit && $('#button_submit').hasClass('box_button_disabled')) {
          return;
@@ -765,6 +789,7 @@ foreach($output['ageGroups'] as $g) {
       };
       $.get("api_hosp.php", params, handleResponse, 'json');
    }
+
    function updateStatus() {
       $('#box_status').removeClass('any_success any_failure any_neutral');
       if(submitStatus == SubmitStatus.sent) {
@@ -780,7 +805,7 @@ foreach($output['ageGroups'] as $g) {
          $next = null;
          $currentID = $ageGroup['id'];
          foreach ($output['ageGroups'] as $g) {
-           if($r['id'] > $currentID && !$g['completed'] && $next === null) {
+           if($g['id'] > $currentID && !$g['completed'] && $next === null) {
               $next = $g['id'];
            }
          }

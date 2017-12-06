@@ -30,17 +30,17 @@ if($_offline) {
    <div class="box_section">
       <div class="box_section_title">
          Post <?= formatEpiweek($output['epiweek']['round_epiweek']) ?> Forecast
-<!--          <div class="box_section_subtitle">
-            Due by 10:00 AM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
-         </div> -->
          <div class="box_section_subtitle">
-            Due by 10:00 AM (ET) on Wednesday, Nov 29, 2017.
+            Due by 10:00 AM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
          </div>
+         <!-- <div class="box_section_subtitle">
+            Due by 10:00 AM (ET) on Wednesday, Nov 29, 2017.
+         </div> -->
       </div>
       <div>
          <?php
          $time = $output['epiweek']['remaining'];
-         $time['days'] = $time['days'] + 2;
+         $time['days'] = $time['days'];
          $value = '';
          $unit = ' until due';
          if($time['days'] < 2) {
@@ -116,17 +116,14 @@ if($_offline) {
    <p class="centered"><i>Hover a button above to see which states are in that region or the location of the state in the map below.</i></p>
    <div id="map_container"></div>
 
-<!--    <?php 
+   <?php
       $ageGroups = listAgeGroups();
       $getUrl = 'forecast_hosp.php';
-   
+
       showNavigation_hosp($ageGroups, $getUrl);
-   ?> -->
-   
+   ?>
+
    <div class="box_section">
-<!--       <div class="box_section_title">
-         Coming Soon --- Hospitalization Forecast
-      </div> -->
 
    <div class="box_section">
       <div class="box_section_title">

@@ -2,7 +2,7 @@
 require_once('utils.php');
 
 define("NUM_REGIONS", 61);
-define("NUM_AGEGROUPS", 5);
+define("NUM_AGEGROUPS", 6);
 
 function getResult(&$output) {
    return $output['result'][count($output['result']) - 1];
@@ -29,7 +29,7 @@ Output:
    A handle to the database connection
 */
 function databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName) {
-   $dbh = mysql_connect("{$dbHost}:{$dbPort}", $dbUser, $dbPass);
+   $dbh = mysql_connect("127.0.0.1:3306", "epi", "7709a59c337c5dfb");
    if($dbh) {
       mysql_select_db($dbName, $dbh);
    }
@@ -335,14 +335,14 @@ function getAgeGroupsExtended(&$output, $userID) {
    if(getAgeGroups($output, $userID) !== 1) {
       return getResult($output);
    }
-   $firstWeek = 200430;
+   $firstWeek = 200940;
    //History and forecast for every region
    foreach($output['ageGroups'] as &$g) {
+
       if(getHistory_Hosp($output, $g['flusurv_name'], $firstWeek) !== 1) {
          return getResult($output);
       }
       $g['history'] = $output['history'];
-
       if(loadForecast_hosp($output, $userID, $g['id']) !== 1) {
          return getResult($output);
       }
