@@ -790,6 +790,10 @@ foreach($output['ageGroups'] as $g) {
       $.get("api_hosp.php", params, handleResponse, 'json');
    }
 
+   function redirect(url) {
+     window.location.href = url;
+   }
+
    function updateStatus() {
       $('#box_status').removeClass('any_success any_failure any_neutral');
       if(submitStatus == SubmitStatus.sent) {
@@ -818,11 +822,11 @@ foreach($output['ageGroups'] as $g) {
 
          if($next !== null) {
             ?>
-            submit('forecast_<?= $next ?>');
+            redirect('forecast_hosp.php?id=<?= $next ?>');
             <?php
          } else {
             ?>
-            navigate('home.php');
+            redirect('home.php');
             <?php
          }
          ?>
