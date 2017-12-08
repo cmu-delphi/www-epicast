@@ -29,7 +29,7 @@ Output:
    A handle to the database connection
 */
 function databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName) {
-   $dbh = mysql_connect("127.0.0.1:3306", "epi", "7709a59c337c5dfb");
+   $dbh = mysql_connect("{$dbHost}:{$dbPort}", $dbUser, $dbPass);
    if($dbh) {
       mysql_select_db($dbName, $dbh);
    }
