@@ -1,7 +1,7 @@
 <?php
 require_once('utils.php');
 
-define("NUM_REGIONS", 61);
+define("NUM_REGIONS", 60);
 define("NUM_AGEGROUPS", 6);
 
 function getResult(&$output) {
