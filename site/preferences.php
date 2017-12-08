@@ -54,7 +54,7 @@ function createPreference(&$output, $label, $prefix, $name, $type) {
 }
 $survey_fields = array('flu', 'vir', 'epi', 'ph', 'sml');
 $email_fields = array('reminders');
-$advanced_fields = array('pandemic', 'leaderboard', 'initials', 'prior');
+$advanced_fields = array('pandemic', 'leaderboard', 'initials', 'prior', 'hospitalization');
 $account_fields = array();
 ?>
 <div class="box_article centered">
@@ -83,6 +83,7 @@ $account_fields = array();
       $preferences = array();
       foreach($advanced_fields as $f) {
          $value = intval(mysql_real_escape_string($_REQUEST[$f]));
+         print ($value);
          $preferences['advanced_' . $f] = ($value === 1) ? $value : 0;
       }
 
@@ -270,6 +271,7 @@ $account_fields = array();
          <div class="centered">
             <form id="form_advanced" method="POST">
                <input type="hidden" name="action" value="advanced" />
+
                <p class="text_title left">Leaderboards</p>
                <p class="text_body left">
                   Each week we'll give you two scores based on your forecasting performance:<br />
@@ -288,6 +290,7 @@ $account_fields = array();
                   createPreference($output, 'My initials are', $prefix, 'initials', 'initials');
                   ?>
                </table>
+
                <p class="text_title left">2009 Pandemic</p>
                <p class="text_body left">
                   The 2009-2010 flu season was atypical because a rare event known as a <i>Pandemic</i> occurred.
@@ -303,6 +306,7 @@ $account_fields = array();
                   createPreference($output, 'Show the 2009 pandemic', $prefix, 'pandemic', 'bool');
                   ?>
                </table>
+
                <p class="text_title left">Additional Seasons --- for National and Regional Forecasts</p>
                <p class="text_body left">
                   The flu sentinel surveillance network (ILINet) has been growing and evolving since its inception in 1997.
@@ -317,6 +321,8 @@ $account_fields = array();
                   $prefix = 'advanced_';
                   createPreference($output, 'Show seasons prior to 2004 for U.S. nation and regions', $prefix, 'prior', 'bool');
                   ?>
+
+
                </table>
                <p class="text_title left">Default Seasons --- for National and Regional Forecasts</p>
                <p class="text_body left">
@@ -351,22 +357,22 @@ $account_fields = array();
                   }
                   ?>
                </table>
-               
-               
-<!--                <p class="text_title left">View All States</p>
+
+
+               <p class="text_title left">Turn On Hospitalization Forecast</p>
                <p class="text_body left">
-                  By selecting yes in this option, you can view the historical and current curves for all locations: 11 HHS regions and
-                  54 states.
+                  By selecting yes in this option, you can input your forecast for the hospitalization prediction!
                </p>
                <table cellspacing="0">
                   <?php
                   $prefix = 'advanced_';
-                  createPreference($output, 'Show All Locations', $prefix, 'allLocation', 'bool');
+                  createPreference($output, 'Forecast Hospitalization', $prefix, 'hospitalization', 'bool');
                   ?>
-               </table> -->
-               
-               
+               </table>
+
+
             </form>
+
             <div style="margin-bottom: 8px;">&nbsp;</div>
             <?php
             button('fa-check-circle', 'Save Advanced Settings', "submit('form_advanced')");

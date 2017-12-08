@@ -57,7 +57,7 @@ function showRegionsDropdownList($regions) {
  * Create buttons to navigate to per-age group hospitalization pages
  * @param $input Array of (flusurv_name, name, ages) tuples
  */
-function showNavigation_hosp($input, $getUrl) {
+function showNavigation_hosp($output, $getUrl) {
   // Print container for per-age group buttons
   ?>
   <div class="box_section">
@@ -67,13 +67,34 @@ function showNavigation_hosp($input, $getUrl) {
   </div>
 
   <?php
-  foreach ($input as $ageGroup) {
+  foreach ($output['ageGroups'] as $ageGroup) {
+    if($ageGroup['completed']) {
+       $class = 'box_region_nav_complete';
+       $icon = 'fa-check';
+    } else {
+       $class = 'box_region_nav_incomplete';
+       $icon = 'fa-question';
+    }
     ?>
-      <button onclick="redirect('<?= ($getUrl . "?id=" . $ageGroup['id']) ?>')"><?= $ageGroup['ages'] ?></button>
-      <br />
+      <!-- <button onclick="redirect('<?= ($getUrl . "?id=" . $ageGroup['id']) ?>')"><?= $ageGroup['ages'] ?></button>
+      <br /> -->
+      <div class="box_region_nav <?= $class ?>" onClick="redirect('<?= ($getUrl . "?id=" . $ageGroup['id']) ?>')">
+         <div class="box_region_nav_content">
+            <div class="box_region_nav_content_stack" style="top: 20px;">
+
+               <img class="img_flag_large" src="images/flags/ages_<?= sprintf('%02d', $ageGroup['id']) ?>.png"></img>
+
+               <div style="margin-top: -8px;">
+                  <?= htmlspecialchars($ageGroup['ages']) ?>
+               </div>
+            </div>
+            <div class="box_region_nav_content_stack" style="top: 2px;">
+               <span style="font-size: 1.3em; opacity: 0.2;"><i class="fa <?= $icon ?> fa-5x"></i></span>
+            </div>
+         </div>
+      </div>
     <?php
   }
-
 
   ?>
   </div>
@@ -94,13 +115,6 @@ function showNavigation($output, $regionID=-1) {
       }
    }
 
-//    foreach($output['regions'] as $r) {
-//       if($r['completed']) {
-//          $submitted++;
-//       } else {
-//          $missing++;
-//       }
-//    }
    ?>
    <div class="box_section">
       <div class="bot_stat_value centered">

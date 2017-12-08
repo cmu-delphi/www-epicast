@@ -42,21 +42,20 @@ if(getAgeGroupsExtended($output, $output['user_id']) !== 1) {
 // if(!isset($output['regions'][region_id])) {
 //    fail('Invalid region_id');
 // }
-
 $group_id = $_GET["id"];
 // if (count($group_id) == 0) {
 //   $group_id = 1;
 // }
 //Forecast from last round, particularly for this region
 // why need this when we have already called getAgeGroupsExtended
-print ("$group_id from GET<br/>");
 if(loadForecast_hosp($output, $output['user_id'], $group_id, true) !== 1) {
    fail('Error loading last week forecast');
 }
 
 $lastForecast = $output['forecast'];
 $ageGroup = $output['ageGroups'][$group_id];
-$num = count($output['ageGroups']); // $num = 5
+$ages = ["None", "0-4 Years Old Group", "5-17 Years Old Group", "18-49 Years Old Group", "50-64 Years Old Group", "65 and Above Years Old Group", "All Ages Group"];
+$num = count($output['ageGroups']); // $num = 6
 //History for this group
 $output['history'] = &$ageGroup['history'];
 //User's previous forecast for this group
@@ -147,9 +146,9 @@ foreach($output['ageGroups'] as $g) {
    <div id="box_status" class="box_status any_neutral right">
       <div class="box_status_line">
          <div class="box_region_label">
-            <?= htmlspecialchars($ageGroup['name']) ?>
-            <span style="font-size: 0.67em;">
-               <?= htmlspecialchars($ageGroup['ages']) ?>
+            Forecasting for
+            <span style="font-size: 1.00 em;">
+               <?= ($ages[$group_id]) ?>
             </span>
          </div>
          <div style="float: right;">
@@ -174,7 +173,7 @@ foreach($output['ageGroups'] as $g) {
 
             <div class="any_bold any_cursor_pointer" onclick="toggleSeasonList(<?= $g['id'] ?>)">
               <i id="checkbox_<?= $g['id'] ?>" class="fa fa-plus-square-o"></i>&nbsp;
-              <?= htmlspecialchars($g['name']) ?>
+              <?= ($g['ages']) ?>
             </div>
 
             <div id="container_<?= $g['id'] ?>_all" class="any_cursor_pointer" onclick="toggleAllSeasons(<?= $g['id'] ?>)">
@@ -473,7 +472,7 @@ foreach($output['ageGroups'] as $g) {
             drawLine(getX(xRange[0]), y, getX(xRange[1]), y, GRID_STYLE);
          }
          //label
-         drawText(g, LABEL_Y, row1, canvas.height / 2, -Math.PI / 2, Align.center, Align.center, 1.5, ['bold', 'Calibri']);
+         drawText(g, 'Hospitlization Rate', row1, canvas.height / 2, -Math.PI / 2, Align.center, Align.center, 1.5, ['bold', 'Calibri']);
          //zoom controls
          var x = 16 * uiScale;
          var dy = BUTTON_SIZE * uiScale;
@@ -552,7 +551,6 @@ foreach($output['ageGroups'] as $g) {
 
       // draw forecast enetered this week (if any, else = last week's forecast)
       // this part is going wrong **********************
-      console.log("drawing forecast");
       drawCurve(forecast[group_id], 0, 52, numPastWeeks + 1, style);
       stitchCurves(group_id, style);
 
@@ -804,6 +802,8 @@ foreach($output['ageGroups'] as $g) {
          <?php
          $next = null;
          $currentID = $ageGroup['id'];
+         // print ($ageGroup);
+         // print ("$currentID of the group");
          foreach ($output['ageGroups'] as $g) {
            if($g['id'] > $currentID && !$g['completed'] && $next === null) {
               $next = $g['id'];
@@ -818,11 +818,11 @@ foreach($output['ageGroups'] as $g) {
 
          if($next !== null) {
             ?>
-            submit('forecast_<?= $next ?>');
+            redirect('forecast_hosp.php?id=<?= $next ?>');
             <?php
          } else {
             ?>
-            navigate('home.php');
+            redirect('home.php');
             <?php
          }
          ?>
@@ -853,6 +853,7 @@ foreach($output['ageGroups'] as $g) {
       }
       updateStatus();
    }
+
    function resize() {
       //Find the right fit for the canvas
       var w = $('body').innerWidth() - $('#box_histories').width() - 48;
@@ -920,6 +921,8 @@ foreach($output['ageGroups'] as $g) {
       repaint();
    }
    function toggleSeason(group_id, seasonID) {
+      // console.log("group_id", group_id);
+      console.log("seasonID", seasonID);
       var uncheckedClass = 'fa-square-o';
       var checkedClass = 'fa-check-square-o';
       var checkbox = $('#checkbox_' + group_id + '_' + seasonID);
@@ -945,6 +948,8 @@ foreach($output['ageGroups'] as $g) {
       }
       repaint();
    }
+
+
    function snapToLastForecast() {
       var extra = lastForecast.length - forecast[group_id].length;
       for(var i = 0; i < Math.min(forecast[group_id].length, lastForecast.length - extra); i++) {
@@ -966,15 +971,8 @@ foreach($output['ageGroups'] as $g) {
       });
       toggleSeasonList(group_id);
       <?php
-
-      // all seasons are shown by default, so hide the ones the user doesn't want to see
-      $hiddenSeasons = getPreference($output, 'hidden_seasons', 'int');
-      // toggle every season that has the "hide" bit set
-      for($season = 2003; $season < $current_season; $season++) {
-         if(($hiddenSeasons & 1) === 0) {
-            ?>toggleSeason(group_id, <?= $season ?>);<?php
-         }
-         $hiddenSeasons >>= 1;
+      for($season = 2010; $season < $current_season; $season++) {
+         ?>toggleSeason(group_id, <?= $season ?>);<?php
       }
 
       ?>

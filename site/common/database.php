@@ -122,6 +122,31 @@ function getUserStats(&$output, $userID, $epiweek) {
 }
 
 /*
+===== getUserStats_hosp =====
+Purpose:
+   Looks up user stats
+Input:
+   $output - The array of return values (array reference)
+   $userID - The user's ID
+   $epiweek - The epiweek
+Output:
+   $output['result'] will contain the following values:
+      1 - Success
+      2 - Failure
+   $output['stat_completed'] - The number of regions completed on the given epiweek
+*/
+function getUserStats_hosp(&$output, $userID, $epiweek) {
+   $result = mysql_query("SELECT count(1) `completed` FROM ec_fluv_submissions_hosp WHERE `user_id` = {$userID} AND `epiweek_now` = {$epiweek}");
+   if($row = mysql_fetch_array($result)) {
+      $output['stat_completed'] = intval($row['completed']);
+      setResult($output, 1);
+   } else {
+      setResult($output, 2);
+   }
+   return getResult($output);
+}
+
+/*
 ===== getEpiweekInfo =====
 Purpose:
    Returns info for the current epiweek
@@ -442,6 +467,7 @@ function listAgeGroups() {
   while ($row = mysql_fetch_assoc($result)) {
     $returnAgeGroups[] = $row;
   }
+  // $returnAgeGroups = getAgeGroupsExtended(&$output, $userID);
   return $returnAgeGroups;
 }
 

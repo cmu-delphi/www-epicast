@@ -22,9 +22,16 @@ if($_offline) {
    if(getUserStats($output, $output['user_id'], $output['epiweek']['round_epiweek']) != 1) {
       fail('Error loading user info');
    }
+   if(getUserStats_hosp($output, $output['user_id'], $output['epiweek']['round_epiweek']) != 1) {
+      fail('Error loading user info');
+   }
    //List of all regions
    if(getRegions($output, $output['user_id']) != 1) {
       fail('Error loading region info');
+   }
+   //List of all age groups
+   if(getAgeGroups($output, $output['user_id']) != 1) {
+      fail('Error loading age group info');
    }
    ?>
    <div class="box_section">
@@ -77,14 +84,7 @@ if($_offline) {
             <div class="bot_stat_value"><?= $value ?></div>
             <div class="bot_stat_description"><?= $unit ?></div>
          </div>
-         <!--<div class="box_stat">
-            <div class="bot_stat_value"><?= $output['stat_completed'] ?></div>
-            <div class="bot_stat_description">forecasts completed</div>
-         </div>
-         <div class="box_stat">
-            <div class="bot_stat_value"><?= count($output['regions']) ?></div>
-            <div class="bot_stat_description">regions to forecast</div>
-         </div>-->
+
          <div class="box_stat">
             <div class="bot_stat_value"><?= formatEpiweek($output['epiweek']['data_epiweek']) ?></div>
             <div class="bot_stat_description">latest available data</div>
@@ -117,10 +117,11 @@ if($_offline) {
    <div id="map_container"></div>
 
    <?php
-      $ageGroups = listAgeGroups();
-      $getUrl = 'forecast_hosp.php';
-
-      showNavigation_hosp($ageGroups, $getUrl);
+      $ifForecastHosp = getPreference($output, 'advanced_hospitalization', 'int');
+      if ($ifForecastHosp) {
+        $getUrl = 'forecast_hosp.php';
+        showNavigation_hosp($output, $getUrl);
+      }
    ?>
 
    <div class="box_section">
