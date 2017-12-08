@@ -92,8 +92,7 @@ function showNavigation_hosp($output, $getUrl) {
                <span style="font-size: 1.3em; opacity: 0.2;"><i class="fa <?= $icon ?> fa-5x"></i></span>
             </div>
          </div>
-      </div>
-    <?php
+      </div>    <?php
   }
 
   ?>
