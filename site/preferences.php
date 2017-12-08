@@ -83,7 +83,6 @@ $account_fields = array();
       $preferences = array();
       foreach($advanced_fields as $f) {
          $value = intval(mysql_real_escape_string($_REQUEST[$f]));
-         print ($value);
          $preferences['advanced_' . $f] = ($value === 1) ? $value : 0;
       }
 
