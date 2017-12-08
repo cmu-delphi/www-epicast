@@ -512,6 +512,12 @@ input.padded {
    vertical-align: top;
    display: block;
 }
+
+img.age_group_img {
+    height: 65px;
+    width: auto;
+}
+
 /*** Screen Size Queries ***/
 @media only screen and (max-width: 800px), only screen and (max-device-width: 800px), only screen and (max-height: 400px), only screen and (max-device-height: 400px) {
    body {

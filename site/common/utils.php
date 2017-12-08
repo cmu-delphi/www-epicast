@@ -18,6 +18,8 @@ function button($icon, $text, $onClick, $classes='', $id=null, $code='') {
    printf('<div %s class="box_button %s" onClick="%s" %s><i class="fa %s"></i>&nbsp;&nbsp;%s</div>', $id, $classes, $onClick, $code, $icon, $text);
 }
 
+
+
 function createForm($id, $action, $values) {
    ?>
    <form id="<?= $id ?>" method="POST" action="<?= $action ?>">

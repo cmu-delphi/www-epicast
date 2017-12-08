@@ -82,7 +82,7 @@ function showNavigation_hosp($output, $getUrl) {
          <div class="box_region_nav_content">
             <div class="box_region_nav_content_stack" style="top: 20px;">
 
-               <img class="img_flag_large" src="images/flags/ages_<?= sprintf('%02d', $ageGroup['id']) ?>.png"></img>
+               <img class="img_flag_large age_group_img" src="images/flags/ages_<?= sprintf('%01d', $ageGroup['id']) ?>.png"></img>
 
                <div style="margin-top: -8px;">
                   <?= htmlspecialchars($ageGroup['ages']) ?>
