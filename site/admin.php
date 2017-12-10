@@ -44,6 +44,7 @@ if(isAdmin($output)) {
          $sortFunc = 'sortInt';
       } else if($_REQUEST['field'] == 's') {
          $sortKey = 'total_submissions';
+         $sortKey = 'total_submissions_hosp';
          $sortFunc = 'sortInt';
       } else {
          //Database sort
@@ -68,10 +69,13 @@ if(isAdmin($output)) {
    $numNew = 0;
    $numForecasts = 0;
    $numForecastusers = 0;
+   $numForecasts_hosp = 0;
+   $numForecastusers_hosp = 0;
    foreach($output['userbase'] as &$u) {
       $debugUser = getPreference($u, '_debug', 'int') === 1;
       $u['emails'] = 0;
       $u['total_submissions'] = 0;
+      $u['total_submissions_hosp'] = 0;
       if($u['online'] === 1) {
          $numOnline++;
       }
@@ -92,6 +96,14 @@ if(isAdmin($output)) {
             }
          }
       }
+      foreach($u['submissions_hosp'] as &$s) {
+         if($s[0] === $output['epiweek']['round_epiweek']) {
+            $numForecasts_hosp += $s[1];
+            if($s[1] > 0) {
+               $numForecastusers_hosp++;
+            }
+         }
+      }
       foreach($emailTypes as &$type) {
          if(getPreference($u, 'email_' . $type, 'int') === 1) {
             $u['emails']++;
@@ -99,6 +111,9 @@ if(isAdmin($output)) {
       }
       foreach($u['submissions'] as &$s) {
          $u['total_submissions'] += $s[1];
+      }
+      foreach($u['submissions_hosp'] as &$s) {
+         $u['total_submissions_hosp'] += $s[1];
       }
    }
    //PHP sort
@@ -108,16 +123,9 @@ if(isAdmin($output)) {
    ?>
    <div class="box_section">
       <div class="box_section_title">
-         At a Glance
-         <div class="box_section_subtitle">
-            Some basic system stats.
-         </div>
+         User Stats
       </div>
       <div>
-         <div class="box_stat">
-            <div class="bot_stat_value"><?= formatEpiweek($output['epiweek']['data_epiweek']) ?></div>
-            <div class="bot_stat_description">Most Recent Report</div>
-         </div>
          <div class="box_stat">
             <div class="bot_stat_value"><?= count($output['userbase']) ?></div>
             <div class="bot_stat_description">Total Registered Users</div>
@@ -134,6 +142,18 @@ if(isAdmin($output)) {
             <div class="bot_stat_value"><?= $numOnline ?></div>
             <div class="bot_stat_description">Users Online Now</div>
          </div>
+      </div>
+   </div>
+
+   <div class="box_section">
+      <div class="box_section_title">
+         Regions and States
+      </div>
+      <div>
+         <div class="box_stat">
+            <div class="bot_stat_value"><?= formatEpiweek($output['epiweek']['data_epiweek']) ?></div>
+            <div class="bot_stat_description">Most Recent Report</div>
+         </div>
          <div class="box_stat">
             <div class="bot_stat_value"><?= $numForecasts ?></div>
             <div class="bot_stat_description">Forecasts Received This Round</div>
@@ -144,7 +164,30 @@ if(isAdmin($output)) {
          </div>
       </div>
    </div>
-   
+
+   <div class="box_section">
+      <div class="box_section_title">
+         Hospitalization
+         <div class="box_section_subtitle">
+            Hopefully one day we will have as many inputs to hospitalization as to regional forecasts.
+         </div>
+      </div>
+      <div>
+         <div class="box_stat">
+            <div class="bot_stat_value"><?= formatEpiweek($output['epiweek']['data_epiweek']) ?></div>
+            <div class="bot_stat_description">Most Recent Report</div>
+         </div>
+         <div class="box_stat">
+            <div class="bot_stat_value"><?= $numForecasts_hosp ?></div>
+            <div class="bot_stat_description">Forecasts Received This Round</div>
+         </div>
+         <div class="box_stat">
+            <div class="bot_stat_value"><?= $numForecastusers_hosp ?></div>
+            <div class="bot_stat_description">Users Participated This Round</div>
+         </div>
+      </div>
+   </div>
+
    <div class="box_section">
       <div class="box_section_title">
          Userbase
@@ -196,10 +239,20 @@ if(isAdmin($output)) {
                      <?php }
                   ?></td>
                   <td class="any_extrasmall"><?php
+                     printf('Regions and States');
+                     printf('<br />');
                      foreach($u['submissions'] as &$s) {
                         printf('%s: %d<br />', formatEpiweek($s[0]), $s[1]);
                      }
                      printf('Total: %d<br />', $u['total_submissions']);
+                  ?></td>
+                  <td class="any_extrasmall"><?php
+                     printf('Hospitalization');
+                     printf('<br />');
+                     foreach($u['submissions_hosp'] as &$s) {
+                        printf('%s: %d<br />', formatEpiweek($s[0]), $s[1]);
+                     }
+                     printf('Total: %d<br />', $u['total_submissions_hosp']);
                   ?></td>
                </tr>
                <?php
