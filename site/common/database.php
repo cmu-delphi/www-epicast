@@ -768,16 +768,26 @@ function getUserbase(&$output, $sortField, $sortDir) {
          'online' => intval($row['online']),
          'new' => intval($row['new']) === 1,
          'default_preferences' => &$output['default_preferences'],
-         'submissions' => array()
+         'submissions' => array(),
+         'submissions_hosp' => array()
       );
+
       if(loadUserPreferences($user, $user['id']) !== 1) {
          return getResult($user);
       }
+
       $result2 = mysql_query("SELECT epiweek_now, count(region_id) num FROM ec_fluv_submissions WHERE user_id = {$user['id']} GROUP BY epiweek_now ORDER BY epiweek_now ASC");
       while($row2 = mysql_fetch_array($result2)) {
          array_push($user['submissions'], array(intval($row2['epiweek_now']), intval($row2['num'])));
       }
+
+      $result3 = mysql_query("SELECT epiweek_now, count(group_id) num FROM ec_fluv_submissions_hosp WHERE user_id = {$user['id']} GROUP BY epiweek_now ORDER BY epiweek_now ASC");
+      while($row3 = mysql_fetch_array($result3)) {
+         array_push($user['submissions_hosp'], array(intval($row3['epiweek_now']), intval($row3['num'])));
+      }
+
       array_push($users, $user);
+
    }
    $output['userbase'] = &$users;
    setResult($output, 1);
