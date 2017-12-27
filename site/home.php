@@ -51,7 +51,7 @@ if($_offline) {
          $value = '';
          $unit = ' until due';
          if($time['days'] < 2) {
-            $time['hours'] += 24 * $time['days'] + 10;
+            $time['hours'] += 24 * $time['days'];
             $time['days'] = 0;
          }
          if($time['hours'] < 2) {
