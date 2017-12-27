@@ -41,13 +41,13 @@ if($_offline) {
             Due by 10:00 AM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
          </div> -->
          <div class="box_section_subtitle">
-            Due by 10:00 AM (ET) on Wednesday, Dec 27, 2017.
+            Due by 10:00 AM (ET) on Wednesday, Jan 03, 2018.
          </div>
       </div>
       <div>
          <?php
          $time = $output['epiweek']['remaining'];
-         $time['days'] = $time['days'];
+         $time['days'] = $time['days']+3;
          $value = '';
          $unit = ' until due';
          if($time['days'] < 2) {
