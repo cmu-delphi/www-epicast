@@ -47,11 +47,11 @@ if($_offline) {
       <div>
          <?php
          $time = $output['epiweek']['remaining'];
-         $time['days'] = $time['days']+1;
+         $time['days'] = $time['days'];
          $value = '';
          $unit = ' until due';
          if($time['days'] < 2) {
-            $time['hours'] += 24 * $time['days']+10;
+            $time['hours'] += 24 * $time['days'];
             $time['days'] = 0;
          }
          if($time['hours'] < 2) {
