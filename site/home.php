@@ -40,8 +40,8 @@ if($_offline) {
          <div class="box_section_subtitle">
             Due by 10:00 AM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
          </div>
-<!--          <div class="box_section_subtitle">
-            Due by 10:00 AM (ET) on Tuesday, Jan 16, 2018.
+         <!-- <div class="box_section_subtitle">
+            Due by 10:00 AM (ET) on Wednesday, Nov 29, 2017.
          </div> -->
       </div>
       <div>
@@ -51,7 +51,7 @@ if($_offline) {
          $value = '';
          $unit = ' until due';
          if($time['days'] < 2) {
-            $time['hours'] += 24 * $time['days'];
+            $time['hours'] += 24 * $time['days']+10;
             $time['days'] = 0;
          }
          if($time['hours'] < 2) {
@@ -123,6 +123,12 @@ if($_offline) {
         showNavigation_hosp($output, $getUrl);
       }
    ?>
+
+   <?php
+      $getUrl = 'forecast_mturk.php';
+      showNavigation_mturk($output, $getUrl);
+   ?>
+
 
    <div class="box_section">
 
