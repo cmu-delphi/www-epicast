@@ -30,6 +30,7 @@ if($error) {
             }
             ?>
             <div class="box_decision_title">Existing Users</div>
+
             <form id="launch" method="POST" action="launch.php">
                <p>
                   Enter your User ID to continue:
@@ -37,12 +38,18 @@ if($error) {
                   <input type="text" name="user" value="" maxlength="8" size="8" />
                </p>
             </form>
+
+
             <?php button('fa-sign-in', 'Login', "submit('launch')"); ?>
+
+            
             <p>&nbsp;</p><div class="box_decision_title">New Users</div><p><b><a href="signup.php">Sign up here!</a></b></p>
             <!--<p>&nbsp;</p><div class="box_decision_title">Lost User ID</div><p><b><a href="userid.php">Get it here!</a></b></p>-->
          </div>
       <?php
-      } else {
+      }
+
+      else {
       ?>
          <div class="box_decision">
             <div class="box_decision_title">Click to Continue</div>

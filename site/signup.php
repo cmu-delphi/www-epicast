@@ -18,8 +18,8 @@ function checkCaptcha($captcha, $ip) {
    <div class="centered">
       <?php
       if(isset($_REQUEST['name']) && isset($_REQUEST['email'])) {
-         $name = mysql_real_escape_string($_REQUEST['name']);
-         $email = mysql_real_escape_string($_REQUEST['email']);
+         $name = mysqli_real_escape_string($_REQUEST['name']);
+         $email = mysqli_real_escape_string($_REQUEST['email']);
          if(empty($name)) {
            $name = 'Anonymous Epicaster';
          }

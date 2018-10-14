@@ -1,5 +1,4 @@
 <?php
-// $skipLogin = true;
 require_once('common/header_mturk.php');
 require_once('common/navigation.php');
 if($error) {
@@ -11,43 +10,59 @@ if(getYearForCurrentSeason($output) !== 1) {
    $current_season = $output['season']['year'];
 }
 function getColor($regionID, $seasonID) {
-   $r = intval((sin(($seasonID - 2004) * 0.4 + 0) + 1) / 2 * 15);
-   $g = intval((sin(($seasonID - 2004) * 0.5 + 2) + 1) / 2 * 15);
-   $b = intval((sin(($seasonID - 2004) * 0.6 + 4) + 1) / 2 * 15);
-   return sprintf('#%x%x%x', $r, $g, $b);
+   $colors =  ["#FF90C9","#B903AA","#D16100","#CC0744","#000035","#7B4F4B","#A1C299", // 1997-2003 (hidden by default)
+ "#A079BF","#1CE6FF","#FF34FF","#FF4A46","#008941","#006FA6","#A30059","#7A4900","#0000A6","#63FFAC","#004D43","#FFAA00","#4FC601"]; // 2004~current, 2009 is hidden on the graph
+   $idx = $seasonID - 1997;
+   $color = $colors[$idx];
+   return $color;
+}
+
+$regionID = intval($_GET["id"]);
+$mturkID = $_SESSION['mturkId'];
+$userID = getUserIDByMturkID($mturkID);
+// echo ($userID);
+
+loadUserPreferences_mturk($output, $userID);
+
+if(isset($_REQUEST['skip_instructions'])) {
+   $output['user_preferences']['skip_instructions'] = 1;
+   if(saveUserPreferences_mturk($output, $userID, $output['user_preferences']) !== 1) {
+      fail('Error updating preferences');
+   }
 }
 
 //Epiweek info
-if(getEpiweekInfo($output) !== 1) {
+if(getEpiweekInfo_mturk($output) !== 1) {
    fail('Error loading epiweek info');
 }
 //List of all regions
-if(getRegionsExtended($output, 1) !== 1) {
+if(getRegionsExtended_mturk($output, $userID) !== 1) {
    fail('Error loading region details, history, or forecast');
 }
+?>
 
-
-
-$regionID = intval($_GET["id"]);
-
-
-
-
+<?php
 //Specific region
 if(!isset($output['regions'][$regionID])) {
    fail('Invalid region_id');
 }
+
 //Forecast from last round
-if(loadForecast($output, $output['user_id'], $regionID, true) !== 1) {
+if(loadForecast_mturk($output, $userID, $regionID, true) !== 1) {
    fail('Error loading last week forecast');
 }
+
 $lastForecast = $output['forecast'];
+
 $region = $output['regions'][$regionID];
 $num = count($output['regions']);
 //History for this region
 $output['history'] = &$output['regions'][$regionID]['history'];
 //User's previous forecast for this region
 $output['forecast'] = &$output['regions'][$regionID]['forecast'];
+// echo "-------------";
+// echo (count($output['forecast']['wili']));
+
 //Settings
 $showPandemic = getPreference($output, 'advanced_pandemic', 'int');
 //Calculate a few helpful stats
@@ -86,10 +101,11 @@ if($seasonOffsets[count($seasonOffsets) - 1] != 0) {
 }
 $seasonOffsets = array_reverse($seasonOffsets);
 $seasonYears = array_reverse($seasonYears);
-//Nowcast (may or may not be available)
-getNowcast($output, addEpiweeks($currentWeek, 1), $regionID);
-$output['skip_instructions'] = 1;
-if(getPreference($output, 'skip_instructions', 'int') !== 1) {
+// echo ($seasonYears[count($seasonYears)-1]);
+$seasonYears = array_slice($seasonYears, 0, count($seasonYears)-2);
+// echo ($seasonYears[count($seasonYears)-1]);
+
+if($regionID === 1 && getPreference($output, 'skip_instructions', 'int') !== 1) {
    ?>
    <div class="box_section">
       <div class="box_section_title">
@@ -111,8 +127,8 @@ if(getPreference($output, 'skip_instructions', 'int') !== 1) {
          </video>
          <p>
             <?php
-            createForm('reload', 'forecast.php#top', array('region_id', $regionID, 'skip_instructions', '1'));
-            button('fa-check', 'I Understand', "submit('reload')");
+           createForm('reload', 'forecast_mturk.php?id=1', array('region_id', $regionID, 'skip_instructions', '1'));
+           button('fa-check', 'I Understand', "submit('reload')");
             ?>
          </p>
       </div>
@@ -122,10 +138,11 @@ if(getPreference($output, 'skip_instructions', 'int') !== 1) {
 ?>
 <?php
 foreach($output['regions'] as $r) {
-   createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
+   createForm('forecast_' . $r['id'], 'forecast_mturk.php#top', array('region_id', $r['id']));
 }
 ?>
 <?php fail('Whoa, your screen is too small! Please visit this site on a non-mobile device, or try to expand your browser window. Sorry about that!', 'box_nocanvas', true); ?>
+
 <div id="box_main_ui">
    <div id="box_status" class="box_status any_neutral right">
       <div class="box_status_line">
@@ -207,6 +224,11 @@ foreach($output['regions'] as $r) {
          ?>
       </div></div><div id="box_canvas"><canvas id="canvas" width="800" height="400"></canvas></div>
 </div>
+
+
+
+
+
 <script src="js/forecast.js"></script>
 <script>
    //globals
@@ -450,6 +472,9 @@ foreach($output['regions'] as $r) {
          var row1 = 12.5 * uiScale;
          var row2 = marginLeft() - 12.5 * uiScale;
          //ticks and lines
+         scale_y0 = getY(yRange[0]);
+         scale_y1 = getY(yRange[0]+yInterval);
+         var scale = scale_y1 - scale_y0
          for(var incidence = yRange[0]; incidence <= yRange[1]; incidence += yInterval) {
             var y = getY(incidence);
             drawText(g, '' + incidence, row2, y, 0, Align.right, Align.center);
@@ -549,6 +574,32 @@ foreach($output['regions'] as $r) {
          y1 = getY(nowcast[0]);
          g.fillRect(x - 5, y1, 11, 1);
       }
+      g.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      // var epiweek = addEpiweeks(xRange[0], numPastWeeks + 1);
+      // var errors = [[-0.25421423, 0.26941263, -0.15824849, 0.20264450, -0.12278384, 0.15011437, -0.11155995, 0.13835847, -0.10352876, 0.12303700],
+      //               [-0.35126740, 0.28674480, -0.18549541, 0.22947093, -0.12160618, 0.16089217, -0.12108624,0.14741964, -0.09037853, 0.13066419],
+      //               [-0.53753338, 0.92758200, -0.31119984, 0.66195073, -0.14422368, 0.58243822, -0.13170999, 0.50501000, -0.07412529, 0.45190200],
+      //               [-0.39443287, 0.41650200, -0.28787902, 0.17568074, -0.23393490, 0.13345493, -0.18385105, 0.10137001, -0.16447600, 0.08822047],
+      //               [-0.20688904, 0.31740226, -0.11901200, 0.25532236, -0.08398740, 0.22726787, -0.07123000, 0.21431023, -0.06658800, 0.21996389],
+      //               [-0.24942400, 0.20380060, -0.13837004, 0.13287000, -0.12956857, 0.11119205, -0.12638667, 0.09339000, -0.12312460, 0.09194342],
+      //               [-0.58407168, 0.65345295, -0.28553676, 0.45182749, -0.20596358, 0.43264114, -0.19105741, 0.41678847, -0.19351715, 0.41257600],
+      //               [-0.33326599, 0.53635165, -0.30726399, 0.25629324, -0.19375001, 0.17594002, -0.11035500, 0.13316077, -0.07146323, 0.09787316],
+      //               [-0.35295015, 0.15924199, -0.31480422, 0.11476599, -0.29572400, 0.08918193, -0.27731600, 0.07671607, -0.27938700, 0.08092397],
+      //               [-1.36375200, 0.36499200, -0.84292035, 0.35217596, -0.61532002, 0.30050214, -0.25313998, 0.27465654, -0.22830517, 0.24405587],
+      //               [-0.30122761, 0.69179569, -0.13852871, 0.54593001, -0.08857343, 0.44755800, -0.08709004, 0.39676995, -0.06306197, 0.33658196]]
+      //
+      // if (regionID <= 11) {
+      //    var error = errors[regionID-1]
+      //    for (var i=0; i<9; i = i + 2) {
+      //       var above = -error[i]*scale;
+      //       var below = error[i+1]*scale;
+      //       var x = getX(epiweek-(i/2)-1);
+      //       var y = getY(pastWili[regionID][pastWili[regionID].length - i/2 - 1]);
+      //       g.fillRect(x-2.5, y-above, 5, above);
+      //       g.fillRect(x-2.5, y, 5, below);
+      //    }
+      // }
+
       //legend
       var x1 = canvas.width - marginRight();
       var x2 = canvas.width - marginRight() - (15 * uiScale);
@@ -574,6 +625,12 @@ foreach($output['regions'] as $r) {
          drawText(g, regionNames[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
          drawLine(x1, y - 3, x2, y + 3, style);
       }
+
+      // error bars
+      drawText(g, '90% Confidence Interval', x2 - 3, y+25, 0, Align.right, Align.center);
+      g.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      g.fillRect(x2+5, y+10, 5, 35);
+
       //tooltip
       if(tooltip != null) {
          drawTooltip(g, tooltip);
@@ -775,11 +832,16 @@ foreach($output['regions'] as $r) {
       }
       var params = {
          'action': commit ? 'forecast' : 'autosave',
-         'hash': '<?= $output['user_hash'] ?>',
+         'mturkID': "<?= $mturkID ?>",
+         'hash': "<?= "147d9191" ?>",
+         'userID': "<?= $userID ?>",
          'region_id': regionID,
          'f[]': f,
       };
+      console.log("sending params");
+      console.log(params['mturkID']);
       $.get("api_mturk.php", params, handleResponse, 'json');
+      console.log("sent");
    }
 
    function updateStatus() {
@@ -809,18 +871,21 @@ foreach($output['regions'] as $r) {
             for ($i = 1; $i <= $defaultNumRegion; $i++) {
                $r = $output['regions'][$i];
                if($r['id'] < $region['id'] && !$r['completed'] && $next === null) {
+
                   $next = $r['id'];
                }
             }
          }
 
+
          if($next !== null) {
             ?>
+            console.log(<?= $next ?>);
             redirect('forecast_mturk.php?id=<?= $next ?>');
             <?php
          } else {
             ?>
-            redirect('home.php'); // should be popUpWindow(), which generates the random string
+            redirect('endOfSurvey.php');
             <?php
          }
          ?>
@@ -832,6 +897,7 @@ foreach($output['regions'] as $r) {
    }
    //other events
    function submitTimeout() {
+      console.log("submitTimeout");
       handleResponse({result: 0, action: 'forecast'});
    }
    function handleResponse(data) {
@@ -979,6 +1045,7 @@ foreach($output['regions'] as $r) {
       resize();
    });
 </script>
+
 <?php
 }
 require_once('common/footer.php');

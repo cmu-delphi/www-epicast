@@ -66,7 +66,7 @@ $account_fields = array();
    if(allSet('action', $survey_fields) && $_REQUEST['action'] == 'survey') {
       $preferences = array();
       foreach($survey_fields as $f) {
-         $value = intval(mysql_real_escape_string($_REQUEST[$f]));
+         $value = intval(mysqli_real_escape_string($_REQUEST[$f]));
          $preferences['survey_' . $f] = ($value === 0 || $value === 1) ? $value : null;
       }
       $updatedSurvey = (saveUserPreferences($output, $output['user_id'], $preferences) == 1);
@@ -74,7 +74,7 @@ $account_fields = array();
    if(allSet('action', $email_fields) && $_REQUEST['action'] == 'email') {
       $preferences = array();
       foreach($email_fields as $f) {
-         $value = intval(mysql_real_escape_string($_REQUEST[$f]));
+         $value = intval(mysqli_real_escape_string($_REQUEST[$f]));
          $preferences['email_' . $f] = ($value === 1) ? $value : 0;
       }
       $updatedEmail = (saveUserPreferences($output, $output['user_id'], $preferences) == 1);
@@ -82,7 +82,7 @@ $account_fields = array();
    if(allSet('action', $advanced_fields) && $_REQUEST['action'] == 'advanced') {
       $preferences = array();
       foreach($advanced_fields as $f) {
-         $value = intval(mysql_real_escape_string($_REQUEST[$f]));
+         $value = intval(mysqli_real_escape_string($_REQUEST[$f]));
          $preferences['advanced_' . $f] = ($value === 1) ? $value : 0;
       }
 

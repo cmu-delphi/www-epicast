@@ -33,7 +33,7 @@ if(getAgeGroupsExtended($output, $output['user_id']) !== 1) {
 //    }
 // }
 // if(isset($_REQUEST['region_id'])) {
-//    region_id = intval(mysql_real_escape_string($_REQUEST['region_id']));
+//    region_id = intval(mysqli_real_escape_string($_REQUEST['region_id']));
 // } else {
 //    //Default to USA National
 //    region_id = 1;

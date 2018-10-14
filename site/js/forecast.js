@@ -16,6 +16,7 @@ var ZOOM_AMOUNT = 1.1;
 var BUTTON_SIZE = 25;
 var WILI_MAX = 20;
 var WILI_MIN = 3;
+var MTURKID = "null";
 
 //Number of axis tick marks
 var xInterval = 2;

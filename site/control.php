@@ -22,7 +22,7 @@ function hasSubmission($name) {
    return isset($_REQUEST['submit_' . $name]);
 }
 function getSafeValue($name) {
-   return mysql_real_escape_string($_REQUEST['input_' . $name]);
+   return mysqli_real_escape_string($_REQUEST['input_' . $name]);
 }
 
 // Automation constants

@@ -16,17 +16,17 @@ if(!$dbh) {
    //Connected successfully
    if($_REQUEST['action'] == 'forecast' || $_REQUEST['action'] == 'autosave') {
       $output['action'] = $_REQUEST['action'];
-      $hash = mysql_real_escape_string($_REQUEST['hash']);
+      $hash = mysqli_real_escape_string($_REQUEST['hash']);
       $temp = array();
       if(getUserByHash($temp, $hash) == 1) {
          $forecast = array();
          foreach($_REQUEST['f'] as $f) {
-            array_push($forecast, floatval(mysql_real_escape_string($f)));
+            array_push($forecast, floatval(mysqli_real_escape_string($f)));
          }
          if(getEpiweekInfo($temp) == 1) {
             if(count($forecast) >= 1 && count($forecast) <= 53) {
                //Save the forecast
-               $regionID = intval(mysql_real_escape_string($_REQUEST['region_id']));
+               $regionID = intval(mysqli_real_escape_string($_REQUEST['region_id']));
                $commit = ($_REQUEST['action'] == 'forecast');
                if(saveForecast($temp, $temp['user_id'], $regionID, $forecast, $commit) == 1) {
                   //Success

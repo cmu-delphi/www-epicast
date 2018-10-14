@@ -48,11 +48,12 @@ function getMiniHash($hash) {
 
 function attemptLogin(&$output) {
    $hash = null;
+   $dbh = mysqli_connect("127.0.0.1:3306", "epi", "7709a59c337c5dfb");
    if(isset($_REQUEST['user']) || isset($_SESSION['hash_fluv'])) {
       if(isset($_REQUEST['user'])) {
-         $hash = mysql_real_escape_string($_REQUEST['user']);
+         $hash = mysqli_real_escape_string($dbh, $_REQUEST['user']);
       } else {
-         $hash = mysql_real_escape_string($_SESSION['hash_fluv']);
+         $hash = mysqli_real_escape_string($dbh, $_SESSION['hash_fluv']);
       }
       if(getUserByHash($output, $hash) === 1) {
          $hash = getMiniHash($output['user_hash']);

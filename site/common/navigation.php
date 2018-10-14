@@ -100,6 +100,45 @@ function showNavigation_hosp($output, $getUrl) {
   <?php
 }
 
+
+function showNavigation_mturk($output, $getUrl) {
+  // Print container for per-age group buttons
+  ?>
+  <div class="box_section">
+
+  <div class="bot_stat_value centered">
+     Mturk Forecast
+  </div>
+
+  <?php
+  $defaultNumRegion = 16;
+  for ($i = 1; $i <= $defaultNumRegion; $i++) {
+    $r = $output['regions'][$i];
+    if($r['completed']) {
+       $class = 'box_region_nav_complete';
+       $icon = 'fa-check';
+    } else {
+       $class = 'box_region_nav_incomplete';
+       $icon = 'fa-question';
+    }
+    ?>
+      <div class="box_region_nav <?= $class ?>" onClick="redirect('<?= ($getUrl . "?id=" . $r['id']) ?>')">
+         <div class="box_region_nav_content">
+            <div class="box_region_nav_content_stack" style="top: 20px;">
+               <img class="img_flag_large" src="images/flags/icon_<?= sprintf('%02d', $r['id']) ?>.png"></img>
+            </div>
+            <div class="box_region_nav_content_stack" style="top: 2px;">
+               <span style="font-size: 1.3em; opacity: 0.2;"><i class="fa <?= $icon ?> fa-5x"></i></span>
+            </div>
+         </div>
+      </div>    <?php
+  }
+  ?>
+  </div>
+  <?php
+}
+
+
 function showNavigation($output, $regionID=-1) {
    $missing = 0;
    $submitted = 0;

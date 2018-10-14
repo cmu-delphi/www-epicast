@@ -4,6 +4,8 @@ require_once('utils.php');
 define("NUM_REGIONS", 60);
 define("NUM_AGEGROUPS", 6);
 
+
+
 function getResult(&$output) {
    return $output['result'][count($output['result']) - 1];
 }
@@ -29,9 +31,10 @@ Output:
    A handle to the database connection
 */
 function databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName) {
-   $dbh = mysql_connect("{$dbHost}:{$dbPort}", $dbUser, $dbPass);
+   $dbh = mysqli_connect("127.0.0.1:3306", "epi", "7709a59c337c5dfb");
+   // $dbh = mysqli_connect("epicast.chvhcepclj4v.us-east-1.rds.amazonaws.com", "epi", "7709a59c337c5dfb");
    if($dbh) {
-      mysql_select_db($dbName, $dbh);
+      mysqli_select_db($dbh, $dbName);
    }
    return $dbh;
 }
@@ -55,14 +58,14 @@ Output:
 */
 function getUserByHash(&$output, $hash) {
    if(strlen($hash) >= 8) {
-      $result = mysql_query("SELECT `id`, `hash`, `name`, `email` FROM ec_fluv_users WHERE `hash` LIKE '{$hash}%'");
-      if($row = mysql_fetch_array($result)) {
+      $result = mysqli_query("SELECT `id`, `hash`, `name`, `email` FROM ec_fluv_users WHERE `hash` LIKE '{$hash}%'");
+      if($row = mysqli_fetch_array($result)) {
          setResult($output, 1);
          $output['user_id'] = intval($row['id']);
          $output['user_hash'] = $row['hash'];
          $output['user_name'] = $row['name'];
          $output['user_email'] = $row['email'];
-         mysql_query("UPDATE ec_fluv_users SET `last_seen` = now() WHERE `id` = {$row['id']}");
+         mysqli_query("UPDATE ec_fluv_users SET `last_seen` = now() WHERE `id` = {$row['id']}");
       } else {
          setResult($output, 2);
       }
@@ -87,13 +90,33 @@ Output:
    See getUserByHash
 */
 function getUserByEmail(&$output, $email) {
-   $result = mysql_query("SELECT `hash` FROM ec_fluv_users WHERE `email` = '{$email}'");
-   if($row = mysql_fetch_array($result)) {
+   $result = mysqli_query("SELECT `hash` FROM ec_fluv_users WHERE `email` = '{$email}'");
+   if($row = mysqli_fetch_array($result)) {
       return getUserByHash($output, $row['hash']);
    } else {
       setResult($output, 2);
       return getResult($output);
    }
+}
+
+function getUserIDByMturkID($mturkID) {
+  $result = mysqli_query("SELECT `id` FROM ec_fluv_users_mturk WHERE `name` = '{$mturkID}'");
+  if($row = mysqli_fetch_array($result)) {
+     return $row['id'];
+  } else {
+     return -1;
+  }
+
+}
+
+function userAlreadyExist($mturkID) {
+  $result = mysqli_query("SELECT `name` FROM ec_fluv_users_mturk WHERE `name` = '{$mturkID}'");
+  if($row = mysqli_fetch_array($result)) {
+     // echo ("old user");
+     return 1;
+  } else {
+     return 0;
+  }
 }
 
 /*
@@ -111,8 +134,8 @@ Output:
    $output['stat_completed'] - The number of regions completed on the given epiweek
 */
 function getUserStats(&$output, $userID, $epiweek) {
-   $result = mysql_query("SELECT count(1) `completed` FROM ec_fluv_submissions WHERE `user_id` = {$userID} AND `epiweek_now` = {$epiweek}");
-   if($row = mysql_fetch_array($result)) {
+   $result = mysqli_query("SELECT count(1) `completed` FROM ec_fluv_submissions WHERE `user_id` = {$userID} AND `epiweek_now` = {$epiweek}");
+   if($row = mysqli_fetch_array($result)) {
       $output['stat_completed'] = intval($row['completed']);
       setResult($output, 1);
    } else {
@@ -136,8 +159,8 @@ Output:
    $output['stat_completed'] - The number of regions completed on the given epiweek
 */
 function getUserStats_hosp(&$output, $userID, $epiweek) {
-   $result = mysql_query("SELECT count(1) `completed` FROM ec_fluv_submissions_hosp WHERE `user_id` = {$userID} AND `epiweek_now` = {$epiweek}");
-   if($row = mysql_fetch_array($result)) {
+   $result = mysqli_query("SELECT count(1) `completed` FROM ec_fluv_submissions_hosp WHERE `user_id` = {$userID} AND `epiweek_now` = {$epiweek}");
+   if($row = mysqli_fetch_array($result)) {
       $output['stat_completed'] = intval($row['completed']);
       setResult($output, 1);
    } else {
@@ -164,10 +187,11 @@ Output:
    $output['epiweek']['remaining'] - An array containing days/hours/minutes/seconds remaining
 */
 function getEpiweekInfo(&$output) {
-   $result = mysql_query('SELECT yearweek(now(), 6) `current_epiweek`, x.`round_epiweek`, x.`deadline`, unix_timestamp(x.`deadline`) `deadline_timestamp`, unix_timestamp(x.`deadline`) - unix_timestamp(now()) `remaining` FROM (SELECT `round_epiweek`, date_sub(`deadline`, INTERVAL 12 HOUR) `deadline` FROM ec_fluv_round) x');
-   if($row = mysql_fetch_array($result)) {
+   $result = mysqli_query('SELECT yearweek(now(), 6) `current_epiweek`, x.`round_epiweek`, x.`deadline`, unix_timestamp(x.`deadline`) `deadline_timestamp`, unix_timestamp(x.`deadline`) - unix_timestamp(now()) `remaining` FROM (SELECT `round_epiweek`, date_sub(`deadline`, INTERVAL 12 HOUR) `deadline` FROM ec_fluv_round) x');
+   if($row = mysqli_fetch_array($result)) {
       $output['epiweek'] = array();
       $output['epiweek']['current_epiweek'] = intval($row['current_epiweek']);
+
       $current_year = intval($output['epiweek']['current_epiweek'] / 100);
       $current_week = intval($output['epiweek']['current_epiweek'] % 100);
       if($current_week >= 30) {
@@ -211,8 +235,72 @@ function getEpiweekInfo(&$output) {
       setResult($output, 2);
       return getResult($output);
    }
-   $result = mysql_query('SELECT max(`issue`) AS `data_epiweek` FROM epidata.`fluview`');
-   if($row = mysql_fetch_array($result)) {
+   $result = mysqli_query('SELECT max(`issue`) AS `data_epiweek` FROM epidata.`fluview`');
+   if($row = mysqli_fetch_array($result)) {
+      $output['epiweek']['data_epiweek'] = intval($row['data_epiweek']);
+      setResult($output, 1);
+   } else {
+      setResult($output, 3);
+      return getResult($output);
+   }
+   return getResult($output);
+}
+
+function getEpiweekInfo_mturk(&$output) {
+   $result = mysqli_query('SELECT yearweek(now(), 6) `current_epiweek`, x.`round_epiweek`, x.`deadline`, unix_timestamp(x.`deadline`) `deadline_timestamp`, unix_timestamp(x.`deadline`) - unix_timestamp(now()) `remaining` FROM (SELECT `round_epiweek`, date_sub(`deadline`, INTERVAL 12 HOUR) `deadline` FROM ec_fluv_round) x');
+   if($row = mysqli_fetch_array($result)) {
+      $output['epiweek'] = array();
+      // $output['epiweek']['current_epiweek'] = intval($row['current_epiweek']);
+
+      $output['epiweek']['current_epiweek'] = 201750;
+
+      $current_year = intval($output['epiweek']['current_epiweek'] / 100);
+      $current_week = intval($output['epiweek']['current_epiweek'] % 100);
+      if($current_week >= 30) {
+        $output['epiweek']['season'] = array(
+          'year' => $current_year,
+          'start' => $current_year * 100 + 40,
+          'end' => ($current_year + 1) * 100 + 20,
+        );
+      } else {
+        $output['epiweek']['season'] = array(
+          'year' => $current_year - 1,
+          'start' => ($current_year - 1) * 100 + 40,
+          'end' => $current_year * 100 + 20,
+        );
+      }
+
+      // $output['epiweek']['round_epiweek'] = intval($row['round_epiweek']);
+      $output['epiweek']['round_epiweek'] = 201749;
+      $output['epiweek']['deadline'] = $row['deadline'];
+      $output['epiweek']['deadline_timestamp'] = intval($row['deadline_timestamp']);
+      $seconds = intval($row['remaining']);
+      $days = 0;
+      $hours = 0;
+      $minutes = 0;
+      if($seconds < 0) {
+         $seconds = 0;
+      } else {
+         $days = intval($seconds / (60 * 60 * 24));
+         $seconds -= $days * (60 * 60 * 24);
+         $hours = intval($seconds / (60 * 60));
+         $seconds -= $hours * (60 * 60);
+         $minutes = intval($seconds / 60);
+         $seconds -= $minutes * 60;
+      }
+      $output['epiweek']['remaining'] = array(
+         'days' => $days,
+         'hours' => $hours,
+         'minutes' => $minutes,
+         'seconds' => $seconds,
+      );
+      setResult($output, 1);
+   } else {
+      setResult($output, 2);
+      return getResult($output);
+   }
+   $result = mysqli_query('SELECT max(`issue`) AS `data_epiweek` FROM epidata.`fluview`');
+   if($row = mysqli_fetch_array($result)) {
       $output['epiweek']['data_epiweek'] = intval($row['data_epiweek']);
       setResult($output, 1);
    } else {
@@ -240,9 +328,31 @@ function getRegions(&$output, $userID) {
    if(getEpiweekInfo($temp) !== 1) {
       return getResult($temp);
    }
-   $result = mysql_query("SELECT r.`id`, r.`name`, r.`states`, r.`population`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM ec_fluv_regions r LEFT JOIN ec_fluv_submissions s ON s.`user_id` = {$userID} AND s.`region_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
+   $result = mysqli_query("SELECT r.`id`, r.`name`, r.`states`, r.`population`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM ec_fluv_regions r LEFT JOIN ec_fluv_submissions s ON s.`user_id` = {$userID} AND s.`region_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
    $regions = array();
-   while($row = mysql_fetch_array($result)) {
+   while($row = mysqli_fetch_array($result)) {
+      $region = array(
+         'id' => intval($row['id']),
+         'name' => $row['name'],
+         'states' => $row['states'],
+         'population' => intval($row['population']),
+         'completed' => intval($row['completed']) === 1,
+      );
+      $regions[$region['id']] = $region;
+   }
+   $output['regions'] = &$regions;
+   setResult($output, count($regions) == NUM_REGIONS ? 1 : 2);
+   return getResult($output);
+}
+
+function getRegions_mturk(&$output, $userID) {
+   $temp = array();
+   if(getEpiweekInfo_mturk($temp) !== 1) {
+      return getResult($temp);
+   }
+   $result = mysqli_query("SELECT r.`id`, r.`name`, r.`states`, r.`population`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM ec_fluv_regions r LEFT JOIN ec_fluv_submissions_mturk s ON s.`user_id` = {$userID} AND s.`region_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
+   $regions = array();
+   while($row = mysqli_fetch_array($result)) {
       $region = array(
          'id' => intval($row['id']),
          'name' => $row['name'],
@@ -275,9 +385,9 @@ function getAgeGroups(&$output, $userID) {
    if(getEpiweekInfo($temp) !== 1) {
       return getResult($temp);
    }
-   $result = mysql_query("SELECT r.`id`, r.`flusurv_name`, r.`name`, r.`ages`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM ec_fluv_age_groups r LEFT JOIN ec_fluv_submissions_hosp s ON s.`user_id` = {$userID} AND s.`group_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
+   $result = mysqli_query("SELECT r.`id`, r.`flusurv_name`, r.`name`, r.`ages`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM ec_fluv_age_groups r LEFT JOIN ec_fluv_submissions_hosp s ON s.`user_id` = {$userID} AND s.`group_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
    $ageGroups = array();
-   while($row = mysql_fetch_array($result)) {
+   while($row = mysqli_fetch_array($result)) {
       $ageGroup = array(
          'id' => intval($row['id']),
          'flusurv_name' => $row['flusurv_name'],
@@ -336,6 +446,36 @@ function getRegionsExtended(&$output, $userID) {
    return getResult($output);
 }
 
+function getRegionsExtended_mturk(&$output, $userID) {
+   $temp = array();
+   if(getEpiweekInfo_mturk($temp) !== 1) {
+      return getResult($temp);
+   }
+   //Basic region information
+   if(getRegions_mturk($output, $userID) !== 1) {
+      return getResult($output);
+   }
+   //History and forecast for every region
+   foreach($output['regions'] as &$r) {
+      if(getPreference($output, 'advanced_prior', 'int') === 1) {
+         $firstWeek = 199730;
+      } else {
+         $firstWeek = 200430;
+      }
+      if(getHistory_mturk($output, $r['id'], $firstWeek) !== 1) {
+         return getResult($output);
+      }
+      $r['history'] = $output['history'];
+      if(loadForecast_mturk($output, $userID, $r['id']) !== 1) {
+         return getResult($output);
+      }
+      $r['forecast'] = $output['forecast'];
+   }
+   setResult($output, 1);
+   return getResult($output);
+}
+
+
 /*
 ===== getAgeGroupsExtended =====
 Purpose:
@@ -393,10 +533,10 @@ Output:
    $output['history'] - Arrays of epiweeks and historical incidence (wILI) for the region
 */
 function getHistory(&$output, $regionID, $firstWeek) {
-   $result = mysql_query("SELECT fv.`epiweek`, fv.`wili` FROM epidata.`fluview` AS fv JOIN ( SELECT `epiweek`, max(`issue`) AS `latest` FROM epidata.`fluview` AS fv JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} GROUP BY fv.`epiweek` ) AS issues ON fv.`epiweek` = issues.`epiweek` AND fv.`issue` = issues.`latest` JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} ORDER BY fv.`epiweek` ASC");
+   $result = mysqli_query("SELECT fv.`epiweek`, fv.`wili` FROM epidata.`fluview` AS fv JOIN ( SELECT `epiweek`, max(`issue`) AS `latest` FROM epidata.`fluview` AS fv JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} GROUP BY fv.`epiweek` ) AS issues ON fv.`epiweek` = issues.`epiweek` AND fv.`issue` = issues.`latest` JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} ORDER BY fv.`epiweek` ASC");
    $date = array();
    $wili = array();
-   while($row = mysql_fetch_array($result)) {
+   while($row = mysqli_fetch_array($result)) {
       $ew = intval($row['epiweek']);
       while($firstWeek < $ew) {
         array_push($date, $firstWeek);
@@ -406,6 +546,29 @@ function getHistory(&$output, $regionID, $firstWeek) {
       array_push($date, $ew);
       array_push($wili, floatval($row['wili']));
       $firstWeek = addEpiweeks($firstWeek, 1);
+   }
+   $output['history'] = array('date' => &$date, 'wili' => &$wili);
+   setResult($output, 1);
+   return getResult($output);
+}
+
+function getHistory_mturk(&$output, $regionID, $firstWeek) {
+   $result = mysqli_query("SELECT fv.`epiweek`, fv.`wili` FROM epidata.`fluview` AS fv JOIN ( SELECT `epiweek`, max(`issue`) AS `latest` FROM epidata.`fluview` AS fv JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} GROUP BY fv.`epiweek` ) AS issues ON fv.`epiweek` = issues.`epiweek` AND fv.`issue` = issues.`latest` JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} ORDER BY fv.`epiweek` ASC");
+   $date = array();
+   $wili = array();
+   $maxEW = 201749;
+   while($row = mysqli_fetch_array($result)) {
+      $ew = intval($row['epiweek']);
+      if($ew<$maxEW) {
+        while($firstWeek < $ew) {
+          array_push($date, $firstWeek);
+          array_push($wili, -1);
+          $firstWeek = addEpiweeks($firstWeek, 1);
+        }
+        array_push($date, $ew);
+        array_push($wili, floatval($row['wili']));
+        $firstWeek = addEpiweeks($firstWeek, 1);
+      }
    }
    $output['history'] = array('date' => &$date, 'wili' => &$wili);
    setResult($output, 1);
@@ -423,7 +586,7 @@ Output:
    $output['history'] - Arrays of epiweeks and historical incidence (wILI) for the region
 */
 function getHistory_Hosp(&$output, $flusurv_name, $firstWeek) {
-   $result = mysql_query("SELECT `epidata`.`flusurv`.`issue`, `epidata`.`flusurv`.`epiweek`, `epidata`.`flusurv`.`{$flusurv_name}` AS `rate` " .
+   $result = mysqli_query("SELECT `epidata`.`flusurv`.`issue`, `epidata`.`flusurv`.`epiweek`, `epidata`.`flusurv`.`{$flusurv_name}` AS `rate` " .
    "FROM (SELECT `epiweek`, max(`issue`) AS `latest` " .
    "FROM `epidata`.`flusurv` WHERE `location` = 'network_all' AND `epiweek` >= {$firstWeek} GROUP BY `epiweek`) AS `issues` " .
    "JOIN `epidata`.`flusurv` ON `epidata`.`flusurv`.`issue` = `issues`.`latest` AND `epidata`.`flusurv`.`epiweek` = `issues`.`epiweek` " .
@@ -433,7 +596,7 @@ function getHistory_Hosp(&$output, $flusurv_name, $firstWeek) {
    $rateArr = array();
 
    $currentWeek = $firstWeek;
-   while ($row = mysql_fetch_array($result)) {
+   while ($row = mysqli_fetch_array($result)) {
       $currentEpiweek = intval($row['epiweek']);
 
       // Push -1 for all weeks with no data
@@ -462,9 +625,9 @@ function getHistory_Hosp(&$output, $flusurv_name, $firstWeek) {
  */
 function listAgeGroups() {
   $returnAgeGroups = array();
-  $result = mysql_query("SELECT * FROM ec_fluv_age_groups");
+  $result = mysqli_query("SELECT * FROM ec_fluv_age_groups");
 
-  while ($row = mysql_fetch_assoc($result)) {
+  while ($row = mysqli_fetch_assoc($result)) {
     $returnAgeGroups[] = $row;
   }
   // $returnAgeGroups = getAgeGroupsExtended(&$output, $userID);
@@ -494,14 +657,47 @@ function saveForecast(&$output, $userID, $regionID, $forecast, $commit) {
    $epiweek = $temp['epiweek']['round_epiweek'];
    foreach($forecast as $wili) {
       $epiweek = addEpiweeks($epiweek, 1);
-      mysql_query("INSERT INTO ec_fluv_forecast (`user_id`, `region_id`, `epiweek_now`, `epiweek`, `wili`, `date`) VALUES ({$userID}, {$regionID}, {$temp['epiweek']['round_epiweek']}, {$epiweek}, {$wili}, now()) ON DUPLICATE KEY UPDATE `wili` = {$wili}, `date` = now()");
+      mysqli_query("INSERT INTO ec_fluv_forecast (`user_id`, `region_id`, `epiweek_now`, `epiweek`, `wili`, `date`) VALUES ({$userID}, {$regionID}, {$temp['epiweek']['round_epiweek']}, {$epiweek}, {$wili}, now()) ON DUPLICATE KEY UPDATE `wili` = {$wili}, `date` = now()");
    }
    if($commit) {
-      mysql_query("INSERT INTO ec_fluv_submissions (`user_id`, `region_id`, `epiweek_now`, `date`) VALUES ({$userID}, {$regionID}, {$temp['epiweek']['round_epiweek']}, now())");
+      mysqli_query("INSERT INTO ec_fluv_submissions (`user_id`, `region_id`, `epiweek_now`, `date`) VALUES ({$userID}, {$regionID}, {$temp['epiweek']['round_epiweek']}, now())");
    }
    setResult($output, 1);
    return getResult($output);
 }
+
+/*
+===== saveForecast_mturk =====
+Purpose:
+   Saves the user's forecast
+Input:
+   $output - The array of return values (array reference)
+   $userID - The user's ID
+   $regionID - The region ID
+   $forecast - The forecast (array of values)
+   $commit - Whether or not to flag the forecast as a final submission
+Output:
+   $output['result'] will contain the following values:
+      1 - Success
+      2 - Failure
+*/
+function saveForecast_mturk(&$output, $userID, $regionID, $forecast, $commit) {
+  $temp = array();
+  if(getEpiweekInfo_mturk($temp) !== 1) {
+     return getResult($temp);
+  }
+  $epiweek = $temp['epiweek']['round_epiweek'];
+  foreach($forecast as $wili) {
+     $epiweek = addEpiweeks($epiweek, 1);
+     mysqli_query("INSERT INTO ec_fluv_forecast_mturk (`user_id`, `region_id`, `epiweek_now`, `epiweek`, `wili`, `date`) VALUES ({$userID}, {$regionID}, {$temp['epiweek']['round_epiweek']}, {$epiweek}, {$wili}, now()) ON DUPLICATE KEY UPDATE `wili` = {$wili}, `date` = now()");
+  }
+  if($commit) {
+     mysqli_query("INSERT INTO ec_fluv_submissions_mturk (`user_id`, `region_id`, `epiweek_now`, `date`) VALUES ({$userID}, {$regionID}, {$temp['epiweek']['round_epiweek']}, now())");
+  }
+  setResult($output, 1);
+  return getResult($output);
+}
+
 /*
 ===== saveForecast_hosp =====
 Purpose:
@@ -526,10 +722,10 @@ function saveForecast_hosp(&$output, $userID, $group_id, $forecast, $commit) {
    $epiweek = $temp['epiweek']['round_epiweek'];
    foreach($forecast as $wili) {
       $epiweek = addEpiweeks($epiweek, 1);
-      mysql_query("INSERT INTO ec_fluv_forecast_hosp (`user_id`, `group_id`, `epiweek_now`, `epiweek`, `value`, `date`) VALUES ({$userID}, {$group_id}, {$temp['epiweek']['round_epiweek']}, {$epiweek}, {$wili}, now()) ON DUPLICATE KEY UPDATE `value` = {$wili}, `date` = now()");
+      mysqli_query("INSERT INTO ec_fluv_forecast_hosp (`user_id`, `group_id`, `epiweek_now`, `epiweek`, `value`, `date`) VALUES ({$userID}, {$group_id}, {$temp['epiweek']['round_epiweek']}, {$epiweek}, {$wili}, now()) ON DUPLICATE KEY UPDATE `value` = {$wili}, `date` = now()");
    }
    if($commit) {
-      mysql_query("INSERT INTO ec_fluv_submissions_hosp (`user_id`, `group_id`, `epiweek_now`, `date`) VALUES ({$userID}, {$group_id}, {$temp['epiweek']['round_epiweek']}, now())");
+      mysqli_query("INSERT INTO ec_fluv_submissions_hosp (`user_id`, `group_id`, `epiweek_now`, `date`) VALUES ({$userID}, {$group_id}, {$temp['epiweek']['round_epiweek']}, now())");
    }
    setResult($output, 1);
    return getResult($output);
@@ -551,25 +747,69 @@ Output:
    $output['forecast'] - Arrays of epiweeks and forecast (wILI) for the region made by the user
 */
 function loadForecast(&$output, $userID, $regionID, $submitted=false) {
+  // echo "loadForecast";
+  if($submitted) {
+     $temp = array();
+     if(getEpiweekInfo($temp) !== 1) {
+        return getResult($temp);
+     }
+     $result = mysqli_query("SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_submissions WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` < {$temp['epiweek']['round_epiweek']}");
+     // echo "ec_fluv_submissions";
+  } else {
+     $result = mysqli_query("SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_forecast WHERE `user_id` = {$userID} AND `region_id` = {$regionID}");
+     // echo "ec_fluv_forecast";
+  }
+  if($row = mysqli_fetch_array($result)) {
+     // echo "result exist";
+     $epiweek = intval($row['epiweek']);
+  } else {
+     // echo "null result";
+     setResult($output, 2);
+     return getResult($output);
+  }
+  $date = array();
+  $wili = array();
+  $result = mysqli_query("SELECT `epiweek_now`, `epiweek`, `wili` FROM ec_fluv_forecast f WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` = {$epiweek} ORDER BY f.`epiweek` ASC");
+  while($row = mysqli_fetch_array($result)) {
+     // echo ($row['wili']);
+     array_push($date, intval($row['epiweek']));
+     array_push($wili, floatval($row['wili']));
+  }
+  $output['forecast'] = array('date' => &$date, 'wili' => &$wili);
+  // foreach ($output['forecast']['wili'] as $key) {
+  //   echo ($key);
+  // }
+
+  setResult($output, 1);
+  return getResult($output);
+}
+
+
+function loadForecast_mturk(&$output, $userID, $regionID, $submitted=false) {
    if($submitted) {
       $temp = array();
-      if(getEpiweekInfo($temp) !== 1) {
+      if(getEpiweekInfo_mturk($temp) !== 1) {
          return getResult($temp);
       }
-      $result = mysql_query("SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_submissions WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` < {$temp['epiweek']['round_epiweek']}");
+      $result = mysqli_query("SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_submissions_mturk WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` < {$temp['epiweek']['round_epiweek']}");
    } else {
-      $result = mysql_query("SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_forecast WHERE `user_id` = {$userID} AND `region_id` = {$regionID}");
+      $result = mysqli_query("SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_forecast_mturk WHERE `user_id` = {$userID} AND `region_id` = {$regionID}");
    }
-   if($row = mysql_fetch_array($result)) {
+   if($row = mysqli_fetch_array($result)) {
       $epiweek = intval($row['epiweek']);
    } else {
       setResult($output, 2);
       return getResult($output);
    }
+
+   // set epiweek to a previous week
+   $epiweek = 201749;
+
    $date = array();
    $wili = array();
-   $result = mysql_query("SELECT `epiweek_now`, `epiweek`, `wili` FROM ec_fluv_forecast f WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` = {$epiweek} ORDER BY f.`epiweek` ASC");
-   while($row = mysql_fetch_array($result)) {
+   $query = "SELECT `epiweek_now`, `epiweek`, `wili` FROM ec_fluv_forecast_mturk f WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` = {$epiweek} ORDER BY f.`epiweek` ASC";
+   $result = mysqli_query($query);
+   while($row = mysqli_fetch_array($result)) {
       array_push($date, intval($row['epiweek']));
       array_push($wili, floatval($row['wili']));
    }
@@ -577,6 +817,8 @@ function loadForecast(&$output, $userID, $regionID, $submitted=false) {
    setResult($output, 1);
    return getResult($output);
 }
+
+
 
 /*
 ===== loadForecast_hosp =====
@@ -600,12 +842,12 @@ function loadForecast_hosp(&$output, $userID, $group_id, $submitted=false) {
          return getResult($temp);
       }
       $q = "SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_submissions_hosp WHERE `user_id` = {$userID} AND `group_id` = {$group_id} AND `epiweek_now` < {$temp['epiweek']['round_epiweek']}";
-      $result = mysql_query($q) or die($q."<br/><br/>".mysql_error());
+      $result = mysqli_query($q) or die($q."<br/><br/>".mysqli_error());
    } else {
       $q = "SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_forecast_hosp WHERE `user_id` = {$userID} AND `group_id` = {$group_id}";
-      $result = mysql_query($q) or die($q."<br/><br/>".mysql_error());
+      $result = mysqli_query($q) or die($q."<br/><br/>".mysqli_error());
    }
-   if($row = mysql_fetch_array($result)) {
+   if($row = mysqli_fetch_array($result)) {
       $epiweek = intval($row['epiweek']);
    } else {
       setResult($output, 2);
@@ -613,8 +855,8 @@ function loadForecast_hosp(&$output, $userID, $group_id, $submitted=false) {
    }
    $date = array();
    $wili = array();
-   $result = mysql_query("SELECT `epiweek_now`, `epiweek`, `value` FROM ec_fluv_forecast_hosp f WHERE `user_id` = {$userID} AND `group_id` = {$group_id} AND `epiweek_now` = {$epiweek} ORDER BY f.`epiweek` ASC");
-   while($row = mysql_fetch_array($result)) {
+   $result = mysqli_query("SELECT `epiweek_now`, `epiweek`, `value` FROM ec_fluv_forecast_hosp f WHERE `user_id` = {$userID} AND `group_id` = {$group_id} AND `epiweek_now` = {$epiweek} ORDER BY f.`epiweek` ASC");
+   while($row = mysqli_fetch_array($result)) {
       array_push($date, intval($row['epiweek']));
       array_push($wili, floatval($row['value']));
    }
@@ -646,7 +888,7 @@ function registerUser(&$output, $name, $email, $adminEmail) {
    if(getUserByEmail($output, $email) === 1) {
       $output['user_new'] = false;
    } else {
-      mysql_query("INSERT INTO ec_fluv_users (`hash`, `name`, `email`, `first_seen`, `last_seen`) VALUES (md5(rand()), '{$name}', '{$email}', now(), now())");
+      mysqli_query("INSERT INTO ec_fluv_users (`hash`, `name`, `email`, `first_seen`, `last_seen`) VALUES (md5(rand()), '{$name}', '{$email}', now(), now())");
       $output['user_new'] = true;
       if(getUserByEmail($output, $email) !== 1) {
          return getResult($output);
@@ -654,12 +896,79 @@ function registerUser(&$output, $name, $email, $adminEmail) {
    }
    //Send an email to the user
    $hash = strtoupper(substr($output['user_hash'], 0, 8));
-   $subject = mysql_real_escape_string('Welcome to Epicast');
-   $body = mysql_real_escape_string(sprintf("Hi %s,\r\n\r\nWelcome to Epicast! Here's your User ID: %s\r\nYou can login and begin forecasting here: https://epicast.org/launch.php?user=%s\r\n\r\nThank you,\r\nThe Delphi Team\r\n\r\n[This is an automated message. Please direct all replies to: %s. Unsubscribe: https://epicast.org/preferences.php?user=%s]", $name, $hash, $hash, $adminEmail, $hash));
-   mysql_query("INSERT INTO automation.email_queue (`from`, `to`, `subject`, `body`) VALUES ('delphi@epicast.net', '{$email}', '{$subject}', '{$body}')");
-   mysql_query("CALL automation.RunStep(2)");
+   $subject = mysqli_real_escape_string('Welcome to Epicast');
+   $body = mysqli_real_escape_string(sprintf("Hi %s,\r\n\r\nWelcome to Epicast! Here's your User ID: %s\r\nYou can login and begin forecasting here: https://epicast.org/launch.php?user=%s\r\n\r\nThank you,\r\nThe Delphi Team\r\n\r\n[This is an automated message. Please direct all replies to: %s. Unsubscribe: https://epicast.org/preferences.php?user=%s]", $name, $hash, $hash, $adminEmail, $hash));
+   mysqli_query("INSERT INTO automation.email_queue (`from`, `to`, `subject`, `body`) VALUES ('delphi@epicast.net', '{$email}', '{$subject}', '{$body}')");
+   mysqli_query("CALL automation.RunStep(2)");
    setResult($output, 1);
    return getResult($output);
+}
+
+/*
+===== getUserByMturkID =====
+Purpose:
+   Finds a user by their mturk ID address
+Input:
+   $mturkID - The user's mturk ID
+Output:
+   1 if user is in the database, 0 if it's a new user
+*/
+// function getUserByMturkID($mturkID) {
+//    $result = mysqli_query("SELECT `name` FROM ec_fluv_users_mturk WHERE `name` = '{$mturkID}'");
+//    printf($result);
+//    if($row = mysqli_fetch_array($result)) {
+//       return 1;
+//    } else {
+//       return 0;
+//    }
+// }
+
+/*
+===== registerUser_mturk =====
+*** THIS WILL REGISTER A MTURK USER BASED ON THEIR ID ***
+Purpose:
+   Registers a new mturk user
+Input:
+   $output - The array of return values (array reference)
+   $name - The user's (nick)name
+   $email - The user's email
+   $adminEmail - The email to which replies should be directed
+Output:
+   $output['result'] will contain the following values:
+      1 - Success
+      2 - Failure
+   $output['user_new'] - Whether or not the user is a new user (as determined by email address)
+   $output['user_id'] - The user's ID, whether nascent or pre-existing
+*/
+function registerUser_mturk($mturkID) {
+  //Find, or create, the user
+  if (userAlreadyExist($mturkID) === 1) {
+    return;
+  } else {
+    $email = md5(rand());
+    $hash = md5(rand());
+    $escapedInput = mysqli_real_escape_string($mturkID);
+    // echo("ecaped string: $escapedInput\n");
+    $query = "INSERT INTO ec_fluv_users_mturk (`hash`, `name`, `email`, `first_seen`, `last_seen`)
+              VALUES ('{$hash}', '{$escapedInput}', '{$email}', now(), now())";
+    $result = mysqli_query($query);
+    // if ($result == FALSE) {
+    //   echo("failed to insert");
+    //   echo(mysqli_error());
+    // }
+    // else {echo("success");}
+  }
+  return;
+}
+
+function save_random_code_mturk($userID, $code) {
+  $result = mysqli_query("INSERT INTO ec_fluv_mturk_code_match (`user_id`, `code`) VALUES ({$userID}, {$code})");
+  if ($result == FALSE) {
+     echo("failed to insert");
+     echo(mysqli_error());
+   }
+  else {echo("success");}
+  return;
 }
 
 /*
@@ -675,8 +984,8 @@ Output:
 */
 function loadDefaultPreferences(&$output) {
    $output['default_preferences'] = array();
-   $result = mysql_query("SELECT `name`, `value` FROM ec_fluv_defaults ORDER BY `name` ASC");
-   while($row = mysql_fetch_array($result)) {
+   $result = mysqli_query("SELECT `name`, `value` FROM ec_fluv_defaults ORDER BY `name` ASC");
+   while($row = mysqli_fetch_array($result)) {
       $output['default_preferences'][$row['name']] = $row['value'];
    }
    setResult($output, 1);
@@ -697,8 +1006,18 @@ Output:
 */
 function loadUserPreferences(&$output, $userID) {
    $output['user_preferences'] = array();
-   $result = mysql_query("SELECT `name`, `value` FROM ec_fluv_user_preferences WHERE `user_id` = {$userID} ORDER BY `name` ASC");
-   while($row = mysql_fetch_array($result)) {
+   $result = mysqli_query("SELECT `name`, `value` FROM ec_fluv_user_preferences WHERE `user_id` = {$userID} ORDER BY `name` ASC");
+   while($row = mysqli_fetch_array($result)) {
+      $output['user_preferences'][$row['name']] = $row['value'];
+   }
+   setResult($output, 1);
+   return getResult($output);
+}
+
+function loadUserPreferences_mturk(&$output, $userID) {
+   $output['user_preferences'] = array();
+   $result = mysqli_query("SELECT `name`, `value` FROM ec_fluv_user_preferences_mturk WHERE `user_id` = {$userID} ORDER BY `name` ASC");
+   while($row = mysqli_fetch_array($result)) {
       $output['user_preferences'][$row['name']] = $row['value'];
    }
    setResult($output, 1);
@@ -720,12 +1039,24 @@ function saveUserPreferences(&$output, $userID, $preferences) {
    foreach(array_keys($preferences) as $name) {
       $value = $preferences[$name];
       if($value === null) {
-         mysql_query("DELETE FROM ec_fluv_user_preferences WHERE `user_id` = {$userID} AND `name` = '{$name}'");
+         mysqli_query("DELETE FROM ec_fluv_user_preferences WHERE `user_id` = {$userID} AND `name` = '{$name}'");
       } else {
-         mysql_query("INSERT INTO ec_fluv_user_preferences (`user_id`, `name`, `value`, `date`) VALUES ({$userID}, '{$name}', '{$value}', now()) ON DUPLICATE KEY UPDATE `value` = '{$value}', `date` = now()");
+         mysqli_query("INSERT INTO ec_fluv_user_preferences (`user_id`, `name`, `value`, `date`) VALUES ({$userID}, '{$name}', '{$value}', now()) ON DUPLICATE KEY UPDATE `value` = '{$value}', `date` = now()");
       }
    }
    return loadUserPreferences($output, $userID);
+}
+
+function saveUserPreferences_mturk(&$output, $userID, $preferences) {
+   foreach(array_keys($preferences) as $name) {
+      $value = $preferences[$name];
+      if($value === null) {
+         mysqli_query("DELETE FROM ec_fluv_user_preferences_mturk WHERE `user_id` = {$userID} AND `name` = '{$name}'");
+      } else {
+         mysqli_query("INSERT INTO ec_fluv_user_preferences_mturk (`user_id`, `name`, `value`, `date`) VALUES ({$userID}, '{$name}', '{$value}', now()) ON DUPLICATE KEY UPDATE `value` = '{$value}', `date` = now()");
+      }
+   }
+   return loadUserPreferences_mturk($output, $userID);
 }
 
 /*
@@ -755,8 +1086,8 @@ function getUserbase(&$output, $sortField, $sortDir) {
       return getResult($output);
    }
    $users = array();
-   $result = mysql_query("SELECT `id`, `hash`, `name`, `email`, `first_seen`, `last_seen`, CASE WHEN `last_seen` >= date_sub(now(), INTERVAL 7 DAY) THEN 1 ELSE 0 END `active`, CASE WHEN `last_seen` = `first_seen` THEN -1 WHEN `last_seen` >= date_sub(now(), INTERVAL 10 MINUTE) THEN 1 ELSE 0 END `online`, CASE WHEN `first_seen` >= date_sub(now(), INTERVAL 7 DAY) THEN 1 ELSE 0 END `new` FROM ec_fluv_users ORDER BY `{$fields[$sortField]}` {$dirs[$sortDir]}");
-   while($row = mysql_fetch_array($result)) {
+   $result = mysqli_query("SELECT `id`, `hash`, `name`, `email`, `first_seen`, `last_seen`, CASE WHEN `last_seen` >= date_sub(now(), INTERVAL 7 DAY) THEN 1 ELSE 0 END `active`, CASE WHEN `last_seen` = `first_seen` THEN -1 WHEN `last_seen` >= date_sub(now(), INTERVAL 10 MINUTE) THEN 1 ELSE 0 END `online`, CASE WHEN `first_seen` >= date_sub(now(), INTERVAL 7 DAY) THEN 1 ELSE 0 END `new` FROM ec_fluv_users ORDER BY `{$fields[$sortField]}` {$dirs[$sortDir]}");
+   while($row = mysqli_fetch_array($result)) {
       $user = array(
          'id' => intval($row['id']),
          'hash' => $row['hash'],
@@ -776,13 +1107,13 @@ function getUserbase(&$output, $sortField, $sortDir) {
          return getResult($user);
       }
 
-      $result2 = mysql_query("SELECT epiweek_now, count(region_id) num FROM ec_fluv_submissions WHERE user_id = {$user['id']} GROUP BY epiweek_now ORDER BY epiweek_now ASC");
-      while($row2 = mysql_fetch_array($result2)) {
+      $result2 = mysqli_query("SELECT epiweek_now, count(region_id) num FROM ec_fluv_submissions WHERE user_id = {$user['id']} GROUP BY epiweek_now ORDER BY epiweek_now ASC");
+      while($row2 = mysqli_fetch_array($result2)) {
          array_push($user['submissions'], array(intval($row2['epiweek_now']), intval($row2['num'])));
       }
 
-      $result3 = mysql_query("SELECT epiweek_now, count(group_id) num FROM ec_fluv_submissions_hosp WHERE user_id = {$user['id']} GROUP BY epiweek_now ORDER BY epiweek_now ASC");
-      while($row3 = mysql_fetch_array($result3)) {
+      $result3 = mysqli_query("SELECT epiweek_now, count(group_id) num FROM ec_fluv_submissions_hosp WHERE user_id = {$user['id']} GROUP BY epiweek_now ORDER BY epiweek_now ASC");
+      while($row3 = mysqli_fetch_array($result3)) {
          array_push($user['submissions_hosp'], array(intval($row3['epiweek_now']), intval($row3['num'])));
       }
 
@@ -816,11 +1147,11 @@ function getLeaderboard(&$output, $type, $limit=25) {
       setResult($output, 2);
       return getResult($output);
    }
-   $result = mysql_query("SELECT u.`id`, u.`hash`, coalesce(CASE WHEN coalesce(p1.`value`, d1.`value`) = '1' THEN p2.`value` ELSE NULL END, d2.`value`) `name`, s.`{$field}` `score`, coalesce(p3.`value`, d3.`value`) `delphi` FROM ec_fluv_users u JOIN ec_fluv_scores s ON s.`user_id` = u.`id` JOIN ec_fluv_defaults d1 ON d1.`name` = 'advanced_leaderboard' LEFT JOIN ec_fluv_user_preferences p1 ON p1.`name` = d1.`name` AND p1.`user_id` = u.`id` JOIN ec_fluv_defaults d2 ON d2.`name` = 'advanced_initials' LEFT JOIN ec_fluv_user_preferences p2 ON p2.`name` = d2.`name` AND p2.`user_id` = u.`id` JOIN ec_fluv_defaults d3 ON d3.`name` = '_delphi' LEFT JOIN ec_fluv_user_preferences p3 ON p3.`name` = d3.`name` AND p3.`user_id` = u.`id` ORDER BY s.`{$field}` DESC, u.`id` DESC LIMIT {$limit}");
+   $result = mysqli_query("SELECT u.`id`, u.`hash`, coalesce(CASE WHEN coalesce(p1.`value`, d1.`value`) = '1' THEN p2.`value` ELSE NULL END, d2.`value`) `name`, s.`{$field}` `score`, coalesce(p3.`value`, d3.`value`) `delphi` FROM ec_fluv_users u JOIN ec_fluv_scores s ON s.`user_id` = u.`id` JOIN ec_fluv_defaults d1 ON d1.`name` = 'advanced_leaderboard' LEFT JOIN ec_fluv_user_preferences p1 ON p1.`name` = d1.`name` AND p1.`user_id` = u.`id` JOIN ec_fluv_defaults d2 ON d2.`name` = 'advanced_initials' LEFT JOIN ec_fluv_user_preferences p2 ON p2.`name` = d2.`name` AND p2.`user_id` = u.`id` JOIN ec_fluv_defaults d3 ON d3.`name` = '_delphi' LEFT JOIN ec_fluv_user_preferences p3 ON p3.`name` = d3.`name` AND p3.`user_id` = u.`id` ORDER BY s.`{$field}` DESC, u.`id` DESC LIMIT {$limit}");
    $lastScore = -1;
    $rank = 0;
    $rownum = 0;
-   while($row = mysql_fetch_array($result)) {
+   while($row = mysqli_fetch_array($result)) {
       $rownum++;
       $entry = array(
          'hash' => getMiniHash($row['hash']),
@@ -869,8 +1200,8 @@ function getNowcast(&$output, $epiweek, $region) {
       11 => 'hhs10',
    );
    $region = $regions[$region];
-   $result = mysql_query("SELECT value, std FROM epidata.`nowcasts` WHERE `epiweek` = {$epiweek} AND `location` = '{$region}'");
-   if($row = mysql_fetch_array($result)) {
+   $result = mysqli_query("SELECT value, std FROM epidata.`nowcasts` WHERE `epiweek` = {$epiweek} AND `location` = '{$region}'");
+   if($row = mysqli_fetch_array($result)) {
       $output['nowcast'] = array(
          'value' => floatval($row['value']),
          'std' => floatval($row['std']),
@@ -898,8 +1229,8 @@ Output:
    $output['season']['last_epiweek'] - The last epiweek of the contest
 */
 function getYearForCurrentSeason(&$output) {
-   $result = mysql_query("SELECT `year`, `first_round_epiweek`, `last_round_epiweek` FROM `ec_fluv_season`");
-   if($row = mysql_fetch_array($result)) {
+   $result = mysqli_query("SELECT `year`, `first_round_epiweek`, `last_round_epiweek` FROM `ec_fluv_season`");
+   if($row = mysqli_fetch_array($result)) {
       $output['season'] = array(
          'year' => intval($row['year']),
          'first_epiweek' => intval($row['first_round_epiweek']),
@@ -926,8 +1257,8 @@ Output:
    $output['task'][<$taskId>] - The datetime when the task will be executed
 */
 function getTaskDate(&$output, $taskId) {
-   $result = mysql_query("SELECT `date` FROM `automation`.`tasks` WHERE `id` = {$taskId}");
-   if($row = mysql_fetch_array($result)) {
+   $result = mysqli_query("SELECT `date` FROM `automation`.`tasks` WHERE `id` = {$taskId}");
+   if($row = mysqli_fetch_array($result)) {
       if(!isset($output['task'])) {
          $output['task'] = array();
       }
@@ -952,7 +1283,7 @@ Output:
       1 - Success
 */
 function updateSeason(&$output, $firstWeek, $lastWeek) {
-   mysql_query("UPDATE `ec_fluv_season` SET `first_round_epiweek` = {$firstWeek}, `last_round_epiweek` = {$lastWeek}");
+   mysqli_query("UPDATE `ec_fluv_season` SET `first_round_epiweek` = {$firstWeek}, `last_round_epiweek` = {$lastWeek}");
    setResult($output, 1);
    return getResult($output);
 }
@@ -970,7 +1301,7 @@ Output:
       1 - Success
 */
 function updateRound(&$output, $epiweek, $deadline) {
-   mysql_query("UPDATE `ec_fluv_round` SET `round_epiweek` = {$epiweek}, `deadline` = '{$deadline}'");
+   mysqli_query("UPDATE `ec_fluv_round` SET `round_epiweek` = {$epiweek}, `deadline` = '{$deadline}'");
    setResult($output, 1);
    return getResult($output);
 }
@@ -988,7 +1319,7 @@ Output:
       1 - Success
 */
 function setTaskDate(&$output, $taskId, $date) {
-   mysql_query("UPDATE `automation`.`tasks` SET `date` = '{$date}' WHERE `id` = {$taskId}");
+   mysqli_query("UPDATE `automation`.`tasks` SET `date` = '{$date}' WHERE `id` = {$taskId}");
    setResult($output, 1);
    return getResult($output);
 }
@@ -996,7 +1327,7 @@ function setTaskDate(&$output, $taskId, $date) {
 /*
 ===== resetEpicast =====
 Purpose:
-   Resets Epicast for a new forecasing season.
+   Resets Epicast for a new forecasting season.
 Input:
    $output - The array of return values (array reference)
    $year - The year of the *new* season (e.g. 2017 for 2017--2018)
@@ -1014,18 +1345,98 @@ function resetEpicast(&$output, $year, $firstEpiweek, $lastEpiweek, $deadline, $
    $tbl_new = 'ec_fluv_';
    $tables = array('defaults', 'forecast', 'regions', 'round', 'scores', 'season', 'submissions', 'user_preferences', 'users', 'age_groups', 'forecast_hosp', 'submissions_hosp');
    foreach($tables as $name) {
-      mysql_query("CREATE TABLE {$tbl_old}{$name} AS SELECT * FROM {$tbl_new}{$name}");
+      mysqli_query("CREATE TABLE {$tbl_old}{$name} AS SELECT * FROM {$tbl_new}{$name}");
    }
    $tables = array('forecast', 'scores', 'submissions', 'user_preferences', 'users', 'forecast_hosp', 'submissions_hosp');
    foreach($tables as $name) {
-      mysql_query("TRUNCATE TABLE {$tbl_new}{$name}");
+      mysqli_query("TRUNCATE TABLE {$tbl_new}{$name}");
    }
-   mysql_query("UPDATE `ec_fluv_season` SET `year` = {$year}, `first_round_epiweek` = {$firstEpiweek}, `last_round_epiweek` = {$lastEpiweek}");
-   mysql_query("UPDATE `ec_fluv_round` SET `round_epiweek` = {$firstEpiweek}, `deadline` = '{$deadline}'");
+   mysqli_query("UPDATE `ec_fluv_season` SET `year` = {$year}, `first_round_epiweek` = {$firstEpiweek}, `last_round_epiweek` = {$lastEpiweek}");
+   mysqli_query("UPDATE `ec_fluv_round` SET `round_epiweek` = {$firstEpiweek}, `deadline` = '{$deadline}'");
    $temp = array();
    registerUser($temp, $admin['name'], $admin['email'], $admin['email']);
    $preferences = array('_admin' => 1, '_delphi' => 1);
    saveUserPreferences($temp, $temp['user_id'], $preferences);
+   setResult($output, 1);
+   return getResult($output);
+}
+
+
+function debugForecasts(&$output, $regionID, $epiweek_now, $epiweek, $regionOrHosp) {
+  if ($regionOrHosp == "regions") {
+    $Users = mysqli_query("select `user_id` from ec_fluv_forecast where `epiweek_now` = {$epiweek_now} and `region_id` = {$regionID} and `epiweek` = {$epiweek}");
+  }
+  else {
+    $Users = mysqli_query("select `user_id` from ec_fluv_forecast_hosp where `epiweek_now` = {$epiweek_now} and `group_id` = {$regionID} and `epiweek` = {$epiweek}");
+  }
+   $allUsers = array();
+   while($row = mysqli_fetch_array($Users)) {
+        array_push($allUsers, $row['user_id']);
+      }
+
+  $allWeeks = array();
+  $weeks = mysqli_query("select `epiweek` from ec_fluv_forecast where `epiweek_now` = {$epiweek_now} and `region_id` = {$regionID} and `user_id` = 1");
+  while($row = mysqli_fetch_array($weeks)) {
+    // print ($row['epiweek']);
+    array_push($allWeeks, $row['epiweek']);
+     }
+
+   $fourWeekAhead = array();
+   if ($regionOrHosp == "regions") {
+     $monthAhead = mysqli_query("select `wili` from ec_fluv_forecast where `epiweek_now` = {$epiweek_now} and `region_id` = {$regionID} and `epiweek` = {$epiweek}");
+     while($row = mysqli_fetch_array($monthAhead)) {
+          array_push($fourWeekAhead, $row['wili']);
+     }
+   }
+   else {
+     $monthAhead = mysqli_query("select `value` from ec_fluv_forecast_hosp where `epiweek_now` = {$epiweek_now} and `group_id` = {$regionID} and `epiweek` = {$epiweek}");
+     while($row = mysqli_fetch_array($monthAhead)) {
+          array_push($fourWeekAhead, $row['value']);
+     }
+   }
+
+   $peakWeek = array();
+   $peakHeight = array();
+   $allForecasts = array();
+   foreach ($allUsers as $u) {
+     $allForecasts[$u] = array();
+     if ($regionOrHosp == "regions") {
+       $allSeasonForecast = mysqli_query("select `wili` from ec_fluv_forecast where `epiweek_now` = {$epiweek_now} and `region_id` = {$regionID} and `user_id` = {$u}");
+       while ($row = mysqli_fetch_array($allSeasonForecast)) {
+         array_push($allForecasts[$u], $row['wili']);
+       }
+     } else {
+       $allSeasonForecast = mysqli_query("select `value` from ec_fluv_forecast_hosp where `epiweek_now` = {$epiweek_now} and `group_id` = {$regionID} and `user_id` = {$u}");
+       while ($row = mysqli_fetch_array($allSeasonForecast)) {
+         array_push($allForecasts[$u], $row['value']);
+       }
+     }
+
+     $maxForecast = 0;
+     $maxWeek = 0;
+     foreach ($allWeeks as $week) {
+       if ($regionOrHosp == "regions") {
+         $forecast = mysqli_query("select `epiweek`, `wili` from ec_fluv_forecast where `epiweek_now` = {$epiweek_now} and `region_id` = {$regionID} and `user_id` = {$u} and `epiweek` = {$week}");
+         $row = mysqli_fetch_array($forecast);
+         if ($row['wili'] > $maxForecast) {
+           $maxForecast = $row['wili'];
+           $maxWeek = $week;
+         }
+       }
+       else {
+         $forecast = mysqli_query("select `epiweek`, `value` from ec_fluv_forecast_hosp where `epiweek_now` = {$epiweek_now} and `group_id` = {$regionID} and `user_id` = {$u} and `epiweek` = {$week}");
+         $row = mysqli_fetch_array($forecast);
+         if ($row['value'] > $maxForecast) {
+           $maxForecast = $row['value'];
+           $maxWeek = $week;
+         }
+       }
+     }
+     array_push($peakHeight, $maxForecast);
+     array_push($peakWeek, $maxWeek);
+  }
+
+   $output['debug'] = array('fourWeeksAhead' => &$fourWeekAhead, 'peakHeight' => &$peakHeight, 'peakWeek' => &$peakWeek, 'allForecasts' => &$allForecasts);
    setResult($output, 1);
    return getResult($output);
 }
