@@ -13,6 +13,12 @@ function checkCaptcha($captcha, $ip) {
    return $obj->success === true ? 1 : 0;
 }
 ?>
+
+<?php
+if (count($_REQUEST) > 0) {$instance = ($_REQUEST['location']);}
+else {$instance = 'all';}
+?>
+
 <script src='https://www.google.com/recaptcha/api.js'></script>
 <div class="box_article">
    <div class="centered">
@@ -29,7 +35,7 @@ function checkCaptcha($captcha, $ip) {
             fail('Uh oh, that email address doesn\'t look right. Please try again.');
          } else if(checkCaptcha($_REQUEST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']) != 1) {
             fail('Uh oh, could not verify captcha. Please try again later.');
-         } else if(registerUser($output, $name, $email, $epicastAdmin['email']) != 1) {
+         } else if(registerUser($output, $name, $email, $instance, $epicastAdmin['email']) != 1) {
             fail('Uh oh, something went wrong on our end. Please try again later.');
          } else {
             ?>
