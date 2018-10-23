@@ -3,6 +3,7 @@
 require_once('settings.php');
 require_once('database.php');
 require_once('utils.php');
+$skipLogin = true;
 
 //Connect to the database
 $dbh = databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName);

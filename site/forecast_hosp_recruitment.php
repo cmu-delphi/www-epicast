@@ -1,9 +1,16 @@
 <?php
-require_once('common/header.php');
-require_once('common/navigation.php');
+require_once('common/headerR.php');
+require_once('common/navigationR.php');
 if($error) {
    return;
 }
+
+$skipLogin = true;
+if ($skipLogin) {
+    $output['user_id'] = 1;
+    $output['user_hash'] = '8d5e3ea4a8872002240f44cd35b0298b';
+}
+
 if(getYearForCurrentSeason($output) !== 1) {
    die('unable to get year for current season');
 } else {
@@ -22,33 +29,13 @@ if(getEpiweekInfo($output) !== 1) {
 }
 //List of all age groups
 
-if(getAgeGroupsExtended($output, $output['user_id']) !== 1) {
+if(getAgeGroupsExtended($output, $output['user_id'], 'ca') !== 1) {
    fail('Error loading age group details, history, or forecast');
 }
 
-// if(isset($_REQUEST['skip_instructions'])) {
-//    $output['user_preferences']['skip_instructions'] = 1;
-//    if(saveUserPreferences($output, $output['user_id'], $output['user_preferences']) !== 1) {
-//       fail('Error updating preferences');
-//    }
-// }
-// if(isset($_REQUEST['region_id'])) {
-//    region_id = intval(mysqli_real_escape_string($_REQUEST['region_id']));
-// } else {
-//    //Default to USA National
-//    region_id = 1;
-// }
-// //Specific region
-// if(!isset($output['regions'][region_id])) {
-//    fail('Invalid region_id');
-// }
 $group_id = $_GET["id"];
-// if (count($group_id) == 0) {
-//   $group_id = 1;
-// }
-//Forecast from last round, particularly for this region
-// why need this when we have already called getAgeGroupsExtended
-if(loadForecast_hosp($output, 1, $group_id, true) !== 1) {
+
+if(loadForecast_hosp($output, $output['user_id'], $group_id, true) !== 1) {
    fail('Error loading last week forecast');
 }
 
@@ -102,42 +89,42 @@ $seasonOffsets = array_reverse($seasonOffsets);
 $seasonYears = array_reverse($seasonYears);
 // print (count($seasonYears)); // 14, 2004 ~ now (2018)
 
-if(getPreference($output, 'skip_instructions', 'int') !== 1) {
-   ?>
-   <div class="box_section">
-      <div class="box_section_title">
-         How to Enter Your Forecast
-         <div class="box_section_subtitle">Draw your forecast curve across the chart by clicking and dragging.</div>
-      </div>
-      <div class="centered">
-         <p>
-            <b></b><br />
-            &nbsp;<i class="fa fa-angle-right"></i>&nbsp; You can draw <i>in one motion</i> the entire trajectory.<br />
-            &nbsp;<i class="fa fa-angle-right"></i>&nbsp; You can edit any part of your forecast by redrawing just that part.<br />
-            &nbsp;<i class="fa fa-angle-right"></i>&nbsp; You can adjust a single point by dragging it up or down.<br />
-            The animation below demonstrates these actions.
-            (If you don't see the animation, click <a target="_blank" href="images/tutorial.gif">here</a>.)
-         </p>
-         <video width="1112" height="480" controls autoplay loop>
-            <source src="images/tutorial.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-         </video>
-         <p>
-            <?php
-            createForm('reload', 'forecast_hosp.php#top', array('group_id', $group_id, 'skip_instructions', '1'));
-            button('fa-check', 'I Understand', "submit('reload')");
-            ?>
-         </p>
-      </div>
-   </div>
-   <?php
-} else {
+//if(getPreference($output, 'skip_instructions', 'int') !== 1) {
+//   ?>
+<!--   <div class="box_section">-->
+<!--      <div class="box_section_title">-->
+<!--         How to Enter Your Forecast-->
+<!--         <div class="box_section_subtitle">Draw your forecast curve across the chart by clicking and dragging.</div>-->
+<!--      </div>-->
+<!--      <div class="centered">-->
+<!--         <p>-->
+<!--            <b></b><br />-->
+<!--            &nbsp;<i class="fa fa-angle-right"></i>&nbsp; You can draw <i>in one motion</i> the entire trajectory.<br />-->
+<!--            &nbsp;<i class="fa fa-angle-right"></i>&nbsp; You can edit any part of your forecast by redrawing just that part.<br />-->
+<!--            &nbsp;<i class="fa fa-angle-right"></i>&nbsp; You can adjust a single point by dragging it up or down.<br />-->
+<!--            The animation below demonstrates these actions.-->
+<!--            (If you don't see the animation, click <a target="_blank" href="images/tutorial.gif">here</a>.)-->
+<!--         </p>-->
+<!--         <video width="1112" height="480" controls autoplay loop>-->
+<!--            <source src="images/tutorial.mp4" type="video/mp4">-->
+<!--            Your browser does not support the video tag.-->
+<!--         </video>-->
+<!--         <p>-->
+<!--            --><?php
+//            createForm('reload', 'forecast_hosp_recruitment.php#top', array('group_id', $group_id, 'skip_instructions', '1'));
+//            button('fa-check', 'I Understand', "submit('reload')");
+//            ?>
+<!--         </p>-->
+<!--      </div>-->
+<!--   </div>-->
+<!--   --><?php
+//} else {
 ?>
 
 
 <?php
 foreach($output['ageGroups'] as $g) {
-   createForm('forecast_' . $g['id'], 'forecast_hosp.php#top', array('group_id', $g['id']));
+   createForm('forecast_' . $g['id'], 'forecast_hosp_recruitment.php#top', array('group_id', $g['id']));
 }
 ?>
 
@@ -151,9 +138,7 @@ foreach($output['ageGroups'] as $g) {
                <?= ($ages[$group_id]) ?>
             </span>
          </div>
-         <div style="float: right;">
-            <?php button('fa-upload', 'Save &amp; Continue', "submitForecast(true)", '', 'button_submit'); ?>
-         </div>
+
          <div class="box_status_info">
             <span id="status_message">Draw your forecast by clicking and dragging across the chart below.</span>
             <span id="status_icon"><i class="fa fa-info-circle"></i></span>
@@ -187,7 +172,7 @@ foreach($output['ageGroups'] as $g) {
             $currentYear = $seasonYears[count($seasonYears) - 1]; // $currentYear = 2017
 
             foreach($seasonYears as $year) {
-              if($year == 2009 && $showPandemic !== 1) {
+              if($year == 2009) {
                  continue;
               }
               if($g['id'] == $group_id && $year == $currentYear) {
@@ -197,24 +182,43 @@ foreach($output['ageGroups'] as $g) {
                     class="any_hidden any_cursor_pointer">
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     <i class="fa fa-check-square"></i>
-                    <span class="effect_tiny"><?= sprintf('%d-now', $year) ?></span>
+<!--                    <span class="effect_tiny">--><?//= sprintf('%d-now', $year) ?><!--</span>-->
+                      <span class="effect_tiny">
+                          <?= sprintf('current year') ?>
+                      </span>
                   </div>
                   <?php
                } else {
                  // Else load the checkbox list and collapse
-                  ?>
-                  <div id="container_<?= $g['id'] ?>_<?= $year ?>"
-                    class="any_hidden any_cursor_pointer"
-                    onclick="toggleSeason(<?= $g['id'] ?>, <?= $year ?>)">
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <i id="checkbox_<?= $g['id'] ?>_<?= $year ?>"
-                      class="fa fa-square-o" style="color: <?= getColor($g['id'], $year) ?>">
-                    </i>
-                    <span class="effect_tiny">
-                      <?= sprintf('%d-%s', $year, ($year == $currentYear) ? 'now' : '' . ($year + 1)) ?><?= ($year == 2009 ? ' pdm' : '')?>
-                    </span>
-                  </div>
-                  <?php
+                  if ($year == $currentYear) {
+                      ?>
+                      <div id="container_<?= $g['id'] ?>_<?= $year ?>"
+                           class="any_hidden any_cursor_pointer"
+                           onclick="toggleSeason(<?= $g['id'] ?>, <?= $year ?>)">
+                          &nbsp;&nbsp;&nbsp;&nbsp;
+                          <i id="checkbox_<?= $g['id'] ?>_<?= $year ?>"
+                             class="fa fa-square-o" style="color: <?= getColor($g['id'], $year) ?>">
+                          </i>
+                          <span class="effect_tiny">
+                              <?= sprintf('current year') ?><?= ($year == 2009 ? ' pdm' : '')?>
+                           </span>
+                      </div>
+                <?php
+                  } else {
+                      ?>
+                      <div id="container_<?= $g['id'] ?>_<?= $year ?>"
+                           class="any_hidden any_cursor_pointer"
+                           onclick="toggleSeason(<?= $g['id'] ?>, <?= $year ?>)">
+                          &nbsp;&nbsp;&nbsp;&nbsp;
+                          <i id="checkbox_<?= $g['id'] ?>_<?= $year ?>"
+                             class="fa fa-square-o" style="color: <?= getColor($g['id'], $year) ?>">
+                          </i>
+                          <span class="effect_tiny">
+                              <?= sprintf('year %d', ($year - 2009)) ?><?= ($year == 2009 ? ' pdm' : '')?>
+                          </span>
+                      </div>
+                      <?php
+                }
                }
             }
          }
@@ -571,14 +575,14 @@ foreach($output['ageGroups'] as $g) {
       drawText(g, groupNames[group_id] + ', ' + Math.round(xRange[0] / 100) + '+', x2 - 3, y, 0, Align.right, Align.center);
       style.dash = [];
       drawLine(x1, y - 3, x2, y + 3, style);
-      for(var i = 0; i < selectedSeasons.length; i++) {
-         y += dy;
-         var r = selectedSeasons[i][0];
-         var s = selectedSeasons[i][1];
-         var style = curveStyles[r][s];
-         drawText(g, groupNames[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
-         drawLine(x1, y - 3, x2, y + 3, style);
-      }
+//      for(var i = 0; i < selectedSeasons.length; i++) {
+//         y += dy;
+//         var r = selectedSeasons[i][0];
+//         var s = selectedSeasons[i][1];
+//         var style = curveStyles[r][s];
+//         drawText(g, groupNames[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
+//         drawLine(x1, y - 3, x2, y + 3, style);
+//      }
       //tooltip
       if(tooltip != null) {
          drawTooltip(g, tooltip);
@@ -818,11 +822,11 @@ foreach($output['ageGroups'] as $g) {
 
          if($next !== null) {
             ?>
-            redirect('forecast_hosp.php?id=<?= $next ?>');
+            redirect('forecast_hosp_recruitment.php?id=<?= $next ?>');
             <?php
          } else {
             ?>
-            redirect('home.php');
+            redirect('recruitment.php');
             <?php
          }
          ?>
@@ -980,6 +984,6 @@ foreach($output['ageGroups'] as $g) {
    });
 </script>
 <?php
-}
+//}
 require_once('common/footer.php');
 ?>

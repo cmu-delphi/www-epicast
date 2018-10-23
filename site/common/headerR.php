@@ -41,11 +41,9 @@ if(!$dbh) {
       ?>
       <div class="box_header">
          <div class="box_title box_title_mega">
-            <a href="/" style="text-decoration: none; color: inherit;">
-               <span class="effect_delphi">Epicast</span>
+               <span class="effect_delphi">Welcome to Epicast</span>
                <br />
-               <span class="effect_fluv">&lt;Influenza Edition&gt;</span>
-            </a>
+               <span class="effect_fluv">&lt;Influenza Edition - California&gt;</span>
          </div>
          <div class="box_subtitle">Epidemiological Forecasting by <span class="effect_delphi"><a class="delphi" target="_blank" href="https://delphi.midas.cs.cmu.edu/">DELPHI</a></span></div>
       </div>
@@ -78,13 +76,12 @@ if(!$dbh) {
          <div class="box_mininav">
             <span class="effect_tiny_header">Epicaster: <?= $output['user_name'] ?> [<?= $hash ?>]<br /></span>
             <?php
-            createLink('Home', 'home.php');
+            createLink('Home', 'recruiment.php');
             createDivider('&middot;');
             createLink('Preferences', 'preferences.php');
             createDivider('&middot;');
             createLink('Leaderboards', 'scores.php');
             createDivider('&middot;');
-            createLink('Logout', 'logout.php');
             createDivider('|');
             if(isAdmin($output)) {
                createLink('<i>Admin</i>', 'admin.php');

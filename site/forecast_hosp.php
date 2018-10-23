@@ -22,7 +22,7 @@ if(getEpiweekInfo($output) !== 1) {
 }
 //List of all age groups
 
-if(getAgeGroupsExtended($output, $output['user_id']) !== 1) {
+if(getAgeGroupsExtended($output, $output['user_id'], 'network_all') !== 1) {
    fail('Error loading age group details, history, or forecast');
 }
 

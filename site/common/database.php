@@ -502,7 +502,7 @@ Output:
       4 - Failure (forecast)
    $output['ageGroups'] - An array of age groups
 */
-function getAgeGroupsExtended(&$output, $userID) {
+function getAgeGroupsExtended(&$output, $userID, $location) {
    $temp = array();
    if(getEpiweekInfo($temp) !== 1) {
       return getResult($temp);
@@ -515,7 +515,7 @@ function getAgeGroupsExtended(&$output, $userID) {
    //History and forecast for every region
    foreach($output['ageGroups'] as &$g) {
 
-      if(getHistory_Hosp($output, $g['flusurv_name'], $firstWeek) !== 1) {
+      if(getHistory_Hosp($output, $g['flusurv_name'], $firstWeek, $location) !== 1) {
          return getResult($output);
       }
       $g['history'] = $output['history'];
@@ -598,13 +598,13 @@ Input:
 Output:
    $output['history'] - Arrays of epiweeks and historical incidence (wILI) for the region
 */
-function getHistory_Hosp(&$output, $flusurv_name, $firstWeek) {
-    $dbh = mysqli_connect("127.0.0.1:3307", "epi", "7709a59c337c5dfb", "epicast2");
+function getHistory_Hosp(&$output, $flusurv_name, $firstWeek, $location) {
+   $dbh = mysqli_connect("127.0.0.1:3307", "epi", "7709a59c337c5dfb", "epicast2");
    $result = mysqli_query($dbh,"SELECT `epidata`.`flusurv`.`issue`, `epidata`.`flusurv`.`epiweek`, `epidata`.`flusurv`.`{$flusurv_name}` AS `rate` " .
    "FROM (SELECT `epiweek`, max(`issue`) AS `latest` " .
-   "FROM `epidata`.`flusurv` WHERE `location` = 'network_all' AND `epiweek` >= {$firstWeek} GROUP BY `epiweek`) AS `issues` " .
+   "FROM `epidata`.`flusurv` WHERE `location` = '{$location}' AND `epiweek` >= {$firstWeek} GROUP BY `epiweek`) AS `issues` " .
    "JOIN `epidata`.`flusurv` ON `epidata`.`flusurv`.`issue` = `issues`.`latest` AND `epidata`.`flusurv`.`epiweek` = `issues`.`epiweek` " .
-   "WHERE `location` = 'network_all' ORDER BY `epidata`.`flusurv`.`epiweek` ASC");
+   "WHERE `location` = '{$location}' ORDER BY `epidata`.`flusurv`.`epiweek` ASC");
 
    $dateArr = array();
    $rateArr = array();
@@ -1392,7 +1392,7 @@ function resetEpicast(&$output, $year, $firstEpiweek, $lastEpiweek, $deadline, $
    mysqli_query($dbh,"UPDATE `ec_fluv_season` SET `year` = {$year}, `first_round_epiweek` = {$firstEpiweek}, `last_round_epiweek` = {$lastEpiweek}");
    mysqli_query($dbh,"UPDATE `ec_fluv_round` SET `round_epiweek` = {$firstEpiweek}, `deadline` = '{$deadline}'");
    $temp = array();
-   registerUser($temp, $admin['name'], $admin['email'], $admin['email']);
+   registerUser($temp, $admin['name'], $admin['email'], 'all', $admin['email']);
    $preferences = array('_admin' => 1, '_delphi' => 1);
    saveUserPreferences($temp, $temp['user_id'], $preferences);
    setResult($output, 1);

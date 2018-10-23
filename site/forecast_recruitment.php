@@ -1,9 +1,16 @@
 <?php
-require_once('common/header.php');
-require_once('common/navigation.php');
+require_once('common/headerR.php');
+require_once('common/navigationR.php');
 if($error) {
    return;
 }
+
+$skipLogin = true;
+if ($skipLogin) {
+    $output['user_id'] = 1;
+    $output['user_hash'] = '8d5e3ea4a8872002240f44cd35b0298b';
+}
+
 if(getYearForCurrentSeason($output) !== 1) {
    die('unable to get year for current season');
 } else {
@@ -11,7 +18,8 @@ if(getYearForCurrentSeason($output) !== 1) {
 }
 function getColor($regionID, $seasonID) {
    $colors =  ["#FF90C9","#B903AA","#D16100","#CC0744","#000035","#7B4F4B","#A1C299", // 1997-2003 (hidden by default)
- "#A079BF","#1CE6FF","#FF34FF","#FF4A46","#008941","#006FA6","#A30059","#7A4900","#0000A6","#63FFAC","#004D43","#FFAA00","#4FC601"]; // 2004~current, 2009 is hidden on the graph
+ "#A079BF","#1CE6FF","#FF34FF","#FF4A46","#008941","#006FA6","#A30059","#7A4900","#0000A6","#63FFAC","#004D43","#FFAA00","#4FC601", "#FFAA00",
+       "#63FFAC","#004D43","#FFAA00","#4FC601", "#FFAA00"]; // 2004~current, 2009 is hidden on the graph
    $idx = $seasonID - 1997;
    $color = $colors[$idx];
    return $color;
@@ -58,7 +66,6 @@ $showPandemic = getPreference($output, 'advanced_pandemic', 'int');
 //Calculate a few helpful stats
 $firstWeekOfChart = 30;
 $currentWeek = $output['epiweek']['round_epiweek'];
-echo($currentWeek);
 
 if(($currentWeek % 100) >= $firstWeekOfChart) {
    $yearStart = intval($currentWeek / 100);
@@ -94,41 +101,41 @@ if($seasonOffsets[count($seasonOffsets) - 1] != 0) {
 $seasonOffsets = array_reverse($seasonOffsets);
 $seasonYears = array_reverse($seasonYears);
 //Nowcast (may or may not be available)
-getNowcast($output, addEpiweeks($currentWeek, 1), $regionID);
-if(getPreference($output, 'skip_instructions', 'int') !== 1) {
-   ?>
-   <div class="box_section">
-      <div class="box_section_title">
-         How to Enter Your Forecast
-         <div class="box_section_subtitle">Draw your forecast curve across the chart by clicking and dragging.</div>
-      </div>
-      <div class="centered">
-         <p>
-            <b></b><br />
-            &nbsp;<i class="fa fa-angle-right"></i>&nbsp; You can draw <i>in one motion</i> the entire trajectory.<br />
-            &nbsp;<i class="fa fa-angle-right"></i>&nbsp; You can edit any part of your forecast by redrawing just that part.<br />
-            &nbsp;<i class="fa fa-angle-right"></i>&nbsp; You can adjust a single point by dragging it up or down.<br />
-            The animation below demonstrates these actions.
-            (If you don't see the animation, click <a target="_blank" href="images/tutorial.gif">here</a>.)
-         </p>
-         <video width="1112" height="480" controls autoplay loop>
-            <source src="images/tutorial.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-         </video>
-         <p>
-            <?php
-            createForm('reload', 'forecast.php#top', array('region_id', $regionID, 'skip_instructions', '1'));
-            button('fa-check', 'I Understand', "submit('reload')");
-            ?>
-         </p>
-      </div>
-   </div>
-   <?php
-} else {
+//getNowcast($output, addEpiweeks($currentWeek, 1), $regionID);
+//if(getPreference($output, 'skip_instructions', 'int') !== 1) {
+//   ?>
+<!--   <div class="box_section">-->
+<!--      <div class="box_section_title">-->
+<!--         How to Enter Your Forecast-->
+<!--         <div class="box_section_subtitle">Draw your forecast curve across the chart by clicking and dragging.</div>-->
+<!--      </div>-->
+<!--      <div class="centered">-->
+<!--         <p>-->
+<!--            <b></b><br />-->
+<!--            &nbsp;<i class="fa fa-angle-right"></i>&nbsp; You can draw <i>in one motion</i> the entire trajectory.<br />-->
+<!--            &nbsp;<i class="fa fa-angle-right"></i>&nbsp; You can edit any part of your forecast by redrawing just that part.<br />-->
+<!--            &nbsp;<i class="fa fa-angle-right"></i>&nbsp; You can adjust a single point by dragging it up or down.<br />-->
+<!--            The animation below demonstrates these actions.-->
+<!--            (If you don't see the animation, click <a target="_blank" href="images/tutorial.gif">here</a>.)-->
+<!--         </p>-->
+<!--         <video width="1112" height="480" controls autoplay loop>-->
+<!--            <source src="images/tutorial.mp4" type="video/mp4">-->
+<!--            Your browser does not support the video tag.-->
+<!--         </video>-->
+<!--         <p>-->
+<!--            --><?php
+//            createForm('reload', 'forecast_recruitment.php#top', array('region_id', $regionID, 'skip_instructions', '1'));
+//            button('fa-check', 'I Understand', "submit('reload')");
+//            ?>
+<!--         </p>-->
+<!--      </div>-->
+<!--   </div>-->
+<!--   --><?php
+//} else {
 ?>
 <?php
 foreach($output['regions'] as $r) {
-   createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
+   createForm('forecast_' . $r['id'], 'forecast_recruitment.php#top', array('region_id', $r['id']));
 }
 ?>
 <?php fail('Whoa, your screen is too small! Please visit this site on a non-mobile device, or try to expand your browser window. Sorry about that!', 'box_nocanvas', true); ?>
@@ -141,9 +148,9 @@ foreach($output['regions'] as $r) {
                [<?= htmlspecialchars($region['states']) ?>]
             </span>
          </div>
-         <div style="float: right;">
-            <?php button('fa-upload', 'Save &amp; Continue', "submitForecast(true)", '', 'button_submit'); ?>
-         </div>
+<!--         <div style="float: right;">-->
+<!--            --><?php //button('fa-upload', 'Save &amp; Continue', "submitForecast(true)", '', 'button_submit'); ?>
+<!--         </div>-->
          <div class="box_status_info">
             <span id="status_message">Draw your forecast by clicking and dragging across the chart below.</span>
             <span id="status_icon"><i class="fa fa-info-circle"></i></span>
@@ -167,23 +174,37 @@ foreach($output['regions'] as $r) {
             $numHHS = 11;
             if($regionID <= $numHHS) {
                foreach($seasonYears as $year) {
-                  if($year == 2009 && $showPandemic !== 1) {
+                  if($year == 2009) {
                      continue;
                   }
                   if($r['id'] == $regionID && $year == $currentYear) {
                      ?>
                      <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
-                        <span class="effect_tiny"><?= sprintf('%d-now', $year) ?></span>
+                        <span class="effect_tiny"><?= sprintf('current year') ?></span>
                      </div>
                      <?php
                   } else {
-                     ?>
-                     <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer" onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o" style="color: <?= getColor($r['id'], $year) ?>"></i>
-                        <span class="effect_tiny"><?= sprintf('%d-%s', $year, ($year == $currentYear) ? 'now' : '' . ($year + 1)) ?><?= ($year == 2009 ? ' pdm' : '')?></span>
-                     </div>
-                     <?php
+                      if ($year == $currentYear) {
+                          ?>
+                          <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer"
+                               onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
+                                      id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
+                                      style="color: <?= getColor($r['id'], $year) ?>"></i>
+                              <span class="effect_tiny"><?= sprintf('current year') ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
+                          </div>
+                          <?php
+                      } else {
+                          ?>
+                          <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer"
+                               onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
+                                      id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
+                                      style="color: <?= getColor($r['id'], $year) ?>"></i>
+                              <span class="effect_tiny"><?= sprintf('year %d', ($year - 2003)) ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
+                          </div>
+                          <?php
+                          }
                   }
-               }
+                  }
             } else { // for each states, data are only available starting 2010-2011 season
                foreach($seasonYears as $year) {
                   if($year <= 2009) {
@@ -194,17 +215,31 @@ foreach($output['regions'] as $r) {
                      continue;
                   }
                   if($r['id'] == $regionID && $year == $currentYear) {
-                     ?>
-                     <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
-                        <span class="effect_tiny"><?= sprintf('%d-now', $year) ?></span>
-                     </div>
-                     <?php
+                      ?>
+                      <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
+                          <span class="effect_tiny"><?= sprintf('current year') ?></span>
+                      </div>
+                      <?php
                   } else {
-                     ?>
-                     <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer" onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o" style="color: <?= getColor($r['id'], $year) ?>"></i>
-                        <span class="effect_tiny"><?= sprintf('%d-%s', $year, ($year == $currentYear) ? 'now' : '' . ($year + 1)) ?><?= ($year == 2009 ? ' pdm' : '')?></span>
-                     </div>
-                     <?php
+                      if ($year == $currentYear) {
+                          ?>
+                          <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer"
+                               onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
+                                      id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
+                                      style="color: <?= getColor($r['id'], $year) ?>"></i>
+                              <span class="effect_tiny"><?= sprintf('current year') ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
+                          </div>
+                          <?php
+                      } else {
+                          ?>
+                          <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer"
+                               onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
+                                      id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
+                                      style="color: <?= getColor($r['id'], $year) ?>"></i>
+                              <span class="effect_tiny"><?= sprintf('year %d', ($year - 2009)) ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
+                          </div>
+                          <?php
+                      }
                   }
                }
             }
@@ -267,12 +302,12 @@ foreach($output['regions'] as $r) {
    var lastDrag = null;
    var tooltip = null;
    // nowcast
-   var showNowcast = <?= (getPreference($output, '_delphi', 'int') == 1 && isset($output['nowcast'])) ? 'true' : 'false' ?>;
-   <?php
-   if(isset($output['nowcast'])) {
-      printf('var nowcast = [%.5f, %.5f];', $output['nowcast']['value'], $output['nowcast']['std']);
-   }
-   ?>
+//   var showNowcast = <?//= (getPreference($output, '_delphi', 'int') == 1 && isset($output['nowcast'])) ? 'true' : 'false' ?>//;
+<!--   --><?php
+//   if(isset($output['nowcast'])) {
+//      printf('var nowcast = [%.5f, %.5f];', $output['nowcast']['value'], $output['nowcast']['std']);
+//   }
+//   ?>
    //x-axis
    function getChartWidth() {
       return canvas.width - marginLeft() - marginRight();
@@ -592,14 +627,14 @@ foreach($output['regions'] as $r) {
       drawText(g, regionNames[regionID] + ', ' + Math.round(xRange[0] / 100) + '+', x2 - 3, y, 0, Align.right, Align.center);
       style.dash = [];
       drawLine(x1, y - 3, x2, y + 3, style);
-      for(var i = 0; i < selectedSeasons.length; i++) {
-         y += dy;
-         var r = selectedSeasons[i][0];
-         var s = selectedSeasons[i][1];
-         var style = curveStyles[r][s];
-         drawText(g, regionNames[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
-         drawLine(x1, y - 3, x2, y + 3, style);
-      }
+//      for(var i = 0; i < selectedSeasons.length; i++) {
+//         y += dy;
+//         var r = selectedSeasons[i][0];
+//         var s = selectedSeasons[i][1];
+//         var style = curveStyles[r][s];
+//         drawText(g, regionNames[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
+//         drawLine(x1, y - 3, x2, y + 3, style);
+//      }
       // error bars
       drawText(g, '90% Confidence Interval', x2 - 3, y+25, 0, Align.right, Align.center);
       g.fillStyle = 'rgba(0, 0, 0, 0.5)';
@@ -1010,6 +1045,6 @@ foreach($output['regions'] as $r) {
    });
 </script>
 <?php
-}
+//}
 require_once('common/footer.php');
 ?>

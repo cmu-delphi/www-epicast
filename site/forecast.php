@@ -32,7 +32,8 @@ if(isset($_REQUEST['skip_instructions'])) {
    }
 }
 if(isset($_REQUEST['region_id'])) {
-   $regionID = intval(mysqli_real_escape_string($_REQUEST['region_id']));
+    $dbh = mysqli_connect("127.0.0.1:3307", "epi", "7709a59c337c5dfb", "epicast2");
+   $regionID = intval(mysqli_real_escape_string($dbh, $_REQUEST['region_id']));
 } else {
    //Default to USA National
    $regionID = 1;

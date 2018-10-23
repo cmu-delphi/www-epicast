@@ -48,7 +48,7 @@ function getMiniHash($hash) {
 
 function attemptLogin(&$output) {
    $hash = null;
-   $dbh = mysqli_connect("127.0.0.1:3306", "epi", "7709a59c337c5dfb");
+   $dbh = mysqli_connect("127.0.0.1:3307", "epi", "7709a59c337c5dfb", "epicast2");
    if(isset($_REQUEST['user']) || isset($_SESSION['hash_fluv'])) {
       if(isset($_REQUEST['user'])) {
          $hash = mysqli_real_escape_string($dbh, $_REQUEST['user']);
@@ -68,6 +68,7 @@ function attemptLogin(&$output) {
          $hash = null;
       }
    }
+//   print("returning $hash (not set)");
    return $hash;
 }
 

@@ -63,10 +63,11 @@ $account_fields = array();
    $updatedEmail = null;
    $updatedAdvanced = null;
    $updatedAccount = null;
+   $dbh = mysqli_connect("127.0.0.1:3307", "epi", "7709a59c337c5dfb", "epicast2");
    if(allSet('action', $survey_fields) && $_REQUEST['action'] == 'survey') {
       $preferences = array();
       foreach($survey_fields as $f) {
-         $value = intval(mysqli_real_escape_string($_REQUEST[$f]));
+         $value = intval(mysqli_real_escape_string($dbh, $_REQUEST[$f]));
          $preferences['survey_' . $f] = ($value === 0 || $value === 1) ? $value : null;
       }
       $updatedSurvey = (saveUserPreferences($output, $output['user_id'], $preferences) == 1);
@@ -74,7 +75,7 @@ $account_fields = array();
    if(allSet('action', $email_fields) && $_REQUEST['action'] == 'email') {
       $preferences = array();
       foreach($email_fields as $f) {
-         $value = intval(mysqli_real_escape_string($_REQUEST[$f]));
+         $value = intval(mysqli_real_escape_string($dbh, $_REQUEST[$f]));
          $preferences['email_' . $f] = ($value === 1) ? $value : 0;
       }
       $updatedEmail = (saveUserPreferences($output, $output['user_id'], $preferences) == 1);
@@ -82,7 +83,7 @@ $account_fields = array();
    if(allSet('action', $advanced_fields) && $_REQUEST['action'] == 'advanced') {
       $preferences = array();
       foreach($advanced_fields as $f) {
-         $value = intval(mysqli_real_escape_string($_REQUEST[$f]));
+         $value = intval(mysqli_real_escape_string($dbh, $_REQUEST[$f]));
          $preferences['advanced_' . $f] = ($value === 1) ? $value : 0;
       }
 
@@ -164,6 +165,7 @@ $account_fields = array();
       <?php
    }
    ?>
+
    <div class="box_section">
       <div class="box_section_title">
          Your Privacy
@@ -182,6 +184,7 @@ $account_fields = array();
          </p>
       </div>
    </div>
+
    <div class="box_section">
       <div class="box_section_title">
          Account Settings
@@ -368,6 +371,33 @@ $account_fields = array();
                   createPreference($output, 'Forecast Hospitalization', $prefix, 'hospitalization', 'bool');
                   ?>
                </table>
+
+
+                <p class="text_title left">Select Your Targets</p>
+                <p class="text_body left">
+                    You can choose what locations to forecast for in this section!
+                </p>
+
+
+                <input type="checkbox" name="vehicle1" value="Bike"> Nat<br>
+                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 1<br>
+                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 2<br>
+                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 3<br>
+                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 4<br>
+                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 5<br>
+                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 6<br>
+                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 7<br>
+                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 8<br>
+                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 9<br>
+                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 10<br>
+
+                <input type="checkbox" name="vehicle2" value="Car"> Georgia<br>
+                <input type="checkbox" name="vehicle2" value="Car"> Pennsylvania<br>
+                <input type="checkbox" name="vehicle2" value="Car"> Washington DC<br>
+                <input type="checkbox" name="vehicle2" value="Car"> Texas<br>
+                <input type="checkbox" name="vehicle2" value="Car"> Oregon<br>
+
+                <input type="checkbox" name="vehicle2" value="Car"> Hospitalization - Above States<br>
 
 
             </form>

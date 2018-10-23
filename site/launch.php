@@ -11,10 +11,7 @@ $dbh = databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName);
 session_start();
 $output = array();
 $hash = attemptLogin($output);
-// print($output);
-// print ($hash);
-// $hash = "147D9191";
-// $location = 'forecast_mturk.php?id=1';
+
 
 if($hash !== null) {
    if(getPreference($output, 'skip_intro', 'int') === 1) {
