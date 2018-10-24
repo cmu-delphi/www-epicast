@@ -6,6 +6,7 @@ if($error) {
    return;
 }
 ?>
+
 <div class="box_article">
    <div class="centered">
       <h3>
