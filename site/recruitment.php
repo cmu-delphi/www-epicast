@@ -1,6 +1,7 @@
 <?php
 require('common/headerR.php');
 require('common/navigationR.php');
+require_once('common/settings.php');
 
 if($error) {
     return;

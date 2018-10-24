@@ -112,7 +112,11 @@ function showNavigation_mturk($output, $getUrl) {
 
   <?php
   $defaultNumRegion = 16;
+//  get the 0 and 1 array for the 16 regions, through a call of a function in database.php
+//  targetPreference = getTargetPreference();
+//  todo: get user id (can be done through getting hash)
   for ($i = 1; $i <= $defaultNumRegion; $i++) {
+//      if 0: continue
     $r = $output['regions'][$i];
     if($r['completed']) {
        $class = 'box_region_nav_complete';

@@ -4,9 +4,6 @@ require_once('common/settings.php');
 require_once('common/database.php');
 require_once('common/utils.php');
 
-//Connect to the database
-$dbh = databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName);
-
 //The header
 session_start();
 $output = array();

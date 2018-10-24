@@ -1,8 +1,14 @@
 <?php
 require_once('common/header.php');
+require_once('common/database.php');
+require_once('common/settings.php');
 if($error) {
    return;
 }
+
+//Connect to the database
+$dbh = databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName);
+
 if(getYearForCurrentSeason($output) !== 1) {
    die('unable to get year for current season');
 } else {
@@ -63,7 +69,6 @@ $account_fields = array();
    $updatedEmail = null;
    $updatedAdvanced = null;
    $updatedAccount = null;
-   $dbh = mysqli_connect("127.0.0.1:3307", "epi", "7709a59c337c5dfb", "epicast2");
    if(allSet('action', $survey_fields) && $_REQUEST['action'] == 'survey') {
       $preferences = array();
       foreach($survey_fields as $f) {
@@ -375,32 +380,51 @@ $account_fields = array();
 
                 <p class="text_title left">Select Your Targets</p>
                 <p class="text_body left">
-                    You can choose what locations to forecast for in this section!
+                    You can choose targets to forecast for in this section!
                 </p>
 
 
-                <input type="checkbox" name="vehicle1" value="Bike"> Nat<br>
-                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 1<br>
-                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 2<br>
-                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 3<br>
-                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 4<br>
-                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 5<br>
-                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 6<br>
-                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 7<br>
-                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 8<br>
-                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 9<br>
-                <input type="checkbox" name="vehicle2" value="Car"> HHS Region 10<br>
+<!--                --><?php
+//                    $targets = ['nat', 'hhs1', 'hhs2', 'hhs3', 'hhs4', 'hhs5', 'hhs6', 'hhs7', 'hhs8', 'hhs9', 'hhs10',
+//                        'ga', 'pa', 'dc', 'tx', 'or'];
+//                ?>
 
-                <input type="checkbox" name="vehicle2" value="Car"> Georgia<br>
-                <input type="checkbox" name="vehicle2" value="Car"> Pennsylvania<br>
-                <input type="checkbox" name="vehicle2" value="Car"> Washington DC<br>
-                <input type="checkbox" name="vehicle2" value="Car"> Texas<br>
-                <input type="checkbox" name="vehicle2" value="Car"> Oregon<br>
+                <input type="checkbox" name="target[]" value="nat"> Nat<br>
+                <input type="checkbox" name="target[]" value="hhs1"> HHS Region 1<br>
+                <input type="checkbox" name="target[]" value="hhs2"> HHS Region 2<br>
+                <input type="checkbox" name="target[]" value="hhs3"> HHS Region 3<br>
+                <input type="checkbox" name="target[]" value="hhs4"> HHS Region 4<br>
+                <input type="checkbox" name="target[]" value="hhs5"> HHS Region 5<br>
+                <input type="checkbox" name="target[]" value="hhs6"> HHS Region 6<br>
+                <input type="checkbox" name="target[]" value="hhs7"> HHS Region 7<br>
+                <input type="checkbox" name="target[]" value="hhs8"> HHS Region 8<br>
+                <input type="checkbox" name="target[]" value="hhs9"> HHS Region 9<br>
+                <input type="checkbox" name="target[]" value="hhs10"> HHS Region 10<br>
 
-                <input type="checkbox" name="vehicle2" value="Car"> Hospitalization - Above States<br>
+                <input type="checkbox" name="target[]" value="ga"> Georgia<br>
+                <input type="checkbox" name="target[]" value="pa"> Pennsylvania<br>
+                <input type="checkbox" name="target[]" value="dc"> Washington DC<br>
+                <input type="checkbox" name="target[]" value="tx"> Texas<br>
+                <input type="checkbox" name="target[]" value="or"> Oregon<br>
+
+                <?php
+//                    $prefix = 'advanced_';
+//                    createPreference($output, 'Forecast Hospitalization', $prefix, 'hospitalization', 'bool');
+                ?>
 
 
             </form>
+
+             <?php
+             var_dump('here');
+             var_dump($_POST);
+             if (isset($_POST['target'])){
+                 var_dump('printing');
+                 foreach($_POST['target'] as $selected){
+                     var_dump($selected);
+                 }
+             }
+             ?>
 
             <div style="margin-bottom: 8px;">&nbsp;</div>
             <?php

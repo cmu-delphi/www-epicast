@@ -1,9 +1,14 @@
 <?php
 require_once('common/headerR.php');
 require_once('common/navigationR.php');
+require_once('common/settings.php');
+require_once('common/database.php');
 if($error) {
    return;
 }
+
+//Connect to the database
+$dbh = databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName);
 
 $skipLogin = true;
 if ($skipLogin) {
@@ -40,7 +45,6 @@ if(isset($_REQUEST['skip_instructions'])) {
    }
 }
 if(isset($_REQUEST['region_id'])) {
-    $dbh = mysqli_connect("127.0.0.1:3307", "epi", "7709a59c337c5dfb", "epicast2");
    $regionID = intval(mysqli_real_escape_string($dbh, $_REQUEST['region_id']));
 } else {
    //Default to USA National
