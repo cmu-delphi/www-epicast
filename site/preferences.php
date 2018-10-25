@@ -54,7 +54,8 @@ function createPreference(&$output, $label, $prefix, $name, $type) {
 }
 $survey_fields = array('flu', 'vir', 'epi', 'ph', 'sml');
 $email_fields = array('reminders');
-$advanced_fields = array('pandemic', 'leaderboard', 'initials', 'prior', 'hospitalization');
+// $advanced_fields = array('pandemic', 'leaderboard', 'initials', 'prior', 'hospitalization');
+$advanced_fields = array('pandemic', 'leaderboard', 'initials', 'prior');
 $account_fields = array();
 ?>
 <div class="box_article centered">
@@ -358,16 +359,16 @@ $account_fields = array();
                </table>
 
 
-               <p class="text_title left">Turn On Hospitalization Forecast</p>
+<!--                <p class="text_title left">Turn On Hospitalization Forecast</p>
                <p class="text_body left">
                   By selecting yes in this option, you can input your forecast for the hospitalization prediction!
-               </p>
-               <table cellspacing="0">
+               </p> -->
+<!--                <table cellspacing="0">
                   <?php
-                  $prefix = 'advanced_';
-                  createPreference($output, 'Forecast Hospitalization', $prefix, 'hospitalization', 'bool');
+//                   $prefix = 'advanced_';
+//                   createPreference($output, 'Forecast Hospitalization', $prefix, 'hospitalization', 'bool');
                   ?>
-               </table>
+               </table> -->
 
 
             </form>
