@@ -163,23 +163,37 @@ foreach($output['regions'] as $r) {
             $numHHS = 11;
             if($regionID <= $numHHS) {
                foreach($seasonYears as $year) {
-                  if($year == 2009 && $showPandemic !== 1) {
+                  if($year == 2009) {
                      continue;
                   }
                   if($r['id'] == $regionID && $year == $currentYear) {
                      ?>
                      <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
-                        <span class="effect_tiny"><?= sprintf('%d-now', $year) ?></span>
+                        <span class="effect_tiny"><?= sprintf('current year') ?></span>
                      </div>
                      <?php
                   } else {
-                     ?>
-                     <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer" onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o" style="color: <?= getColor($r['id'], $year) ?>"></i>
-                        <span class="effect_tiny"><?= sprintf('%d-%s', $year, ($year == $currentYear) ? 'now' : '' . ($year + 1)) ?><?= ($year == 2009 ? ' pdm' : '')?></span>
-                     </div>
-                     <?php
+                      if ($year == $currentYear) {
+                          ?>
+                          <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer"
+                               onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
+                                      id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
+                                      style="color: <?= getColor($r['id'], $year) ?>"></i>
+                              <span class="effect_tiny"><?= sprintf('current year') ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
+                          </div>
+                          <?php
+                      } else {
+                          ?>
+                          <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer"
+                               onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
+                                      id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
+                                      style="color: <?= getColor($r['id'], $year) ?>"></i>
+                              <span class="effect_tiny"><?= sprintf('year %d', ($year - 2003)) ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
+                          </div>
+                          <?php
+                          }
                   }
-               }
+                  }
             } else { // for each states, data are only available starting 2010-2011 season
                foreach($seasonYears as $year) {
                   if($year <= 2009) {
@@ -190,17 +204,31 @@ foreach($output['regions'] as $r) {
                      continue;
                   }
                   if($r['id'] == $regionID && $year == $currentYear) {
-                     ?>
-                     <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
-                        <span class="effect_tiny"><?= sprintf('%d-now', $year) ?></span>
-                     </div>
-                     <?php
+                      ?>
+                      <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
+                          <span class="effect_tiny"><?= sprintf('current year') ?></span>
+                      </div>
+                      <?php
                   } else {
-                     ?>
-                     <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer" onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o" style="color: <?= getColor($r['id'], $year) ?>"></i>
-                        <span class="effect_tiny"><?= sprintf('%d-%s', $year, ($year == $currentYear) ? 'now' : '' . ($year + 1)) ?><?= ($year == 2009 ? ' pdm' : '')?></span>
-                     </div>
-                     <?php
+                      if ($year == $currentYear) {
+                          ?>
+                          <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer"
+                               onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
+                                      id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
+                                      style="color: <?= getColor($r['id'], $year) ?>"></i>
+                              <span class="effect_tiny"><?= sprintf('current year') ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
+                          </div>
+                          <?php
+                      } else {
+                          ?>
+                          <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer"
+                               onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
+                                      id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
+                                      style="color: <?= getColor($r['id'], $year) ?>"></i>
+                              <span class="effect_tiny"><?= sprintf('year %d', ($year - 2009)) ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
+                          </div>
+                          <?php
+                      }
                   }
                }
             }
@@ -568,14 +596,20 @@ foreach($output['regions'] as $r) {
       drawText(g, regionNames[regionID] + ', ' + Math.round(xRange[0] / 100) + '+', x2 - 3, y, 0, Align.right, Align.center);
       style.dash = [];
       drawLine(x1, y - 3, x2, y + 3, style);
-      for(var i = 0; i < selectedSeasons.length; i++) {
-         y += dy;
-         var r = selectedSeasons[i][0];
-         var s = selectedSeasons[i][1];
-         var style = curveStyles[r][s];
-         drawText(g, regionNames[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
-         drawLine(x1, y - 3, x2, y + 3, style);
-      }
+//       for(var i = 0; i < selectedSeasons.length; i++) {
+//          y += dy;
+//          var r = selectedSeasons[i][0];
+//          var s = selectedSeasons[i][1];
+//          var style = curveStyles[r][s];
+//          drawText(g, regionNames[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
+//          drawLine(x1, y - 3, x2, y + 3, style);
+//       }
+      
+      // error bars
+      drawText(g, '90% Confidence Interval', x2 - 3, y+25, 0, Align.right, Align.center);
+      g.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      g.fillRect(x2+5, y+10, 5, 35);
+      
       //tooltip
       if(tooltip != null) {
          drawTooltip(g, tooltip);
