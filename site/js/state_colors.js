@@ -1,5 +1,5 @@
 function getStates(region) {
-   var regionColors = ['#5c7981', '#643c18', '#b2721a', '#dbd543', '#679a61', '#e28e45', '#508dac', '#a48f70', '#9dcbdb', '#d99b9c', '#b2721a', '#dbd543', '#b2721a', '#e28e45', '#d99b9c'];
+   var regionColors = ['#5c7981', '#643c18', '#b2721a', '#dbd543', '#679a61', '#e28e45', '#508dac', '#a48f70', '#9dcbdb', '#d99b9c', '#dbd543', '#b2721a', '#0080ff'];
    var regionStates = [
       ['CT', 'MA', 'ME', 'NH', 'RI', 'VT', ],
       ['NJ', 'NY', ],
@@ -11,12 +11,11 @@ function getStates(region) {
       ['CO', 'MT', 'ND', 'SD', 'UT', 'WY', ],
       ['AZ', 'CA', 'HI', 'NV', ],
       ['AK', 'ID', 'OR', 'WA', ],
-      ['PA'],
       ['GA'],
       ['MD'],
-      ['TX'],
-      ['OR']
+      ['CA']
    ];
+   
    var style = {};
    var defaultNumRegion = 16
    for(var i = 0; i < defaultNumRegion-1; i++) {
