@@ -828,27 +828,41 @@ foreach($output['regions'] as $r) {
          $('#status_message').html('Forecast submitted successfully!');
          $('#box_status').addClass('any_success');
          //Move to the next missing region, or go home
+         
+         
          <?php
          $next = null;
-         $defaultNumRegion = 16;
-         $currentID = $region['id'];
-         if ($currentID <= $defaultNumRegion) {
+          $numRegion = 14;
+          $listIdxToId = array(1 => 1, 2 => 2, 3 => 3, 4 => 4,
+                            5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11,
+                            12 => 13, 13 => 14, 14 => 56);
+          $idToListIdx = array(1 => 1, 2 => 2, 3 => 3, 4 => 4,
+                          5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11,
+                          13 => 12, 14 => 13, 56 => 14);
+          $currentID = $region['id'];
+          $currentListIdx = $idToListIdx[$currentID];
+          
+          if ($currentListIdx <= $numRegion) {
+              
+              for ($i = 1; $i <= $numRegion; $i++) {
+                  $otherRegionID = $listIdxToId[$i];
+                  $otherRegion = $output['regions'][$otherRegionID];
+                  if($i > $currentListIdx && !$otherRegion['completed'] && $next === null) {
+                      $next = $otherRegion['id'];
+                  }
+              }
 
-            for ($i = 1; $i <= $defaultNumRegion; $i++) {
-            $r = $output['regions'][$i];
-            if($r['id'] > $region['id'] && !$r['completed'] && $next === null) {
-               $next = $r['id'];
-            }
-         }
-
-            for ($i = 1; $i <= $defaultNumRegion; $i++) {
-               $r = $output['regions'][$i];
-               if($r['id'] < $region['id'] && !$r['completed'] && $next === null) {
-                  $next = $r['id'];
-               }
-            }
-         }
-
+              for ($i = 1; $i <= $numRegion; $i++) {
+                  $otherRegionID = $listIdxToId[$i];
+                  $otherRegion = $output['regions'][$otherRegionID];
+                  if($i < $currentListIdx && !$otherRegion['completed'] && $next === null) {
+                      $next = $otherRegion['id'];
+                  }
+              }
+              
+          }
+         
+   
          if($next !== null) {
             ?>
             submit('forecast_<?= $next ?>');
