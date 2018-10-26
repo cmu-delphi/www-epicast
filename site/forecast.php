@@ -461,6 +461,8 @@ foreach($output['regions'] as $r) {
       var x2 = getX(xRange[1]);
       var y1 = getY(yRange[0]);
       var y2 = getY(yRange[1]);
+      var scale_y0 = 0;
+      var scale_y1 = 0;
       //past
       g.fillStyle = '#eee';
       g.fillRect(x1, y2, weekX - x1, y1 - y2);
@@ -479,6 +481,9 @@ foreach($output['regions'] as $r) {
       {
          var row1 = 12.5 * uiScale;
          var row2 = marginLeft() - 12.5 * uiScale;
+         scale_y0 = getY(yRange[0]);
+         scale_y1 = getY(yRange[0]+yInterval);
+         var scale = scale_y0 - scale_y1;
          //ticks and lines
          for(var incidence = yRange[0]; incidence <= yRange[1]; incidence += yInterval) {
             var y = getY(incidence);
