@@ -639,12 +639,12 @@ foreach($output['regions'] as $r) {
       
       
 //       error bar legend
-//       if (regionID <= 11) {
-//          // error bar legend
-//          drawText(g, '90% Confidence Interval', x2 - 3, y+25, 0, Align.right, Align.center);
-//          g.fillStyle = 'rgba(0, 0, 0, 0.5)';
-//          g.fillRect(x2+5, y+10, 5, 35);
-//       }
+      if (regionID <= 11) {
+         // error bar legend
+         drawText(g, '90% Confidence Interval', x2 - 3, y+25, 0, Align.right, Align.center);
+         g.fillStyle = 'rgba(0, 0, 0, 0.5)';
+         g.fillRect(x2+5, y+10, 5, 35);
+      }
       
       //tooltip
       if(tooltip != null) {
