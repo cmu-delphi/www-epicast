@@ -585,6 +585,33 @@ foreach($output['regions'] as $r) {
          g.fillRect(x - 5, y1, 11, 1);
       }
       
+      
+      //legend
+      var x1 = canvas.width - marginRight();
+      var x2 = canvas.width - marginRight() - (15 * uiScale);
+      var dy = 12 * uiScale;
+      var y = marginTop() + dy;
+      var labelBounds = drawText(g, 'Your Forecast, Last Week', x2 - 3, y, 0, Align.right, Align.center);
+      drawLine(x1, y - 3, x2, y + 3, lfStyle);
+      g.fillStyle = '#000';
+      showLastBounds = drawText(g, showLastForecast ? "\uf046" : "\uf096", labelBounds.x - 5 * uiScale, y, 0, Align.right, Align.center, 1.25, ['', 'FontAwesome']);
+      snapLastBounds = drawText(g, "\uf08d", showLastBounds.x - 5 * uiScale, y, 0, Align.right, Align.center, 1.25, ['', 'FontAwesome']);
+      y += dy;
+      drawText(g, 'Your Forecast, This Week', x2 - 3, y, 0, Align.right, Align.center);
+      drawLine(x1, y - 3, x2, y + 3, style);
+      y += dy;
+      drawText(g, regionNames[regionID] + ', ' + Math.round(xRange[0] / 100) + '+', x2 - 3, y, 0, Align.right, Align.center);
+      style.dash = [];
+      drawLine(x1, y - 3, x2, y + 3, style);
+//       for(var i = 0; i < selectedSeasons.length; i++) {
+//          y += dy;
+//          var r = selectedSeasons[i][0];
+//          var s = selectedSeasons[i][1];
+//          var style = curveStyles[r][s];
+//          drawText(g, regionNames[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
+//          drawLine(x1, y - 3, x2, y + 3, style);
+//       }
+      
       //error bars
       var errors = [[-0.24712308, 0.26624813, -0.15322715, 0.19664234, -0.12082035, 0.14860900, -0.10876045, 0.13621647, -0.10154039, 0.11983600],
                       [-0.34045688, 0.28280759, -0.19137420, 0.22352091, -0.12384349, 0.15987915, -0.12117887, 0.13885572, -0.09956699, 0.12704858],
@@ -614,37 +641,6 @@ foreach($output['regions'] as $r) {
          g.fillStyle = 'rgba(0, 0, 0, 0.5)';
          g.fillRect(x2+5, y+10, 5, 35);
       }
-      
-      
-      
-      
-      
-      //legend
-      var x1 = canvas.width - marginRight();
-      var x2 = canvas.width - marginRight() - (15 * uiScale);
-      var dy = 12 * uiScale;
-      var y = marginTop() + dy;
-      var labelBounds = drawText(g, 'Your Forecast, Last Week', x2 - 3, y, 0, Align.right, Align.center);
-      drawLine(x1, y - 3, x2, y + 3, lfStyle);
-      g.fillStyle = '#000';
-      showLastBounds = drawText(g, showLastForecast ? "\uf046" : "\uf096", labelBounds.x - 5 * uiScale, y, 0, Align.right, Align.center, 1.25, ['', 'FontAwesome']);
-      snapLastBounds = drawText(g, "\uf08d", showLastBounds.x - 5 * uiScale, y, 0, Align.right, Align.center, 1.25, ['', 'FontAwesome']);
-      y += dy;
-      drawText(g, 'Your Forecast, This Week', x2 - 3, y, 0, Align.right, Align.center);
-      drawLine(x1, y - 3, x2, y + 3, style);
-      y += dy;
-      drawText(g, regionNames[regionID] + ', ' + Math.round(xRange[0] / 100) + '+', x2 - 3, y, 0, Align.right, Align.center);
-      style.dash = [];
-      drawLine(x1, y - 3, x2, y + 3, style);
-//       for(var i = 0; i < selectedSeasons.length; i++) {
-//          y += dy;
-//          var r = selectedSeasons[i][0];
-//          var s = selectedSeasons[i][1];
-//          var style = curveStyles[r][s];
-//          drawText(g, regionNames[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
-//          drawLine(x1, y - 3, x2, y + 3, style);
-//       }
-      
       
       //tooltip
       if(tooltip != null) {
