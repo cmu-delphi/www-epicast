@@ -599,7 +599,7 @@ foreach($output['regions'] as $r) {
                       [-0.27729994, 0.68184800, -0.13515150, 0.52133115, -0.08949614, 0.43160405, -0.08189019, 0.37754501, -0.05750600, 0.27308000]]
 
       if (regionID <= 11) {
-         var error = errors[regionID-1]
+         var error = errors[regionID-1];
          for (var i=0; i<9; i = i + 2) {
             var above = -error[i]*scale;
             var below = error[i+1]*scale;
