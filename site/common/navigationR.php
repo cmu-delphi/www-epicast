@@ -105,6 +105,7 @@ function showNavigation($targets, $regionID=-1) {
 
            <?php
       foreach($targets as $r) {
+          var_dump($r['id']);
           createForm('forecast_' . $r['id'], 'forecast_recruitment.php#top', array('region_id', $r['id']));
       }
       ?>
