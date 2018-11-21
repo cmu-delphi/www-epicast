@@ -52,7 +52,6 @@ if(isset($_REQUEST['region_id'])) {
 }
 
 var_dump($regionID);
-var_dump($output['regions']);
 
 //Specific region
 if(!isset($output['regions'][$regionID])) {
