@@ -50,6 +50,10 @@ if(isset($_REQUEST['region_id'])) {
    //Default to USA National
    $regionID = 1;
 }
+
+var_dump($regionID);
+var_dump($output['regions']);
+
 //Specific region
 if(!isset($output['regions'][$regionID])) {
    fail('Invalid region_id');
