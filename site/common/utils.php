@@ -2,8 +2,6 @@
 
 require_once('settings.php');
 require_once('database.php');
-//Connect to the database
-//$dbh = databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName);
 
 function fail($message, $id=null, $hidden=false) {
    $id = ($id === null) ? '' : sprintf('id="%s"', $id);
@@ -52,7 +50,7 @@ function getMiniHash($hash) {
 }
 
 function attemptLogin(&$output) {
-    $dbh = mysqli_connect("127.0.0.1:3307", "epi", "54cdaffaf976a714", "epicast2");
+    $dbh = databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName);
    $hash = null;
    if(isset($_REQUEST['user']) || isset($_SESSION['hash_fluv'])) {
       if(isset($_REQUEST['user'])) {
@@ -73,7 +71,7 @@ function attemptLogin(&$output) {
          $hash = null;
       }
    }
-   print("returning $hash (not set)");
+   // print("returning $hash (not set)");
    return $hash;
 }
 

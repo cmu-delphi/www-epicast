@@ -7,7 +7,6 @@ $skipLogin = true;
 
 //Connect to the database
 $dbh = databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName);
-//$dbh = mysqli_connect("127.0.0.1:3307", "epi", "54cdaffaf976a714", "epicast2");
 
 //The header
 session_start();

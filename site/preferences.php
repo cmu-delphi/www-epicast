@@ -402,10 +402,9 @@ $account_fields = array();
                 <input type="checkbox" name="target[]" value="hhs10"> HHS Region 10<br>
 
                 <input type="checkbox" name="target[]" value="ga"> Georgia<br>
-                <input type="checkbox" name="target[]" value="pa"> Pennsylvania<br>
+                <input type="checkbox" name="target[]" value="pa"> California<br>
                 <input type="checkbox" name="target[]" value="dc"> Washington DC<br>
-                <input type="checkbox" name="target[]" value="tx"> Texas<br>
-                <input type="checkbox" name="target[]" value="or"> Oregon<br>
+
 
                 <?php
 //                    $prefix = 'advanced_';
@@ -415,16 +414,16 @@ $account_fields = array();
 
             </form>
 
-             <?php
-             var_dump('here');
-             var_dump($_POST);
-             if (isset($_POST['target'])){
-                 var_dump('printing');
-                 foreach($_POST['target'] as $selected){
-                     var_dump($selected);
-                 }
-             }
-             ?>
+<!--             --><?php
+//             var_dump('here');
+//             var_dump($_POST);
+//             if (isset($_POST['target'])){
+//                 var_dump('printing');
+//                 foreach($_POST['target'] as $selected){
+//                     var_dump($selected);
+//                 }
+//             }
+//             ?>
 
             <div style="margin-bottom: 8px;">&nbsp;</div>
             <?php

@@ -30,7 +30,7 @@ Output:
    A handle to the database connection
 */
 function databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName) {
-   $dbh = mysqli_connect("127.0.0.1:3307", "epi", "54cdaffaf976a714", "epicast2");
+    $dbh = databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName);
    if($dbh) {
       mysqli_select_db($dbh, $dbName);
    }
@@ -1280,7 +1280,7 @@ Output:
 function getYearForCurrentSeason(&$output) {
     $dbh = databaseConnect(null, null, null, null, 'epicast2');
     $result = mysqli_query($dbh, "SELECT `year`, `first_round_epiweek`, `last_round_epiweek` FROM `ec_fluv_season`");
-   if($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+   if($row = mysqli_fetch_array($result, MYSQLI_NUM)) {
       $output['season'] = array(
          'year' => intval($row['year']),
          'first_epiweek' => intval($row['first_round_epiweek']),

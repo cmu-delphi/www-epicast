@@ -9,7 +9,7 @@ $skipLogin = true;
 $dbh = databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName);
 
 //The header
-session_start();
+//session_start();
 $output = array();
 ?>
 <!DOCTYPE html>
@@ -36,7 +36,7 @@ if(!$dbh) {
    $error = true;
 } else {
    $hash = attemptLogin($output);
-   if($hash == null || (isset($fullHeader) && $fullHeader)) {
+//   if($hash == null || (isset($fullHeader) && $fullHeader)) {
       //Big header
       ?>
       <div class="box_header">
@@ -67,39 +67,39 @@ if(!$dbh) {
          <div class="box_content">
          <?php
       }
-   } else {
-      //Mini header
-      ?>
-      <div class="box_header box_header_narrow box_header_fixed0"></div>
-      <div class="box_header box_header_narrow box_header_fixed1">
-         <div class="box_title box_title_mini"><span class="effect_delphi">Epicast</span>&nbsp;<span class="effect_fluv">FLUV</span></div>
-         <div class="box_mininav">
-            <span class="effect_tiny_header">Epicaster: <?= $output['user_name'] ?> [<?= $hash ?>]<br /></span>
-            <?php
-            createLink('Home', 'recruiment.php');
-            createDivider('&middot;');
-            createLink('Preferences', 'preferences.php');
-            createDivider('&middot;');
-            createLink('Leaderboards', 'scores.php');
-            createDivider('&middot;');
-            createDivider('|');
-            if(isAdmin($output)) {
-               createLink('<i>Admin</i>', 'admin.php');
-               createDivider('|');
-            }
-            print('<span class="effect_delphi">');
-            createLink('DELPHI', 'https://delphi.midas.cs.cmu.edu/', true, 'delphi');
-            print('</span>');
-            ?>
-         </div>
-         <div class="box_miniclear"></div>
-      </div>
-      <div class="box_content">
-      <?php
-      //Account status
-      if(!isActivated($output)) {
-         fail('Uh oh, your account is currently deactivated. Please visit the <a href="preferences.php">preferences</a> page to reactivate it!', 'account_deactivated_warning');
-      }
-   }
+//   } else {
+//      //Mini header
+//      ?>
+<!--      <div class="box_header box_header_narrow box_header_fixed0"></div>-->
+<!--      <div class="box_header box_header_narrow box_header_fixed1">-->
+<!--         <div class="box_title box_title_mini"><span class="effect_delphi">Epicast</span>&nbsp;<span class="effect_fluv">FLUV</span></div>-->
+<!--         <div class="box_mininav">-->
+<!--            <span class="effect_tiny_header">Epicaster: --><?//= $output['user_name'] ?><!-- [--><?//= $hash ?><!--]<br /></span>-->
+<!--            --><?php
+//            createLink('Home', 'recruiment.php');
+//            createDivider('&middot;');
+//            createLink('Preferences', 'preferences.php');
+//            createDivider('&middot;');
+//            createLink('Leaderboards', 'scores.php');
+//            createDivider('&middot;');
+//            createDivider('|');
+//            if(isAdmin($output)) {
+//               createLink('<i>Admin</i>', 'admin.php');
+//               createDivider('|');
+//            }
+//            print('<span class="effect_delphi">');
+//            createLink('DELPHI', 'https://delphi.midas.cs.cmu.edu/', true, 'delphi');
+//            print('</span>');
+//            ?>
+<!--         </div>-->
+<!--         <div class="box_miniclear"></div>-->
+<!--      </div>-->
+<!--      <div class="box_content">-->
+<!--      --><?php
+//      //Account status
+//      if(!isActivated($output)) {
+//         fail('Uh oh, your account is currently deactivated. Please visit the <a href="preferences.php">preferences</a> page to reactivate it!', 'account_deactivated_warning');
+//      }
+//   }
 }
 ?>

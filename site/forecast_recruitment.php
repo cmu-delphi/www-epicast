@@ -167,13 +167,12 @@ foreach($output['regions'] as $r) {
          <div class="box_decision_title centered" style="width: 100%;">History</div>
          <?php
          foreach($output['regions'] as $r) {
-            if($r['id'] !== $regionID) continue;
-            // print $regionID;
+            if($r['id'] !== $regionID) continue
             ?>
+             <div class="any_bold any_cursor_pointer" onclick="toggleSeasonList(<?= $r['id'] ?>)"><i id="checkbox_region_<?= $r['id'] ?>" class="fa fa-plus-square-o"></i>&nbsp;<?= htmlspecialchars($r['name']) ?></div>
 
-            <div class="any_bold any_cursor_pointer" onclick="toggleSeasonList(<?= $r['id'] ?>)"><i id="checkbox_region_<?= $r['id'] ?>" class="fa fa-plus-square-o"></i>&nbsp;<?= htmlspecialchars($r['name']) ?></div>
-            <div id="container_<?= $r['id'] ?>_all" class="any_hidden any_cursor_pointer" onclick="toggleAllSeasons(<?= $r['id'] ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $r['id'] ?>_all" class="fa fa-square-o"></i>&nbsp;<span class="effect_tiny effect_italics">Show all</span></div>
-            <?php
+             <div id="container_<?= $r['id'] ?>_all" class="any_hidden any_cursor_pointer" onclick="toggleAllSeasons(<?= $r['id'] ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $r['id'] ?>_all" class="fa fa-square-o"></i>&nbsp;<span class="effect_tiny effect_italics">Show all</span></div>
+             <?php
             $currentYear = $seasonYears[count($seasonYears) - 1];
             $numHHS = 11;
             if($regionID <= $numHHS) {
@@ -183,9 +182,9 @@ foreach($output['regions'] as $r) {
                   }
                   if($r['id'] == $regionID && $year == $currentYear) {
                      ?>
-                     <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
-                        <span class="effect_tiny"><?= sprintf('current year') ?></span>
-                     </div>
+                      <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
+                          <span class="effect_tiny"><?= sprintf('current year') ?></span>
+                      </div>
                      <?php
                   } else {
                       if ($year == $currentYear) {
@@ -305,13 +304,7 @@ foreach($output['regions'] as $r) {
    var timeoutID;
    var lastDrag = null;
    var tooltip = null;
-   // nowcast
-//   var showNowcast = <?//= (getPreference($output, '_delphi', 'int') == 1 && isset($output['nowcast'])) ? 'true' : 'false' ?>//;
-<!--   --><?php
-//   if(isset($output['nowcast'])) {
-//      printf('var nowcast = [%.5f, %.5f];', $output['nowcast']['value'], $output['nowcast']['std']);
-//   }
-//   ?>
+
    //x-axis
    function getChartWidth() {
       return canvas.width - marginLeft() - marginRight();
@@ -606,7 +599,7 @@ foreach($output['regions'] as $r) {
          for (var i=0; i<9; i = i + 2) {
             var above = -error[i]*scale;
             var below = error[i+1]*scale;
-            var x = getX(epiweek-(i/2)-1);
+            var x = getX(epiweek-(i/2)-2);
             var y = getY(pastWili[regionID][pastWili[regionID].length - i/2 - 1]);
             g.fillRect(x-2.5, y-above, 5, above);
             g.fillRect(x-2.5, y, 5, below);
@@ -986,6 +979,7 @@ foreach($output['regions'] as $r) {
       }
       repaint();
    }
+
    function toggleSeason(regionID, seasonID) {
       var uncheckedClass = 'fa-square-o';
       var checkedClass = 'fa-check-square-o';
@@ -1012,6 +1006,7 @@ foreach($output['regions'] as $r) {
       }
       repaint();
    }
+
    function snapToLastForecast() {
       var extra = lastForecast.length - forecast[regionID].length;
       for(var i = 0; i < Math.min(forecast[regionID].length, lastForecast.length - extra); i++) {

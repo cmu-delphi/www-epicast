@@ -319,6 +319,7 @@ foreach($output['regions'] as $r) {
       top: 3,
       center: 4
    };
+
    function drawText(g, str, x, y, angle, alignX, alignY, scale, font) {
       scale = typeof scale !== 'undefined' ? scale : 1;
       font = typeof font !== 'undefined' ? font : ['', 'Calibri'];
@@ -335,7 +336,7 @@ foreach($output['regions'] as $r) {
       } else if(alignX == Align.center) {
          dx = -w / 2;
       } else {
-         g.strokeStyle = '#ff0000';
+         g.strokeStyle = '#c9d3ff';
       }
       if(alignY == Align.bottom) {
          dy = 0;
@@ -353,6 +354,7 @@ foreach($output['regions'] as $r) {
       g.restore();
       return {x: x + dx, y: y + dy - h, w: w, h: h};
    }
+
    function drawLine(x1, y1, x2, y2, style) {
       var g = getGraphics();
       g.strokeStyle = style.color;
@@ -465,7 +467,7 @@ foreach($output['regions'] as $r) {
          //ticks and lines
          scale_y0 = getY(yRange[0]);
          scale_y1 = getY(yRange[0]+yInterval);
-         var scale = scale_y0 - scale_y1
+         var scale = scale_y0 - scale_y1;
 
          for(var incidence = yRange[0]; incidence <= yRange[1]; incidence += yInterval) {
             var y = getY(incidence);
@@ -556,29 +558,31 @@ foreach($output['regions'] as $r) {
       g.fillStyle = 'rgba(0, 0, 0, 0.5)';
       var epiweek = addEpiweeks(xRange[0], numPastWeeks + 1);
 
-      var errors = [[-0.25338424,0.26779459,-0.15795799,0.20148600,-0.12117048,0.14912525,-0.11135660,0.13786491,-0.10296978,0.12267500],
-                     [-0.37133889,0.28737775,-0.18741000,0.22619977,-0.12151379,0.16038566,-0.11972604,0.14476482,-0.08794867,0.13023546],
-                     [-0.53967752,0.91292750,-0.30949658,0.66027137,-0.14296645,0.57360150,-0.12647747,0.49948000,-0.07414534,0.44931900],
-                     [-0.39363206,0.41723500,-0.28709464,0.17538391,-0.23228040,0.13045875,-0.18332568,0.10019016,-0.16310800,0.08782887],
-                     [-0.21239382,0.31333511,-0.13463250,0.25531522,-0.08853938,0.21940100,-0.07864655,0.20932306,-0.07102450,0.21487889],
-                     [-0.24715251,0.20679995,-0.14143999,0.13624821,-0.13295860,0.11166325,-0.13193269,0.08903700,-0.12365955, 0.09060098],
-                     [-0.58020765,0.65221247,-0.28295473,0.45485750,-0.20057961,0.43163394,-0.19048759,0.41439580,-0.19280505,0.41133369],
-                     [-0.33121999,0.56569729,-0.29290752,0.26606175,-0.18486197,0.17791750,-0.10793828,0.17026650,-0.07014470,0.14382107],
-                     [-0.35220337,0.15993339,-0.31276828,0.11385248,-0.29510800,0.08565048,-0.27511612,0.07664048,-0.27868001,0.08013796],
-                     [-1.36094501,0.36230750,-0.84078577,0.34896998,-0.61232752,0.29950366,-0.24876148,0.27405922,-0.22608813,0.24210786],
-                     [-0.29804050,0.68942689,-0.13677758,0.54288501,-0.08749087,0.44275949,-0.08624862,0.39595800,-0.06056332,0.32726796]]
 
-      if (regionID <= 11) {
-         var error = errors[regionID-1]
-         for (var i=0; i<9; i = i + 2) {
-            var above = -error[i]*scale;
-            var below = error[i+1]*scale;
-            var x = getX(epiweek-(i/2)-1);
-            var y = getY(pastWili[regionID][pastWili[regionID].length - i/2 - 1]);
-            g.fillRect(x-2.5, y-above, 5, above);
-            g.fillRect(x-2.5, y, 5, below);
-         }
-      }
+       // error bars
+       var errors = [[-0.24712308, 0.26624813, -0.15322715, 0.19664234, -0.12082035, 0.14860900, -0.10876045, 0.13621647, -0.10154039, 0.11983600],
+           [-0.34045688, 0.28280759, -0.19137420, 0.22352091, -0.12384349, 0.15987915, -0.12117887, 0.13885572, -0.09956699, 0.12704858],
+           [-0.53590684, 0.89629600, -0.30283597, 0.65499400, -0.13787600, 0.54568168, -0.12595600, 0.46704100, -0.07453499, 0.42750000],
+           [-0.37387307, 0.40863698, -0.28367110, 0.17509570, -0.22997874, 0.12172077, -0.18229534, 0.09756572, -0.15973500, 0.08463503],
+           [-0.20557898, 0.30245800, -0.11755700, 0.25408800, -0.08413807, 0.22757000, -0.06954300, 0.20408900, -0.06438000, 0.18230000],
+           [-0.25137100, 0.20174244, -0.13700409, 0.12403700, -0.13057810, 0.10987716, -0.12696880, 0.09290900, -0.12235000, 0.09099834],
+           [-0.57328148, 0.64364400, -0.27041096, 0.44918005, -0.18156448, 0.42412171, -0.18928335, 0.40630354, -0.18612046, 0.41034824],
+           [-0.32095530, 0.54476070, -0.28740699, 0.25858733, -0.18130595, 0.17634701, -0.09897983, 0.15026802, -0.06751735, 0.11558500],
+           [-0.34997978, 0.16394630, -0.30868833, 0.11241897, -0.28318147, 0.08211904, -0.25449258, 0.07656490, -0.27305331, 0.07975996],
+           [-1.35755500, 0.36729300, -0.83626201, 0.34423500, -0.58568300, 0.29383702, -0.25386898, 0.26257593, -0.22364929, 0.23857497],
+           [-0.27729994, 0.68184800, -0.13515150, 0.52133115, -0.08949614, 0.43160405, -0.08189019, 0.37754501, -0.05750600, 0.27308000]]
+
+       if (regionID <= 11) {
+           var error = errors[regionID-1]
+           for (var i=0; i<9; i = i + 2) {
+               var above = -error[i]*scale;
+               var below = error[i+1]*scale;
+               var x = getX(epiweek-(i/2)-1);
+               var y = getY(pastWili[regionID][pastWili[regionID].length - i/2 - 1]);
+               g.fillRect(x-2.5, y-above, 5, above);
+               g.fillRect(x-2.5, y, 5, below);
+           }
+       }
 
 
       //legend
@@ -606,7 +610,7 @@ foreach($output['regions'] as $r) {
          drawText(g, regionNames[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
          drawLine(x1, y - 3, x2, y + 3, style);
       }
-      // error bars
+
       drawText(g, '90% Confidence Interval', x2 - 3, y+25, 0, Align.right, Align.center);
       g.fillStyle = 'rgba(0, 0, 0, 0.5)';
       g.fillRect(x2+5, y+10, 5, 35);
@@ -831,24 +835,56 @@ foreach($output['regions'] as $r) {
          //Move to the next missing region, or go home
          <?php
          $next = null;
-         $defaultNumRegion = 16;
-         $currentID = $region['id'];
-         if ($currentID <= $defaultNumRegion) {
+          $numRegion = 14;
+          $listIdxToId = array(1 => 1, 2 => 2, 3 => 3, 4 => 4,
+                            5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11,
+                            12 => 13, 13 => 14, 14 => 56);
+          $idToListIdx = array(1 => 1, 2 => 2, 3 => 3, 4 => 4,
+                          5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11,
+                          13 => 12, 14 => 13, 56 => 14);
+          $currentID = $region['id'];
+          $currentListIdx = $idToListIdx[$currentID];
 
-            for ($i = 1; $i <= $defaultNumRegion; $i++) {
-            $r = $output['regions'][$i];
-            if($r['id'] > $region['id'] && !$r['completed'] && $next === null) {
-               $next = $r['id'];
-            }
-         }
+          if ($currentListIdx <= $numRegion) {
 
-            for ($i = 1; $i <= $defaultNumRegion; $i++) {
-               $r = $output['regions'][$i];
-               if($r['id'] < $region['id'] && !$r['completed'] && $next === null) {
-                  $next = $r['id'];
-               }
-            }
-         }
+              for ($i = 1; $i <= $numRegion; $i++) {
+                  $otherRegionID = $listIdxToId[$i];
+                  $otherRegion = $output['regions'][$otherRegionID];
+                  if($i > $currentListIdx && !$otherRegion['completed'] && $next === null) {
+                      $next = $otherRegion['id'];
+                  }
+              }
+
+              for ($i = 1; $i <= $numRegion; $i++) {
+                  $otherRegionID = $listIdxToId[$i];
+                  $otherRegion = $output['regions'][$otherRegionID];
+                  if($i < $currentListIdx && !$otherRegion['completed'] && $next === null) {
+                      $next = $otherRegion['id'];
+                  }
+              }
+
+          }
+
+
+//         $defaultNumRegion = 16;
+//         $currentID = $region['id'];
+//         if ($currentID <= $defaultNumRegion) {
+//
+//            for ($i = 1; $i <= $defaultNumRegion; $i++) {
+//            $r = $output['regions'][$i];
+//            if($r['id'] > $region['id'] && !$r['completed'] && $next === null) {
+//               $next = $r['id'];
+//            }
+//         }
+//
+//            for ($i = 1; $i <= $defaultNumRegion; $i++) {
+//               $r = $output['regions'][$i];
+//               if($r['id'] < $region['id'] && !$r['completed'] && $next === null) {
+//                  $next = $r['id'];
+//               }
+//            }
+//         }
+
 
          if($next !== null) {
             ?>

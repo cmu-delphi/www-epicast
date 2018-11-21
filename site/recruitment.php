@@ -1,4 +1,4 @@
-<?php
+ <?php
 require('common/headerR.php');
 require('common/navigationR.php');
 require_once('common/settings.php');
@@ -100,9 +100,9 @@ $map = array(
     </div>
 
 
-    <div>
-        <a target="_blank" href="images/tutorial.gif">Click here for a BRIEF TUTORIAL on how to enter your forecast</a>
-    </div>
+<!--    <div>-->
+<!--        <a target="_blank" href="images/tutorial.gif">Click here for a BRIEF TUTORIAL on how to enter your forecast</a>-->
+<!--    </div>-->
 
 
     <?php
