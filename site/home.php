@@ -77,7 +77,8 @@ if($_offline) {
          } else {
             $value = '<i class="fa fa-exclamation-triangle"></i>';
             //$unit = 'past due';
-            $unit = 'due very soon';
+//             $unit = 'due very soon';
+            $unit = 'due in 1 day';
          }
          ?>
          <div class="box_stat">
