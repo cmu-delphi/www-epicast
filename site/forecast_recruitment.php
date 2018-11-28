@@ -45,7 +45,7 @@ if(isset($_REQUEST['skip_instructions'])) {
    }
 }
 if(isset($_REQUEST['region_id'])) {
-   $regionID = intval(mysqli_real_escape_string($dbh, $_REQUEST['region_id']));
+   $regionID = intval(mysql_real_escape_string($_REQUEST['region_id']));
 } else {
    //Default to USA National
    $regionID = 1;
