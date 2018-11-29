@@ -119,7 +119,10 @@ $map = array(
 <!--    <div id="map_container"></div>-->
 
     <div class="bot_stat_value centered">
-        Per Age Group Hospitalization Forecast for <?php echo $location ?>
+       ~~ Coming Soon ~~
+    </div>
+    <div class="bot_stat_value centered">
+       Per Age Group Hospitalization Forecast for <?php echo $location ?>
     </div>
 
     <?php
