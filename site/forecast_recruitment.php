@@ -51,8 +51,6 @@ if(isset($_REQUEST['region_id'])) {
    $regionID = 1;
 }
 
-var_dump($regionID);
-
 //Specific region
 if(!isset($output['regions'][$regionID])) {
    fail('Invalid region_id');
