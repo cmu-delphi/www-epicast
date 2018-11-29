@@ -43,8 +43,27 @@ if(!$dbh) {
                <br />
                <span class="effect_fluv">&lt;Influenza Edition - California&gt;</span>
          </div>
+
          <div class="box_subtitle">Epidemiological Forecasting by <span class="effect_delphi"><a class="delphi" target="_blank" href="https://delphi.midas.cs.cmu.edu/">DELPHI</a></span></div>
+
+          <div style='text-align:right'>
+              <?php
+              createLink('Home', 'recruitment.php?location=CA');
+              createDivider('&middot;');
+              createLink('Preferences', 'preferences_recruitment.php');
+              createDivider('&middot;');
+              createLink('Leaderboards', 'scores_recruitment.php');
+              createDivider('|');
+              print('<span class="effect_delphi">');
+              createLink('DELPHI', 'https://delphi.midas.cs.cmu.edu/', true, 'delphi');
+              print('</span>');
+              ?>
+          </div>
+
       </div>
+
+
+
       <?php
       if(!isset($skipLogin) || !$skipLogin) {
          //Uh oh, login was required
