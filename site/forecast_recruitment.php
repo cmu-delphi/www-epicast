@@ -602,7 +602,7 @@ foreach($output['regions'] as $r) {
          for (var i=0; i<9; i = i + 2) {
             var above = -error[i]*scale;
             var below = error[i+1]*scale;
-            var x = getX(epiweek-(i/2)-3);
+            var x = getX(epiweek-(i/2)-2);
             var y = getY(pastWili[regionID][pastWili[regionID].length - i/2 - 1]);
             g.fillRect(x-2.5, y-above, 5, above);
             g.fillRect(x-2.5, y, 5, below);
