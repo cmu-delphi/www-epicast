@@ -97,7 +97,6 @@ if($_offline) {
    </div>
    <?php
    $numRegion = 13;
-//    var_dump($output['stat_completed']);
    if($output['stat_completed'] >= $numRegion) {
       ?>
       <div class="box_section">
@@ -117,14 +116,14 @@ if($_offline) {
    <p class="centered"><i>Hover a button above to see which states are in that region or the location of the state in the map below.</i></p>
    <div id="map_container"></div>
 
-<!--  save for later   -->
-<!--    <?php
-//       $ifForecastHosp = getPreference($output, 'advanced_hospitalization', 'int');
-//       if ($ifForecastHosp) {
-//         $getUrl = 'forecast_hosp.php';
-//         showNavigation_hosp($output, $getUrl);
-//       }
-   ?> -->
+
+    <?php
+      $ifForecastHosp = getPreference($output, 'advanced_hospitalization', 'int');
+      if ($ifForecastHosp) {
+        $getUrl = 'forecast_hosp.php';
+        showNavigation_hosp($output, $getUrl);
+       }
+     ?>
 
    <div class="box_section">
 
