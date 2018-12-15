@@ -188,7 +188,7 @@ foreach($output['regions'] as $r) {
                                onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
                                       id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
                                       style="color: <?= getColor($r['id'], $year) ?>"></i>
-                              <span class="effect_tiny"><?= sprintf('year %d', ($year - 2003)) ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
+                              <span class="effect_tiny"><?= sprintf('year %d', $year) ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
                           </div>
                           <?php
                           }
