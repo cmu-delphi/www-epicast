@@ -228,7 +228,7 @@ foreach($output['ageGroups'] as $g) {
                              class="fa fa-square-o" style="color: <?= getColor($g['id'], $year) ?>">
                           </i>
                           <span class="effect_tiny">
-                              <?= sprintf('year %d', ($year - 2009)) ?><?= ($year == 2009 ? ' pdm' : '')?>
+                              <?= sprintf('year %d', $year) ?><?= ($year == 2009 ? ' pdm' : '')?>
                           </span>
                       </div>
                       <?php
