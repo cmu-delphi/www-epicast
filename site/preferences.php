@@ -54,8 +54,8 @@ function createPreference(&$output, $label, $prefix, $name, $type) {
 }
 $survey_fields = array('flu', 'vir', 'epi', 'ph', 'sml');
 $email_fields = array('reminders');
-// $advanced_fields = array('pandemic', 'leaderboard', 'initials', 'prior', 'hospitalization');
-$advanced_fields = array('pandemic', 'leaderboard', 'initials', 'prior');
+$advanced_fields = array('pandemic', 'leaderboard', 'initials', 'prior', 'hospitalization');
+// $advanced_fields = array('pandemic', 'leaderboard', 'initials', 'prior');
 $account_fields = array();
 ?>
 <div class="box_article centered">
