@@ -598,40 +598,21 @@ foreach($output['regions'] as $r) {
                      [-1.35720500, 0.36575900, -0.83282601, 0.33934500, -0.57508135, 0.29297430, -0.25338298, 0.25961193, -0.22189758, 0.23839696],
                      [-0.27577982, 0.67580001, -0.13440096, 0.51631755, -0.08888274, 0.42762205, -0.08109139, 0.37271498, -0.05693280, 0.26734400]];
 
-//       if (regionID <= 11) {
-//          var epiweek = addEpiweeks(xRange[0], numPastWeeks + 1);
-//          var error = errors[regionID-1];
-//          for (var i=0; i<9; i = i + 2) {
-//             var above = -error[i]*scale;
-//             var below = error[i+1]*scale;
-//             var x = getX(epiweek-(i/2)-1);
-//             var y = getY(pastWili[regionID][pastWili[regionID].length - i/2 - 1]);
-//             g.fillStyle = 'rgba(0, 0, 0, 0.5)';
-//             g.fillRect(x-2.5, y-above, 5, above);
-//             g.fillRect(x-2.5, y, 5, below);
-//          }
-//       }
-      
-      var epiweek = addEpiweeks(xRange[0], numPastWeeks + 1);
-      drawText(g, epiweek, 100, 100, 0, Align.right, Align.center);
-      var error = errors[regionID-1];
-      var above = -error[2]*scale;
-      var below = error[3]*scale;
-      var x = getX(epiweek-2);
-      var y = getY(pastWili[regionID][pastWili[regionID].length - 2]);
-      drawText(g, x, 110, 110, 0, Align.right, Align.center);
-      drawText(g, y, 120, 120, 0, Align.right, Align.center);
-      g.fillStyle = 'rgba(0, 0, 0, 0.5)';
-      g.fillRect(x-2.5, y-above, 5, above);
-      g.fillRect(x-2.5, y, 5, below);
-      
-      var above = -error[0]*scale;
-      var below = error[1]*scale;
-      var x = getX(epiweek-1);
-      var y = getY(pastWili[regionID][pastWili[regionID].length - 1]);
-      g.fillStyle = 'rgba(0, 0, 0, 0.5)';
-      g.fillRect(x-2.5, y-above, 5, above);
-      g.fillRect(x-2.5, y, 5, below);
+      if (regionID <= 11) {
+         var epiweek = addEpiweeks(xRange[0], numPastWeeks + 1);
+         var error = errors[regionID-1];
+         for (var i=0; i<9; i = i + 2) {
+            var above = -error[i]*scale;
+            var below = error[i+1]*scale;
+            var x_weekNumber = addEpiweeks(epiweek, -(i/2)-1)
+            var x = getX(x_weekNumber);
+            var y = getY(pastWili[regionID][pastWili[regionID].length - i/2 - 1]);
+            g.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            g.fillRect(x-2.5, y-above, 5, above);
+            g.fillRect(x-2.5, y, 5, below);
+         }
+      }
+    
       
       
       //legend
