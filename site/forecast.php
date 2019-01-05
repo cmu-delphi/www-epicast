@@ -612,14 +612,26 @@ foreach($output['regions'] as $r) {
 //          }
 //       }
       
-//       var above = -error[3]*scale;
-//       var below = error[4]*scale;
-//       var x = getX(epiweek-2);
-//       var y = getY(pastWili[regionID][pastWili[regionID].length - 1 - 1]);
-//       g.fillStyle = 'rgba(0, 0, 0, 0.5)';
-//       g.fillRect(x-2.5, y-above, 5, above);
-//       g.fillRect(x-2.5, y, 5, below);
+      var epiweek = addEpiweeks(xRange[0], numPastWeeks + 1);
+      drawText(g, epiweek, 100, 100, 0, Align.right, Align.center);
+      var error = errors[regionID-1];
+      var above = -error[2]*scale;
+      var below = error[3]*scale;
+      var x = getX(epiweek-2);
+      var y = getY(pastWili[regionID][pastWili[regionID].length - 2]);
+      drawText(g, x, 110, 110, 0, Align.right, Align.center);
+      drawText(g, y, 120, 120, 0, Align.right, Align.center);
+      g.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      g.fillRect(x-2.5, y-above, 5, above);
+      g.fillRect(x-2.5, y, 5, below);
       
+      var above = -error[0]*scale;
+      var below = error[1]*scale;
+      var x = getX(epiweek-1);
+      var y = getY(pastWili[regionID][pastWili[regionID].length - 1]);
+      g.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      g.fillRect(x-2.5, y-above, 5, above);
+      g.fillRect(x-2.5, y, 5, below);
       
       
       //legend
