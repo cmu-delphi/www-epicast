@@ -612,6 +612,32 @@ foreach($output['regions'] as $r) {
          }
       }
       
+      var above = -error[3]*scale;
+      var below = error[4]*scale;
+      var x = getX(epiweek-2);
+      var y = getY(pastWili[regionID][pastWili[regionID].length - 1 - 1]);
+      g.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      g.fillRect(x-2.5, y-above, 5, above);
+      g.fillRect(x-2.5, y, 5, below);
+      
+      var above = -error[5]*scale;
+      var below = error[6]*scale;
+      var x = getX(epiweek-3);
+      var y = getY(pastWili[regionID][pastWili[regionID].length - 3]);
+      g.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      g.fillRect(x-2.5, y-above, 5, above);
+      g.fillRect(x-2.5, y, 5, below);
+      
+      var above = -error[7]*scale;
+      var below = error[8]*scale;
+      var x = getX(epiweek-4);
+      var y = getY(pastWili[regionID][pastWili[regionID].length - 4]);
+      g.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      g.fillRect(x-2.5, y-above, 5, above);
+      g.fillRect(x-2.5, y, 5, below);
+      
+      g.fillRect(0, 0, 100, 100);
+      
       
       //legend
       var x1 = canvas.width - marginRight();
