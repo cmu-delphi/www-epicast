@@ -37,17 +37,17 @@ if($_offline) {
    <div class="box_section">
       <div class="box_section_title">
          Post <?= formatEpiweek($output['epiweek']['round_epiweek']) ?> Forecast
-         <div class="box_section_subtitle">
-            Due by 10:00 AM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
-         </div>
 <!--          <div class="box_section_subtitle">
-            Due by 10:00 AM (ET) on Wednesday, January 2, 2018.
+            Due by 10:00 AM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
          </div> -->
+         <div class="box_section_subtitle">
+            Due by 10:00 AM (ET) on Tuesday, January 22, 2019.
+         </div>
       </div>
       <div>
          <?php
          $time = $output['epiweek']['remaining'];
-         $time['days'] = $time['days'];
+         $time['days'] = $time['days'] + 1;
          $value = '';
          $unit = ' until due';
          if($time['days'] < 2) {
