@@ -37,6 +37,8 @@ function databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName) {
    return $dbh;
 }
 
+$dbh = databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName);
+
 function getTargetPreference(&$output, $hash){
     $userID = $output['user_id'];
     $dbh = databaseConnect(null, null, null, null, 'epicast2');
@@ -948,8 +950,7 @@ function getAvailableTaskSets() {
 
 
 function getNextLocation($mturkID, $regionID) {
-    $dbh = databaseConnect(null, null, null, null, 'epicast2');
-
+//     $dbh = databaseConnect(null, null, null, null, 'epicast2');
     if ($regionID === -1 && !userAlreadyExist($mturkID)) {
         $availableTasks = getAvailableTaskSets();
         $task = $availableTasks[array_rand($availableTasks)];
