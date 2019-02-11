@@ -1,5 +1,6 @@
 <?php
 require_once('utils.php');
+require_once('settings.php');
 
 define("NUM_REGIONS", 60);
 define("NUM_AGEGROUPS", 6);
@@ -34,6 +35,18 @@ function databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName) {
       mysql_select_db($dbName, $dbh);
    }
    return $dbh;
+}
+
+function getTargetPreference(&$output, $hash){
+    $userID = $output['user_id'];
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+    $result = mysqli_query($dbh,"SELECT `value` FROM ec_fluv_user_preferences WHERE `user_id` = '{$userID}' AND 'name' = 'targets'");
+    if($row = mysqli_fetch_array($result)) {
+        $list = explode(",",$result);
+        return $list;
+    } else {
+        return null;
+    }
 }
 
 /*
@@ -95,6 +108,29 @@ function getUserByEmail(&$output, $email) {
       return getResult($output);
    }
 }
+
+function getUserIDByMturkID($mturkID) {
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+    $result = mysqli_query($dbh,"SELECT `id` FROM ec_fluv_users_mturk WHERE `name` = '{$mturkID}'");
+  if($row = mysqli_fetch_array($result)) {
+     return $row['id'];
+  } else {
+     return -1;
+  }
+
+}
+
+function userAlreadyExist($mturkID) {
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+    $result = mysqli_query($dbh,"SELECT `name` FROM ec_fluv_users_mturk_2019 WHERE `name` = '{$mturkID}'");
+  if($row = mysqli_fetch_array($result)) {
+     // echo ("old user");
+     return 1;
+  } else {
+     return 0;
+  }
+}
+
 
 /*
 ===== getUserStats =====
@@ -222,6 +258,69 @@ function getEpiweekInfo(&$output) {
    return getResult($output);
 }
 
+function getEpiweekInfo_mturk(&$output) {
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+    $result = mysqli_query($dbh,'SELECT yearweek(now(), 6) `current_epiweek`, x.`round_epiweek`, x.`deadline`, unix_timestamp(x.`deadline`) `deadline_timestamp`, unix_timestamp(x.`deadline`) - unix_timestamp(now()) `remaining` FROM (SELECT `round_epiweek`, date_sub(`deadline`, INTERVAL 12 HOUR) `deadline` FROM ec_fluv_round) x');
+   if($row = mysqli_fetch_array($result)) {
+      $output['epiweek'] = array();
+       $output['epiweek']['current_epiweek'] = intval($row['current_epiweek']);
+
+      $current_year = intval($output['epiweek']['current_epiweek'] / 100);
+      $current_week = intval($output['epiweek']['current_epiweek'] % 100);
+      if($current_week >= 30) {
+        $output['epiweek']['season'] = array(
+          'year' => $current_year,
+          'start' => $current_year * 100 + 40,
+          'end' => ($current_year + 1) * 100 + 20,
+        );
+      } else {
+        $output['epiweek']['season'] = array(
+          'year' => $current_year - 1,
+          'start' => ($current_year - 1) * 100 + 40,
+          'end' => $current_year * 100 + 20,
+        );
+      }
+
+       $output['epiweek']['round_epiweek'] = intval($row['round_epiweek']);
+      $output['epiweek']['deadline'] = $row['deadline'];
+      $output['epiweek']['deadline_timestamp'] = intval($row['deadline_timestamp']);
+      $seconds = intval($row['remaining']);
+      $days = 0;
+      $hours = 0;
+      $minutes = 0;
+      if($seconds < 0) {
+         $seconds = 0;
+      } else {
+         $days = intval($seconds / (60 * 60 * 24));
+         $seconds -= $days * (60 * 60 * 24);
+         $hours = intval($seconds / (60 * 60));
+         $seconds -= $hours * (60 * 60);
+         $minutes = intval($seconds / 60);
+         $seconds -= $minutes * 60;
+      }
+      $output['epiweek']['remaining'] = array(
+         'days' => $days,
+         'hours' => $hours,
+         'minutes' => $minutes,
+         'seconds' => $seconds,
+      );
+      setResult($output, 1);
+   } else {
+      setResult($output, 2);
+      return getResult($output);
+   }
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+   $result = mysqli_query($dbh,'SELECT max(`issue`) AS `data_epiweek` FROM epidata.`fluview`');
+   if($row = mysqli_fetch_array($result)) {
+      $output['epiweek']['data_epiweek'] = intval($row['data_epiweek']);
+      setResult($output, 1);
+   } else {
+      setResult($output, 3);
+      return getResult($output);
+   }
+   return getResult($output);
+}
+
 /*
 ===== getRegions =====
 Purpose:
@@ -243,6 +342,29 @@ function getRegions(&$output, $userID) {
    $result = mysql_query("SELECT r.`id`, r.`name`, r.`states`, r.`population`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM ec_fluv_regions r LEFT JOIN ec_fluv_submissions s ON s.`user_id` = {$userID} AND s.`region_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
    $regions = array();
    while($row = mysql_fetch_array($result)) {
+      $region = array(
+         'id' => intval($row['id']),
+         'name' => $row['name'],
+         'states' => $row['states'],
+         'population' => intval($row['population']),
+         'completed' => intval($row['completed']) === 1,
+      );
+      $regions[$region['id']] = $region;
+   }
+   $output['regions'] = &$regions;
+   setResult($output, count($regions) == NUM_REGIONS ? 1 : 2);
+   return getResult($output);
+}
+
+function getRegions_mturk(&$output, $userID) {
+   $temp = array();
+   if(getEpiweekInfo_mturk($temp) !== 1) {
+      return getResult($temp);
+   }
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+   $result = mysqli_query($dbh,"SELECT r.`id`, r.`name`, r.`states`, r.`population`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM ec_fluv_regions r LEFT JOIN ec_fluv_submissions_mturk s ON s.`user_id` = {$userID} AND s.`region_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
+   $regions = array();
+   while($row = mysqli_fetch_array($result)) {
       $region = array(
          'id' => intval($row['id']),
          'name' => $row['name'],
@@ -335,6 +457,36 @@ function getRegionsExtended(&$output, $userID) {
    setResult($output, 1);
    return getResult($output);
 }
+
+function getRegionsExtended_mturk(&$output, $userID) {
+   $temp = array();
+   if(getEpiweekInfo_mturk($temp) !== 1) {
+      return getResult($temp);
+   }
+   //Basic region information
+   if(getRegions_mturk($output, $userID) !== 1) {
+      return getResult($output);
+   }
+   //History and forecast for every region
+   foreach($output['regions'] as &$r) {
+      if(getPreference($output, 'advanced_prior', 'int') === 1) {
+         $firstWeek = 199730;
+      } else {
+         $firstWeek = 200430;
+      }
+      if(getHistory_mturk($output, $r['id'], $firstWeek) !== 1) {
+         return getResult($output);
+      }
+      $r['history'] = $output['history'];
+      if(loadForecast_mturk($output, $userID, $r['id']) !== 1) {
+         return getResult($output);
+      }
+      $r['forecast'] = $output['forecast'];
+   }
+   setResult($output, 1);
+   return getResult($output);
+}
+
 
 /*
 ===== getAgeGroupsExtended =====
@@ -453,6 +605,30 @@ function getHistory_Hosp(&$output, $flusurv_name, $firstWeek) {
    return getResult($output);
 }
 
+function getHistory_mturk(&$output, $regionID, $firstWeek) {
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+    $result = mysqli_query($dbh,"SELECT fv.`epiweek`, fv.`wili` FROM epidata.`fluview` AS fv JOIN ( SELECT `epiweek`, max(`issue`) AS `latest` FROM epidata.`fluview` AS fv JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} GROUP BY fv.`epiweek` ) AS issues ON fv.`epiweek` = issues.`epiweek` AND fv.`issue` = issues.`latest` JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} ORDER BY fv.`epiweek` ASC");
+   $date = array();
+   $wili = array();
+   $maxEW = 201920;
+   while($row = mysqli_fetch_array($result)) {
+      $ew = intval($row['epiweek']);
+      if($ew<$maxEW) {
+        while($firstWeek < $ew) {
+          array_push($date, $firstWeek);
+          array_push($wili, -1);
+          $firstWeek = addEpiweeks($firstWeek, 1);
+        }
+        array_push($date, $ew);
+        array_push($wili, floatval($row['wili']));
+        $firstWeek = addEpiweeks($firstWeek, 1);
+      }
+   }
+   $output['history'] = array('date' => &$date, 'wili' => &$wili);
+   setResult($output, 1);
+   return getResult($output);
+}
+
 
 /**
  * Returns an array of age groups in the form of (flusurv_name, name, ages) where
@@ -502,6 +678,26 @@ function saveForecast(&$output, $userID, $regionID, $forecast, $commit) {
    setResult($output, 1);
    return getResult($output);
 }
+
+function saveForecast_mturk(&$output, $userID, $regionID, $forecast, $commit) {
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+    $temp = array();
+  if(getEpiweekInfo_mturk($temp) !== 1) {
+     return getResult($temp);
+  }
+  $epiweek = $temp['epiweek']['round_epiweek'];
+  foreach($forecast as $wili) {
+     $epiweek = addEpiweeks($epiweek, 1);
+     mysqli_query($dbh,"INSERT INTO ec_fluv_forecast_mturk (`user_id`, `region_id`, `epiweek_now`, `epiweek`, `wili`, `date`) VALUES ({$userID}, {$regionID}, {$temp['epiweek']['round_epiweek']}, {$epiweek}, {$wili}, now()) ON DUPLICATE KEY UPDATE `wili` = {$wili}, `date` = now()");
+  }
+  if($commit) {
+     mysqli_query($dbh,"INSERT INTO ec_fluv_submissions_mturk (`user_id`, `region_id`, `epiweek_now`, `date`) VALUES ({$userID}, {$regionID}, {$temp['epiweek']['round_epiweek']}, now())");
+  }
+  setResult($output, 1);
+  return getResult($output);
+}
+
+
 /*
 ===== saveForecast_hosp =====
 Purpose:
@@ -570,6 +766,37 @@ function loadForecast(&$output, $userID, $regionID, $submitted=false) {
    $wili = array();
    $result = mysql_query("SELECT `epiweek_now`, `epiweek`, `wili` FROM ec_fluv_forecast f WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` = {$epiweek} ORDER BY f.`epiweek` ASC");
    while($row = mysql_fetch_array($result)) {
+      array_push($date, intval($row['epiweek']));
+      array_push($wili, floatval($row['wili']));
+   }
+   $output['forecast'] = array('date' => &$date, 'wili' => &$wili);
+   setResult($output, 1);
+   return getResult($output);
+}
+
+function loadForecast_mturk(&$output, $userID, $regionID, $submitted=false) {
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+    if($submitted) {
+      $temp = array();
+      if(getEpiweekInfo_mturk($temp) !== 1) {
+         return getResult($temp);
+      }
+      $result = mysqli_query($dbh,"SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_submissions_mturk WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` < {$temp['epiweek']['round_epiweek']}");
+   } else {
+      $result = mysqli_query($dbh,"SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_forecast_mturk WHERE `user_id` = {$userID} AND `region_id` = {$regionID}");
+   }
+   if($row = mysqli_fetch_array($result)) {
+      $epiweek = intval($row['epiweek']);
+   } else {
+      setResult($output, 2);
+      return getResult($output);
+   }
+
+   $date = array();
+   $wili = array();
+   $query = "SELECT `epiweek_now`, `epiweek`, `wili` FROM ec_fluv_forecast_mturk f WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` = {$epiweek} ORDER BY f.`epiweek` ASC";
+   $result = mysqli_query($dbh, $query);
+   while($row = mysqli_fetch_array($result)) {
       array_push($date, intval($row['epiweek']));
       array_push($wili, floatval($row['wili']));
    }
@@ -660,6 +887,104 @@ function registerUser(&$output, $name, $email, $adminEmail) {
    mysql_query("CALL automation.RunStep(2)");
    setResult($output, 1);
    return getResult($output);
+}
+
+function registerUser_mturk($mturkID) {
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+    //Find, or create, the user
+  if (userAlreadyExist($mturkID) === 1) {
+    return;
+  } else {
+    $email = md5(rand());
+    $hash = md5(rand());
+    $escapedInput = mysqli_real_escape_string($dbh, $mturkID);
+    // echo("ecaped string: $escapedInput\n");
+    $query = "INSERT INTO ec_fluv_users_mturk (`hash`, `name`, `email`, `first_seen`, `last_seen`)
+              VALUES ('{$hash}', '{$escapedInput}', '{$email}', now(), now())";
+    $result = mysqli_query($dbh, $query);
+    // if ($result == FALSE) {
+    //   echo("failed to insert");
+    //   echo(mysqli_error($dbh));
+    // }
+    // else {echo("success");}
+  }
+  return;
+}
+
+function registerUser_mturk_2019($mturkID, $taskID) {
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+    //Find, or create, the user
+    if (userAlreadyExist($mturkID) === 1) {
+        return;
+    } else {
+        $email = md5(rand());
+        $hash = md5(rand());
+        $escapedInput = mysqli_real_escape_string($dbh, $mturkID);
+        $query = "INSERT INTO ec_fluv_users_mturk_2019 (`hash`, `name`, `email`, `first_seen`, `last_seen`, `taskID`)
+              VALUES ('{$hash}', '{$escapedInput}', '{$email}', now(), now(), {$taskID})";
+        mysqli_query($dbh, $query);
+        $query = "UPDATE ec_fluv_mturk_tasks SET numWorker = numWorker + 1 WHERE taskID = {$taskID}";
+        mysqli_query($dbh, $query);
+    }
+    return;
+}
+
+function readSqlResult($query, $dest) {
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+    $result = mysqli_query($dbh, $query);
+    while ($row = mysqli_fetch_assoc($result)) {
+        array_push($dest, $row);
+    }
+    return $dest;
+
+}
+
+function getAvailableTaskSets() {
+    $query = "select taskID, states from ec_fluv_mturk_tasks where numWorker < 50";
+    $availableTasks = array();
+    $availableTasks = readSqlResult($query, $availableTasks);
+    return $availableTasks;
+}
+
+
+function getNextLocation($mturkID, $regionID) {
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+
+    if ($regionID === -1 && !userAlreadyExist($mturkID)) {
+        $availableTasks = getAvailableTaskSets();
+        $task = $availableTasks[array_rand($availableTasks)];
+        $taskID = $task['taskID'];
+        registerUser_mturk_2019($mturkID, $taskID);
+
+        $states = $task['states'];
+        $regionIDs = explode(",",$states);
+        $regionID = array(min($regionIDs));
+        return $regionID;
+
+    } else {
+        $escapedInput = mysqli_real_escape_string($dbh, $mturkID);
+        $query = "select taskID from ec_fluv_users_mturk_2019 where name = '{$escapedInput}'";
+        $result = mysqli_query($dbh, $query);
+        $taskID = intval(mysqli_fetch_assoc($result));
+
+        $query = "select states from ec_fluv_mturk_tasks where taskID = {$taskID}";
+        $states = array();
+        $states = readSqlResult($query, $states);
+        $states = $states[0]['states'];
+        $states = explode(",", $states);
+        return $states;
+    }
+}
+
+function save_random_code_mturk($userID, $code) {
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+    $result = mysqli_query($dbh,"INSERT INTO ec_fluv_mturk_code_match (`user_id`, `code`) VALUES ({$userID}, {$code})");
+  if ($result == FALSE) {
+     echo("failed to insert");
+     echo(mysqli_error($dbh));
+   }
+  else {echo("success");}
+  return;
 }
 
 /*
@@ -793,6 +1118,34 @@ function getUserbase(&$output, $sortField, $sortDir) {
    setResult($output, 1);
    return getResult($output);
 }
+
+
+function loadUserPreferences_mturk(&$output, $userID) {
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+    $output['user_preferences'] = array();
+   $result = mysqli_query($dbh, "SELECT `name`, `value` FROM ec_fluv_user_preferences_mturk WHERE `user_id` = {$userID} ORDER BY `name` ASC");
+   while($row = mysqli_fetch_array($result)) {
+      $output['user_preferences'][$row['name']] = $row['value'];
+   }
+   setResult($output, 1);
+   return getResult($output);
+}
+
+
+function saveUserPreferences_mturk(&$output, $userID, $preferences) {
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+    foreach(array_keys($preferences) as $name) {
+      $value = $preferences[$name];
+      if($value === null) {
+         mysqli_query($dbh,"DELETE FROM ec_fluv_user_preferences_mturk WHERE `user_id` = {$userID} AND `name` = '{$name}'");
+      } else {
+         mysqli_query($dbh,"INSERT INTO ec_fluv_user_preferences_mturk (`user_id`, `name`, `value`, `date`) VALUES ({$userID}, '{$name}', '{$value}', now()) ON DUPLICATE KEY UPDATE `value` = '{$value}', `date` = now()");
+      }
+   }
+   return loadUserPreferences_mturk($output, $userID);
+}
+
+
 
 /*
 ===== getLeaderboard =====
