@@ -933,8 +933,12 @@ function registerUser_mturk_2019($mturkID, $taskID) {
 
 function readSqlResult($query, $dest) {
     $dbh = databaseConnect(null, null, null, null, 'epicast2');
-    $result = mysqli_query($dbh, $query);
-    while ($row = mysqli_fetch_assoc($result)) {
+//     $result = mysqli_query($dbh, $query);
+    $result = mysql_query($query);
+//     while ($row = mysqli_fetch_assoc($result)) {
+//         array_push($dest, $row);
+//     }
+    while ($row = mysql_fetch_assoc($result)) {
         array_push($dest, $row);
     }
     return $dest;
@@ -963,10 +967,13 @@ function getNextLocation($mturkID, $regionID) {
         return $regionID;
 
     } else {
-        $escapedInput = mysqli_real_escape_string($dbh, $mturkID);
+//         $escapedInput = mysqli_real_escape_string($dbh, $mturkID);
+       $escapedInput = mysql_real_escape_string($mturkID);
         $query = "select taskID from ec_fluv_users_mturk_2019 where name = '{$escapedInput}'";
-        $result = mysqli_query($dbh, $query);
-        $taskID = intval(mysqli_fetch_assoc($result));
+//         $result = mysqli_query($dbh, $query);
+//         $taskID = intval(mysqli_fetch_assoc($result));
+        $result = mysql_query($query);
+        $taskID = intval(mysql_fetch_assoc($result));
 
         $query = "select states from ec_fluv_mturk_tasks where taskID = {$taskID}";
         $states = array();
