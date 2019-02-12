@@ -17,8 +17,10 @@ if(!$dbh) {
    //Connected successfully
    if($_REQUEST['action'] == 'forecast' || $_REQUEST['action'] == 'autosave') {
       $output['action'] = $_REQUEST['action'];
-      $mturkID = mysql_real_escape_string($_REQUEST['mturkID']);
-      $hash = mysql_real_escape_string($_REQUEST['hash']);
+//       $mturkID = mysql_real_escape_string($_REQUEST['mturkID']);
+//       $hash = mysql_real_escape_string($_REQUEST['hash']);
+      $mturkID = $_REQUEST['mturkID'];
+      $hash = $_REQUEST['hash'];
       $id = $_REQUEST['userID'];
       $temp = array();
       if(userAlreadyExist($mturkID) == 1) {
