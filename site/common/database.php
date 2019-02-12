@@ -121,7 +121,7 @@ function getUserIDByMturkID($mturkID) {
 function userAlreadyExist($mturkID) {
     $result = mysql_query("SELECT `name` FROM ec_fluv_users_mturk_2019 WHERE `name` = '{$mturkID}'");
   if($row = mysql_fetch_array($result)) {
-     // echo ("old user");
+     echo ("old user");
      return 1;
   } else {
      return 0;
