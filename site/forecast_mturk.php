@@ -801,7 +801,7 @@ foreach($output['regions'] as $r) {
             alert('Some points are still at zero. Please double check your forecast and try again.');
             return;
          }
-         timeoutID = setTimeout(submitTimeout, 10000);
+         timeoutID = setTimeout(submitTimeout, 100000);
          submitStatus = SubmitStatus.sent;
          updateStatus();
          $('#button_submit').addClass('box_button_disabled');
