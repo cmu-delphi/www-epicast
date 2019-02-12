@@ -1103,10 +1103,9 @@ function getUserbase(&$output, $sortField, $sortDir) {
 
 
 function loadUserPreferences_mturk(&$output, $userID) {
-    $dbh = databaseConnect(null, null, null, null, 'epicast2');
     $output['user_preferences'] = array();
-   $result = mysqli_query($dbh, "SELECT `name`, `value` FROM ec_fluv_user_preferences_mturk WHERE `user_id` = {$userID} ORDER BY `name` ASC");
-   while($row = mysqli_fetch_array($result)) {
+   $result = mysql_query("SELECT `name`, `value` FROM ec_fluv_user_preferences_mturk WHERE `user_id` = {$userID} ORDER BY `name` ASC");
+   while($row = mysql_fetch_array($result)) {
       $output['user_preferences'][$row['name']] = $row['value'];
    }
    setResult($output, 1);
