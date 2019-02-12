@@ -815,8 +815,8 @@ foreach($output['regions'] as $r) {
            'f[]': f,
        };
 
-//      console.log("inside submitForecast, sending params");
-//      console.log(params);
+     console.log("inside submitForecast, sending params");
+     console.log(params);
 //      console.log("in api_mturk.php, calling handleResponse");
       var hjj = $.get("api_mturk.php", params, handleResponse, 'json');
       hjj.error(function(jqXHR, textStatus, errorThrown) {
