@@ -50,7 +50,8 @@ function getMiniHash($hash) {
 }
 
 function attemptLogin(&$output) {
-    $dbh = databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName);
+//    $dbh = databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName);
+    $dbh = mysqli_connect("127.0.0.1:3307", "epi", "3b1941e1cda870fd", "epicast2");
    $hash = null;
    if(isset($_REQUEST['user']) || isset($_SESSION['hash_fluv'])) {
       if(isset($_REQUEST['user'])) {

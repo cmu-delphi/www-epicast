@@ -50,6 +50,7 @@ if(isset($_REQUEST['region_id'])) {
    //Default to USA National
    $regionID = 1;
 }
+
 //Specific region
 if(!isset($output['regions'][$regionID])) {
    fail('Invalid region_id');
@@ -152,9 +153,7 @@ foreach($output['regions'] as $r) {
                [<?= htmlspecialchars($region['states']) ?>]
             </span>
          </div>
-<!--         <div style="float: right;">-->
-<!--            --><?php //button('fa-upload', 'Save &amp; Continue', "submitForecast(true)", '', 'button_submit'); ?>
-<!--         </div>-->
+
          <div class="box_status_info">
             <span id="status_message">Draw your forecast by clicking and dragging across the chart below.</span>
             <span id="status_icon"><i class="fa fa-info-circle"></i></span>

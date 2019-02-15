@@ -30,7 +30,8 @@ Output:
    A handle to the database connection
 */
 function databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName) {
-    $dbh = databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName);
+//    $dbh = databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName);
+    $dbh = mysqli_connect("127.0.0.1:3307", "epi", "3b1941e1cda870fd", "epicast2");
    if($dbh) {
       mysqli_select_db($dbh, $dbName);
    }
@@ -129,7 +130,7 @@ function getUserIDByMturkID($mturkID) {
 
 function userAlreadyExist($mturkID) {
     $dbh = databaseConnect(null, null, null, null, 'epicast2');
-    $result = mysqli_query($dbh,"SELECT `name` FROM ec_fluv_users_mturk WHERE `name` = '{$mturkID}'");
+    $result = mysqli_query($dbh,"SELECT `name` FROM ec_fluv_users_mturk_2019 WHERE `name` = '{$mturkID}'");
   if($row = mysqli_fetch_array($result)) {
      // echo ("old user");
      return 1;
@@ -274,9 +275,7 @@ function getEpiweekInfo_mturk(&$output) {
     $result = mysqli_query($dbh,'SELECT yearweek(now(), 6) `current_epiweek`, x.`round_epiweek`, x.`deadline`, unix_timestamp(x.`deadline`) `deadline_timestamp`, unix_timestamp(x.`deadline`) - unix_timestamp(now()) `remaining` FROM (SELECT `round_epiweek`, date_sub(`deadline`, INTERVAL 12 HOUR) `deadline` FROM ec_fluv_round) x');
    if($row = mysqli_fetch_array($result)) {
       $output['epiweek'] = array();
-      // $output['epiweek']['current_epiweek'] = intval($row['current_epiweek']);
-
-      $output['epiweek']['current_epiweek'] = 201750;
+       $output['epiweek']['current_epiweek'] = intval($row['current_epiweek']);
 
       $current_year = intval($output['epiweek']['current_epiweek'] / 100);
       $current_week = intval($output['epiweek']['current_epiweek'] % 100);
@@ -294,8 +293,7 @@ function getEpiweekInfo_mturk(&$output) {
         );
       }
 
-      // $output['epiweek']['round_epiweek'] = intval($row['round_epiweek']);
-      $output['epiweek']['round_epiweek'] = 201749;
+       $output['epiweek']['round_epiweek'] = intval($row['round_epiweek']);
       $output['epiweek']['deadline'] = $row['deadline'];
       $output['epiweek']['deadline_timestamp'] = intval($row['deadline_timestamp']);
       $seconds = intval($row['remaining']);
@@ -586,7 +584,7 @@ function getHistory_mturk(&$output, $regionID, $firstWeek) {
     $result = mysqli_query($dbh,"SELECT fv.`epiweek`, fv.`wili` FROM epidata.`fluview` AS fv JOIN ( SELECT `epiweek`, max(`issue`) AS `latest` FROM epidata.`fluview` AS fv JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} GROUP BY fv.`epiweek` ) AS issues ON fv.`epiweek` = issues.`epiweek` AND fv.`issue` = issues.`latest` JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} ORDER BY fv.`epiweek` ASC");
    $date = array();
    $wili = array();
-   $maxEW = 201749;
+   $maxEW = 201920;
    while($row = mysqli_fetch_array($result)) {
       $ew = intval($row['epiweek']);
       if($ew<$maxEW) {
@@ -700,7 +698,7 @@ function saveForecast(&$output, $userID, $regionID, $forecast, $commit) {
 }
 
 /*
-===== saveForecast_mturk =====
+===== saveForecast_mturk =====rtt
 Purpose:
    Saves the user's forecast
 Input:
@@ -731,6 +729,7 @@ function saveForecast_mturk(&$output, $userID, $regionID, $forecast, $commit) {
   setResult($output, 1);
   return getResult($output);
 }
+
 
 /*
 ===== saveForecast_hosp =====
@@ -839,9 +838,6 @@ function loadForecast_mturk(&$output, $userID, $regionID, $submitted=false) {
       return getResult($output);
    }
 
-   // set epiweek to a previous week
-   $epiweek = 201749;
-
    $date = array();
    $wili = array();
    $query = "SELECT `epiweek_now`, `epiweek`, `wili` FROM ec_fluv_forecast_mturk f WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` = {$epiweek} ORDER BY f.`epiweek` ASC";
@@ -935,8 +931,8 @@ function registerUser(&$output, $name, $email, $instance, $adminEmail) {
    }
    //Send an email to the user
    $hash = strtoupper(substr($output['user_hash'], 0, 8));
-   $subject = mysqli_real_escape_string('Welcome to Epicast');
-   $body = mysqli_real_escape_string(sprintf("Hi %s,\r\n\r\nWelcome to Epicast! Here's your User ID: %s\r\nYou can login and begin forecasting here: https://epicast.org/launch.php?user=%s\r\n\r\nThank you,\r\nThe Delphi Team\r\n\r\n[This is an automated message. Please direct all replies to: %s. Unsubscribe: https://epicast.org/preferences.php?user=%s]", $name, $hash, $hash, $adminEmail, $hash));
+   $subject = mysqli_real_escape_string($dbh, 'Welcome to Epicast');
+   $body = mysqli_real_escape_string($dbh, sprintf("Hi %s,\r\n\r\nWelcome to Epicast! Here's your User ID: %s\r\nYou can login and begin forecasting here: https://epicast.org/launch.php?user=%s\r\n\r\nThank you,\r\nThe Delphi Team\r\n\r\n[This is an automated message. Please direct all replies to: %s. Unsubscribe: https://epicast.org/preferences.php?user=%s]", $name, $hash, $hash, $adminEmail, $hash));
    mysqli_query($dbh,"INSERT INTO automation.email_queue (`from`, `to`, `subject`, `body`) VALUES ('delphi@epicast.net', '{$email}', '{$subject}', '{$body}')");
    mysqli_query($dbh,"CALL automation.RunStep(2)");
    setResult($output, 1);
@@ -987,7 +983,7 @@ function registerUser_mturk($mturkID) {
   } else {
     $email = md5(rand());
     $hash = md5(rand());
-    $escapedInput = mysqli_real_escape_string($mturkID);
+    $escapedInput = mysqli_real_escape_string($dbh, $mturkID);
     // echo("ecaped string: $escapedInput\n");
     $query = "INSERT INTO ec_fluv_users_mturk (`hash`, `name`, `email`, `first_seen`, `last_seen`)
               VALUES ('{$hash}', '{$escapedInput}', '{$email}', now(), now())";
@@ -1000,6 +996,73 @@ function registerUser_mturk($mturkID) {
   }
   return;
 }
+
+
+function registerUser_mturk_2019($mturkID, $taskID) {
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+    //Find, or create, the user
+    if (userAlreadyExist($mturkID) === 1) {
+        return;
+    } else {
+        $email = md5(rand());
+        $hash = md5(rand());
+        $escapedInput = mysqli_real_escape_string($dbh, $mturkID);
+        $query = "INSERT INTO ec_fluv_users_mturk_2019 (`hash`, `name`, `email`, `first_seen`, `last_seen`, `taskID`)
+              VALUES ('{$hash}', '{$escapedInput}', '{$email}', now(), now(), {$taskID})";
+        mysqli_query($dbh, $query);
+        $query = "UPDATE ec_fluv_mturk_tasks SET numWorker = numWorker + 1 WHERE taskID = {$taskID}";
+        mysqli_query($dbh, $query);
+    }
+    return;
+}
+
+function readSqlResult($query, $dest) {
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+    $result = mysqli_query($dbh, $query);
+    while ($row = mysqli_fetch_assoc($result)) {
+        array_push($dest, $row);
+    }
+    return $dest;
+
+}
+
+function getAvailableTaskSets() {
+    $query = "select taskID, states from ec_fluv_mturk_tasks where numWorker < 50";
+    $availableTasks = array();
+    $availableTasks = readSqlResult($query, $availableTasks);
+    return $availableTasks;
+}
+
+
+function getNextLocation($mturkID, $regionID) {
+    $dbh = databaseConnect(null, null, null, null, 'epicast2');
+
+    if ($regionID === -1 && !userAlreadyExist($mturkID)) {
+        $availableTasks = getAvailableTaskSets();
+        $task = $availableTasks[array_rand($availableTasks)];
+        $taskID = $task['taskID'];
+        registerUser_mturk_2019($mturkID, $taskID);
+
+        $states = $task['states'];
+        $regionIDs = explode(",",$states);
+        $regionID = array(min($regionIDs));
+        return $regionID;
+
+    } else {
+        $escapedInput = mysqli_real_escape_string($dbh, $mturkID);
+        $query = "select taskID from ec_fluv_users_mturk_2019 where name = '{$escapedInput}'";
+        $result = mysqli_query($dbh, $query);
+        $taskID = intval(mysqli_fetch_assoc($result));
+
+        $query = "select states from ec_fluv_mturk_tasks where taskID = {$taskID}";
+        $states = array();
+        $states = readSqlResult($query, $states);
+        $states = $states[0]['states'];
+        $states = explode(",", $states);
+        return $states;
+    }
+}
+
 
 function save_random_code_mturk($userID, $code) {
     $dbh = databaseConnect(null, null, null, null, 'epicast2');
