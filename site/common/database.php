@@ -31,7 +31,6 @@ Output:
 */
 function databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName) {
 //    $dbh = databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName);
-    $dbh = mysqli_connect("127.0.0.1:3307", "epi", "3b1941e1cda870fd", "epicast2");
    if($dbh) {
       mysqli_select_db($dbh, $dbName);
    }
