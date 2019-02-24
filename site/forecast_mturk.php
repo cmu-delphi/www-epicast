@@ -124,7 +124,7 @@ if(($regionID=== 17 || $regionID=== 12 || $regionID=== 21 || $regionID=== 14 || 
          </video>
          <p>
             <?php
-           createForm('reload', 'forecast_mturk.php?id={$regionID}', array('region_id', $regionID, 'skip_instructions', '1'));
+           createForm('reload', 'forecast_mturk.php?id=' + strval($regionID), array('region_id', $regionID, 'skip_instructions', '1'));
            button('fa-check', 'I Understand', "submit('reload')");
             ?>
          </p>
