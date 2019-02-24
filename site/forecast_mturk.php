@@ -102,7 +102,7 @@ $seasonOffsets = array_reverse($seasonOffsets);
 $seasonYears = array_reverse($seasonYears);
 //$seasonYears = array_slice($seasonYears, 0, count($seasonYears));
 
-if($regionID === 1 && getPreference($output, 'skip_instructions', 'int') !== 1) {
+if(($regionID=== 17 || $regionID=== 12 || $regionID=== 21 || $regionID=== 14 || $regionID=== 25) && getPreference($output, 'skip_instructions', 'int') !== 1) {
    ?>
    <div class="box_section">
       <div class="box_section_title">
