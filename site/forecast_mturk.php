@@ -820,6 +820,7 @@ foreach($output['regions'] as $r) {
      var hjj = $.get("api_mturk.php", params, handleResponse, 'json');
      hjj.error(function(jqXHR, textStatus, errorThrown) {
          console.log('The server is not responding');
+         console.log(jqXHR);
          console.log(errorThrown);
          console.log(textStatus);
      });
