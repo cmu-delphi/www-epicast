@@ -907,9 +907,9 @@ function registerUser_mturk_2019($mturkID, $taskID) {
         $escapedInput = mysql_real_escape_string($mturkID);
         $query = "INSERT INTO ec_fluv_users_mturk_2019 (`hash`, `name`, `email`, `first_seen`, `last_seen`, `taskID`)
               VALUES ('{$hash}', '{$escapedInput}', '{$email}', now(), now(), {$taskID})";
-        mysql_query($dbh, $query);
+        mysql_query($query);
         $query = "UPDATE ec_fluv_mturk_tasks SET numWorker = numWorker + 1 WHERE taskID = {$taskID}";
-        mysql_query($dbh, $query);
+        mysql_query($query);
     }
     return;
 }
