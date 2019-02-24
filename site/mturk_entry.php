@@ -32,6 +32,7 @@ if (!$_GET['mturkId']) {
 } else {
   // If provided, set session variable and redirect to forecast_mturk
   $firstLocationID = getNextLocation($_GET['mturkId'], -1)[0];
+  echo ($firstLocationID);
 ?>
 
   <script type='text/javascript'>
