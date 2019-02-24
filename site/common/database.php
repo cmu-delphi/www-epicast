@@ -356,7 +356,6 @@ function getRegions_mturk(&$output, $userID) {
    if(getEpiweekInfo_mturk($temp) !== 1) {
       return getResult($temp);
    }
-    $dbh = databaseConnect(null, null, null, null, 'epicast2');
    $result = mysql_query("SELECT r.`id`, r.`name`, r.`states`, r.`population`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM ec_fluv_regions r LEFT JOIN ec_fluv_submissions_mturk s ON s.`user_id` = {$userID} AND s.`region_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
    $regions = array();
    while($row = mysql_fetch_array($result)) {
@@ -924,7 +923,12 @@ function readSqlResult($query, $dest) {
 }
 
 function getAvailableTaskSets() {
-    $query = "select taskID, states from ec_fluv_mturk_tasks where numWorker < 50";
+    $temp = array();
+     if(getEpiweekInfo_mturk($temp) !== 1) {
+       return getResult($temp);
+    }
+    $epiweek_now = $temp['epiweek']['round_epiweek'];
+    $query = "select taskID, states from ec_fluv_mturk_tasks where epiweek_now = {$epiweek_now} and numWorker < 50";
     $availableTasks = array();
     $availableTasks = readSqlResult($query, $availableTasks);
     return $availableTasks;
