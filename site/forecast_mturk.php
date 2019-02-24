@@ -790,20 +790,20 @@ foreach($output['regions'] as $r) {
            'f[]': f,
        };
 
-     console.log("inside submitForecast, sending params");
-     console.log(params);
+//      console.log("inside submitForecast, sending params");
+//      console.log(params);
      var hjj = $.get("api_mturk.php", params, handleResponse, 'json');
-     hjj.error(function(jqXHR, textStatus, errorThrown) {
-         console.log('The server is not responding');
-         console.log(jqXHR);
-         console.log(errorThrown);
-         console.log(textStatus);
-     });
+//      hjj.error(function(jqXHR, textStatus, errorThrown) {
+//          console.log('The server is not responding');
+//          console.log(jqXHR);
+//          console.log(errorThrown);
+//          console.log(textStatus);
+//      });
 
-     hjj.success(function(result) {
-          console.log(result);
-     });
-     console.log("sent");
+//      hjj.success(function(result) {
+//           console.log(result);
+//      });
+//      console.log("sent");
    }
 
    function updateStatus() {
