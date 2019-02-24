@@ -109,7 +109,7 @@ function getUserByEmail(&$output, $email) {
 }
 
 function getUserIDByMturkID($mturkID) {
-    $result = mysql_query("SELECT `id` FROM ec_fluv_users_mturk WHERE `name` = '{$mturkID}'");
+    $result = mysql_query("SELECT `id` FROM ec_fluv_users_mturk_2019 WHERE `name` = '{$mturkID}'");
   if($row = mysql_fetch_array($result)) {
      return $row['id'];
   } else {
