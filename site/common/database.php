@@ -958,10 +958,13 @@ function getNextLocation($mturkID, $regionID) {
         // return an array of unfinished states
         echo ('inside getNextLocation, get set of states in this task group');
         $escapedInput = mysql_real_escape_string($mturkID);
-        echo ($escapedInput);
         $query = "select taskID from ec_fluv_users_mturk_2019 where name = '{$escapedInput}'";
         $result = mysql_query($query);
-        $taskID = intval(mysql_fetch_assoc($result));
+//         $taskID = intval(mysql_fetch_assoc($result));
+       
+        while($row = mysql_fetch_array($result)) {
+           $taskID = intval($row['taskID']);
+        }
         
         echo ($taskID);
 
