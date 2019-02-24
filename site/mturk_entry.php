@@ -32,11 +32,10 @@ if (!$_GET['mturkId']) {
 } else {
   // If provided, set session variable and redirect to forecast_mturk
   $firstLocationID = getNextLocation($_GET['mturkId'], -1)[0];
-  echo($firstLocationID);
 ?>
 
   <script type='text/javascript'>
-    window.location.href = 'forecast_mturk.php?id=<?= $firstLocationID ?>&mturkId=<?= $_GET['mturkId'] ?>';
+    window.location.href = 'forecast_mturk.php?id=<?= $firstLocationID ?>&mturkId=<?= $_GET['mturkId'] ?>&isFirsRegion=true';
   </script>
 <?php
 }
