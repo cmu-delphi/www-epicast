@@ -821,6 +821,8 @@ foreach($output['regions'] as $r) {
           //Move to the next missing region, or go home
           $next = null;
           $unfinishedStates = getNextLocation($mturkID, $regionID);
+          echo('getting states');
+          echo($unfinishedStates);
 
           if (sizeof($unfinishedStates) !== 0) {
              foreach ($unfinishedStates as $i) {
@@ -832,7 +834,7 @@ foreach($output['regions'] as $r) {
 
              foreach ($unfinishedStates as $i) {
                  $r = $output['regions'][$i];
-                 if($r['id'] > $region['id'] && !$r['completed'] && $next === null) {
+                 if($r['id'] < $region['id'] && !$r['completed'] && $next === null) {
                      $next = $r['id'];
                  }
              }
