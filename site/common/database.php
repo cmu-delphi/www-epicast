@@ -907,7 +907,13 @@ function registerUser_mturk_2019($mturkID, $taskID) {
         $query = "INSERT INTO ec_fluv_users_mturk_2019 (`hash`, `name`, `email`, `first_seen`, `last_seen`, `taskID`)
               VALUES ('{$hash}', '{$escapedInput}', '{$email}', now(), now(), {$taskID})";
         mysql_query($query);
-        $query = "UPDATE ec_fluv_mturk_tasks SET numWorker = numWorker + 1 WHERE taskID = {$taskID}";
+       
+        $temp = array();
+        if(getEpiweekInfo_mturk($temp) !== 1) {
+            return getResult($temp);
+        }
+        $epiweek_now = $temp['epiweek']['round_epiweek'];
+        $query = "UPDATE ec_fluv_mturk_tasks SET numWorker = numWorker + 1 WHERE taskID = {$taskID} and epiweek_now = {$epiweek_now}";
         mysql_query($query);
     }
     return;
@@ -937,6 +943,7 @@ function getAvailableTaskSets() {
 
 function getNextLocation($mturkID, $regionID) {
     if ($regionID === -1 && !userAlreadyExist($mturkID)) {
+        // return the state with the smallest region ID in this task group
         $availableTasks = getAvailableTaskSets();
         $task = $availableTasks[array_rand($availableTasks)];
         $taskID = $task['taskID'];
@@ -948,10 +955,13 @@ function getNextLocation($mturkID, $regionID) {
         return $regionID;
 
     } else {
-       $escapedInput = mysql_real_escape_string($mturkID);
+        // return an array of unfinished states
+        $escapedInput = mysql_real_escape_string($mturkID);
         $query = "select taskID from ec_fluv_users_mturk_2019 where name = '{$escapedInput}'";
         $result = mysql_query($query);
         $taskID = intval(mysql_fetch_assoc($result));
+        echo ('inside getNextLocation, get set of states in this task group');
+        echo ($taskID);
 
         $query = "select states from ec_fluv_mturk_tasks where taskID = {$taskID}";
         $states = array();
