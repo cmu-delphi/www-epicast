@@ -21,6 +21,7 @@ function getColor($regionID, $seasonID) {
 
 $regionID = intval($_GET["id"]);
 $mturkID = $_GET['mturkId'];
+$isFirsRegion = $_GET['isFirsRegion'];
 $userID = getUserIDByMturkID($mturkID);
 
 loadUserPreferences_mturk($output, $userID);
@@ -102,7 +103,7 @@ $seasonOffsets = array_reverse($seasonOffsets);
 $seasonYears = array_reverse($seasonYears);
 //$seasonYears = array_slice($seasonYears, 0, count($seasonYears));
 
-if($regionID === 1 && getPreference($output, 'skip_instructions', 'int') !== 1) {
+if($isFirsRegion && getPreference($output, 'skip_instructions', 'int') !== 1) {
    ?>
    <div class="box_section">
       <div class="box_section_title">
@@ -841,7 +842,7 @@ foreach($output['regions'] as $r) {
          if($next !== null) {
             ?>
             console.log(<?= $next ?>);
-            redirect('forecast_mturk.php?id=<?= $next ?>&mturkId=<?= $mturkID ?>');
+            redirect('forecast_mturk.php?id=<?= $next ?>&mturkId=<?= $mturkID ?>&isFirsRegion=false');
             <?php
          } else {
             ?>
