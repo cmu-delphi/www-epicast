@@ -934,7 +934,7 @@ function getAvailableTaskSets() {
        return getResult($temp);
     }
     $epiweek_now = $temp['epiweek']['round_epiweek'];
-    $query = "select taskID, states from ec_fluv_mturk_tasks where epiweek_now = {$epiweek_now} and numWorker < 50";
+    $query = "select taskID, states from ec_fluv_mturk_tasks where epiweek_now = {$epiweek_now} and numWorker < 70";
     $availableTasks = array();
     $availableTasks = readSqlResult($query, $availableTasks);
     return $availableTasks;
