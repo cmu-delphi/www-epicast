@@ -913,7 +913,7 @@ function registerUser_mturk_2019($mturkID, $taskID) {
             return getResult($temp);
         }
         $epiweek_now = $temp['epiweek']['round_epiweek'];
-        $query = "UPDATE ec_fluv_mturk_tasks SET numWorker = numWorker + 1 WHERE taskID = {$taskID} and epiweek_now = {$epiweek_now}";
+        $query = "UPDATE ec_fluv_mturk_tasks SET numWorker = numWorker + 1 WHERE taskID = {$taskID}";
         mysql_query($query);
     }
     return;
