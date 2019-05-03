@@ -67,7 +67,7 @@ function showNavigation_hosp($output, $getUrl) {
   </div>
     
   <div class="bot_stat_value centered">
-     The hospitalization forecast for this season has ended. Thank you so much for your input, we hope you've had fun with the forecast!
+     The hospitalization forecast for this season has ended. Thank you so much for your input, we hope you've had fun!
   </div>
 
   <?php
