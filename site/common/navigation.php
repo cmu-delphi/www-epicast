@@ -65,10 +65,6 @@ function showNavigation_hosp($output, $getUrl) {
   <div class="bot_stat_value centered">
      Per Age Group Hospitalization
   </div>
-    
-<!--   <div class="bot_stat_value centered">
-     The hospitalization forecast for this season has ended. Thank you so much for your input, we hope you've had fun!
-  </div> -->
 
   <?php
   foreach ($output['ageGroups'] as $ageGroup) {
@@ -120,14 +116,10 @@ function showNavigation($output, $regionID=-1) {
    ?>
 
    <div class="box_section">
-<!--       <div class="bot_stat_value centered">
+      <div class="bot_stat_value centered">
          <i class="fa fa-check"></i> Submitted: <?= $submitted ?>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-question"></i> Still Missing: <?= $missing ?>
-      </div> -->
+      </div>
      
-<!--      <div class="bot_stat_value centered">
-         This year's influenza forecast has ended. Thank you so much for your input!
-     </div> -->
-
       <?php
        foreach ($regionIDs as $i) {
            $r = $output['regions'][$i];
