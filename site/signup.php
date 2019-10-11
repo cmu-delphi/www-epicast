@@ -52,7 +52,7 @@ function checkCaptcha($captcha, $ip) {
             </p><p style="text-align: left;">
                Your privacy and the confidentiality of your predictions will be strictly protected; we will not share your email address or your individual predictions without your prior written consent. The study is entirely voluntary, and you are free to stop participating or withdraw entirely at any time.
             </p><p style="text-align: left;">
-               The primary contact is <?= $epicastAdmin['name'] ?> (Email: <?= $epicastAdmin['email'] ?>), and the principal investigator is Roni Rosenfeld (Email: Roni.Rosenfeld@cs.cmu.edu; Office: GHC 8103). If you have questions pertaining to your rights as a research participant, or to report concerns with this study, you should contact the Carnegie Mellon University Office of Research Integrity and Compliance (Email: irb-review@andrew.cmu.edu).
+               The primary contact is <?= $epicastAdmin['name'] ?> (Email: <?= $epicastAdmin['email'] ?>), and the principal investigator is Roni Rosenfeld (Email: Roni.Rosenfeld@cs.cmu.edu; Office: GHC 8002). If you have questions pertaining to your rights as a research participant, or to report concerns with this study, you should contact the Carnegie Mellon University Office of Research Integrity and Compliance (Email: irb-review@andrew.cmu.edu).
             </p>
             <div class="box_decision_title">New User Signup</div>
             <form id="signup" method="POST" action="signup.php">
