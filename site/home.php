@@ -70,6 +70,7 @@ if($_offline) {
             $value = $time['days'] * 24 + $time['hours'];
             $unit = 'hours' . $unit;
          } else if ($time['minutes'] > 0) {
+            $value = '<i class="fa fa-exclamation-triangle"></i>';
             $unit = 'due very soon';
 //             $value = $time['hours'] * 60 + $time['minutes'];
 //             $unit = 'minutes' . $unit;
