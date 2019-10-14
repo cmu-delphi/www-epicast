@@ -69,16 +69,15 @@ if($_offline) {
          } else if ($time['hours'] > 0) {
             $value = $time['days'] * 24 + $time['hours'];
             $unit = 'hours' . $unit;
-         } else if ($time['minutes'] > 0) {
-            $value = $time['hours'] * 60 + $time['minutes'];
-            $unit = 'minutes' . $unit;
-         } else if ($time['seconds'] > 0) {
-            $value = $time['minutes'] * 60 + $time['seconds'];
-            $unit = 'seconds' . $unit;
+//          } else if ($time['minutes'] > 0) {
+//             $value = $time['hours'] * 60 + $time['minutes'];
+//             $unit = 'minutes' . $unit;
+//          } else if ($time['seconds'] > 0) {
+//             $value = $time['minutes'] * 60 + $time['seconds'];
+//             $unit = 'seconds' . $unit;
          } else {
             $value = '<i class="fa fa-exclamation-triangle"></i>';
-//             $unit = 'past due';
-            $unit = 'due very soon';
+            $unit = 'past due';
          }
          ?>
          <div class="box_stat">
