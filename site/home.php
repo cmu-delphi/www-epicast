@@ -69,7 +69,8 @@ if($_offline) {
          } else if ($time['hours'] > 0) {
             $value = $time['days'] * 24 + $time['hours'];
             $unit = 'hours' . $unit;
-//          } else if ($time['minutes'] > 0) {
+         } else if ($time['minutes'] > 0) {
+            $unit = 'due very soon';
 //             $value = $time['hours'] * 60 + $time['minutes'];
 //             $unit = 'minutes' . $unit;
 //          } else if ($time['seconds'] > 0) {
