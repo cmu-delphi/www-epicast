@@ -47,7 +47,7 @@ function checkCaptcha($captcha, $ip) {
       ?>
          <div class="box_decision" style="width: 80%;">
             <div class="box_decision_title">We are preparing Epicast for the new season, please come back in a few days!</div>
-            <div class="box_decision_title">Research Overview</div>
+<!--             <div class="box_decision_title">Research Overview</div> -->
             <p style="text-align: left;">
                In this research study, being conducted by Carnegie Mellon University, we ask you each Friday during the flu season to predict current and future flu activity within one or more Health and Human Services regions of the United States. You will be able to enter and submit your predictions online using any modern web browser, and we expect that the entire process will take no more than two minutes per region. There are no expected risks or benefits to participants in this study.
             </p><p style="text-align: left;">
@@ -72,8 +72,8 @@ function checkCaptcha($captcha, $ip) {
                <div style="height: 1px;"></div>
                <div class="g-recaptcha" data-sitekey="6Lc4fBgUAAAAACYFwGhajRyg6LPwC03A5BdwJ_vF" style="display: inline-block;"></div>
             </form>
-//             <?php button('fa-arrow-circle-right', 'Email My User ID', "submit('signup')"); ?>
-         </div> -->
+//             <?php button('fa-arrow-circle-right', 'Email My User ID', "submit('signup')"); ?> -->
+         </div>
          <?php
       }
       ?>
