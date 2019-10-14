@@ -570,20 +570,21 @@ foreach($output['regions'] as $r) {
       style.dash = DASH_STYLE;
       drawCurve(forecast[regionID], 0, 52, numPastWeeks + 1, style);
       stitchCurves(regionID, style);
-      //nowcast
-      if(showNowcast) {
-         g.fillStyle = 'rgba(0, 0, 0, 0.5)';
-         var epiweek = addEpiweeks(xRange[0], numPastWeeks + 1);
-         var x = getX(epiweek);
-         var y1 = getY(nowcast[0] - 2 * nowcast[1]);
-         var y2 = getY(nowcast[0] + 2 * nowcast[1]);
-         g.fillRect(x - 2, y1, 5, y2 - y1);
-         y1 = getY(nowcast[0] - 1 * nowcast[1]);
-         y2 = getY(nowcast[0] + 1 * nowcast[1]);
-         g.fillRect(x - 4, y1, 9, y2 - y1);
-         y1 = getY(nowcast[0]);
-         g.fillRect(x - 5, y1, 11, 1);
-      }
+      
+//       //nowcast
+//       if(showNowcast) {
+//          g.fillStyle = 'rgba(0, 0, 0, 0.5)';
+//          var epiweek = addEpiweeks(xRange[0], numPastWeeks + 1);
+//          var x = getX(epiweek);
+//          var y1 = getY(nowcast[0] - 2 * nowcast[1]);
+//          var y2 = getY(nowcast[0] + 2 * nowcast[1]);
+//          g.fillRect(x - 2, y1, 5, y2 - y1);
+//          y1 = getY(nowcast[0] - 1 * nowcast[1]);
+//          y2 = getY(nowcast[0] + 1 * nowcast[1]);
+//          g.fillRect(x - 4, y1, 9, y2 - y1);
+//          y1 = getY(nowcast[0]);
+//          g.fillRect(x - 5, y1, 11, 1);
+//       }
       
 //       //error bars
 //       var errors = [[-0.24705835, 0.26585897, -0.15209838, 0.19588030, -0.12080783, 0.14845500, -0.10822840, 0.13591350, -0.10105576, 0.11903400],
@@ -642,13 +643,13 @@ foreach($output['regions'] as $r) {
 //       }
       
       
-//       error bar legend
-      if (regionID <= 11) {
-         // error bar legend
-         drawText(g, '90% Confidence Interval', x2 - 3, y+25, 0, Align.right, Align.center);
-         g.fillStyle = 'rgba(0, 0, 0, 0.5)';
-         g.fillRect(x2+5, y+10, 5, 35);
-      }
+// //       error bar legend
+//       if (regionID <= 11) {
+//          // error bar legend
+//          drawText(g, '90% Confidence Interval', x2 - 3, y+25, 0, Align.right, Align.center);
+//          g.fillStyle = 'rgba(0, 0, 0, 0.5)';
+//          g.fillRect(x2+5, y+10, 5, 35);
+//       }
       
       //tooltip
       if(tooltip != null) {
