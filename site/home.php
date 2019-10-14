@@ -212,22 +212,22 @@ if($_offline) {
             <i class="fa fa-external-link"></i>
             <a target="_blank" href="https://www.ncdc.noaa.gov/">NOAA's Climate Normals</a>
          </div>
-         <div>
+<!--          <div>
             <i class="fa fa-external-link"></i>
             <a target="_blank" href="https://www.google.org/flutrends/us/#US">Google Flu Trends</a>
-         </div>
+         </div> -->
          <div>
             <i class="fa fa-external-link"></i>
             <a target="_blank" href="http://www.healthtweets.org/">Flu Nowcasting using Twitter</a>
          </div>
       </div>
-      <div class="box_list left">
+<!--       <div class="box_list left">
          <div class="box_decision_title centered" style="width: 100%"><i class="fa fa-book"></i> Literature</div>
          <div>
             <i class="fa fa-external-link"></i>
             <a target="_blank" href="https://delphi.midas.cs.cmu.edu/bibliography.html">The Delphi Bibliography</a>
          </div>
-      </div>
+      </div> -->
    </div>
 </div>
 <script>
