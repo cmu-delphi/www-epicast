@@ -457,7 +457,7 @@ function getRegionsExtended(&$output, $userID) {
       if($debug) {
          $timenow = microtime(true);
          echo($timenow - $start);
-         echo($r['id'], $firstWeek);
+//          echo($r['id'], $firstWeek);
          echo("---------------------");
          $start = $timenow;
       }
