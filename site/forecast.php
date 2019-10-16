@@ -9,26 +9,10 @@ if($error) {
    return;
 }
 
-if($debug) {
-   $timenow = microtime(true);
-   echo("14:    ");
-   echo($timenow - $start);
-   echo("---------------------");
-   $start = $timenow;
-}
-
 if(getYearForCurrentSeason($output) !== 1) {
    die('unable to get year for current season');
 } else {
    $current_season = $output['season']['year'];
-}
-
-if($debug) {
-   $timenow = microtime(true);
-   echo("27:   ");
-   echo($timenow - $start);
-   echo("---------------------");
-   $start = $timenow;
 }
 
 function getColor($regionID, $seasonID) {
@@ -45,9 +29,6 @@ if(getEpiweekInfo($output) !== 1) {
 
 if($debug) {
    $timenow = microtime(true);
-   echo("46:   ");
-   echo($timenow - $start);
-   echo("---------------------");
    $start = $timenow;
 }
 
@@ -59,7 +40,7 @@ if(getRegionsExtended($output, $output['user_id']) !== 1) {
 
 if($debug) {
    $timenow = microtime(true);
-   echo("59:   ");
+   echo("getRegionsExtended:   ");
    echo($timenow - $start);
    echo("---------------------");
    $start = $timenow;
@@ -73,15 +54,6 @@ if(isset($_REQUEST['skip_instructions'])) {
    }
 }
 
-if($debug) {
-   $timenow = microtime(true);
-   echo("74:   ");
-   echo($timenow - $start);
-   echo("---------------------");
-   $start = $timenow;
-}
-
-
 if(isset($_REQUEST['region_id'])) {
    $regionID = intval(mysql_real_escape_string($_REQUEST['region_id']));
 } else {
@@ -89,26 +61,9 @@ if(isset($_REQUEST['region_id'])) {
    $regionID = 1;
 }
 
-if($debug) {
-   $timenow = microtime(true);
-   echo("89:   ");
-   echo($timenow - $start);
-   echo("---------------------");
-   $start = $timenow;
-}
-
-
 //Specific region
 if(!isset($output['regions'][$regionID])) {
    fail('Invalid region_id');
-}
-
-if($debug) {
-   $timenow = microtime(true);
-   echo("102:   ");
-   echo($timenow - $start);
-   echo("---------------------");
-   $start = $timenow;
 }
 
 //Forecast from last round
@@ -116,13 +71,6 @@ if(loadForecast($output, $output['user_id'], $regionID, true) !== 1) {
    fail('Error loading last week forecast');
 }
 
-if($debug) {
-   $timenow = microtime(true);
-   echo("114:   ");
-   echo($timenow - $start);
-   echo("---------------------");
-   $start = $timenow;
-}
 
 $lastForecast = $output['forecast'];
 $region = $output['regions'][$regionID];
@@ -133,14 +81,6 @@ $output['history'] = &$output['regions'][$regionID]['history'];
 $output['forecast'] = &$output['regions'][$regionID]['forecast'];
 //Settings
 $showPandemic = getPreference($output, 'advanced_pandemic', 'int');
-
-if($debug) {
-   $timenow = microtime(true);
-   echo("131:   ");
-   echo($timenow - $start);
-   echo("---------------------");
-   $start = $timenow;
-}
 
 //Calculate a few helpful stats
 $firstWeekOfChart = 30;
@@ -179,25 +119,9 @@ if($seasonOffsets[count($seasonOffsets) - 1] != 0) {
 $seasonOffsets = array_reverse($seasonOffsets);
 $seasonYears = array_reverse($seasonYears);
 
-if($debug) {
-   $timenow = microtime(true);
-   echo("175:   ");
-   echo($timenow - $start);
-   echo("---------------------");
-   $start = $timenow;
-}
-
 
 //Nowcast (may or may not be available)
 getNowcast($output, addEpiweeks($currentWeek, 1), $regionID);
-
-if($debug) {
-   $timenow = microtime(true);
-   echo("186:   ");
-   echo($timenow - $start);
-   echo("---------------------");
-   $start = $timenow;
-}
 
 if(getPreference($output, 'skip_instructions', 'int') !== 1) {
    ?>
@@ -233,14 +157,6 @@ if(getPreference($output, 'skip_instructions', 'int') !== 1) {
 <?php
 foreach($output['regions'] as $r) {
    createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
-}
-   
-if($debug) {
-   $timenow = microtime(true);
-   echo("229:   ");
-   echo($timenow - $start);
-   echo("---------------------");
-   $start = $timenow;
 }
 
 ?>
