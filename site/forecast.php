@@ -1,8 +1,5 @@
 <?php
 
-$debug = false;
-$start = microtime(true);
-
 require_once('common/header.php');
 require_once('common/navigation.php');
 if($error) {
@@ -27,25 +24,10 @@ if(getEpiweekInfo($output) !== 1) {
    fail('Error loading epiweek info');
 }
 
-if($debug) {
-   $timenow = microtime(true);
-   $start = $timenow;
-}
-
-
 //List of all regions
 if(getRegionsExtended($output, $output['user_id']) !== 1) {
    fail('Error loading region details, history, or forecast');
 }
-
-if($debug) {
-   $timenow = microtime(true);
-   echo("getRegionsExtended:   ");
-   echo($timenow - $start);
-   echo("---------------------");
-   $start = $timenow;
-}
-
 
 if(isset($_REQUEST['skip_instructions'])) {
    $output['user_preferences']['skip_instructions'] = 1;
@@ -70,7 +52,6 @@ if(!isset($output['regions'][$regionID])) {
 if(loadForecast($output, $output['user_id'], $regionID, true) !== 1) {
    fail('Error loading last week forecast');
 }
-
 
 $lastForecast = $output['forecast'];
 $region = $output['regions'][$regionID];
