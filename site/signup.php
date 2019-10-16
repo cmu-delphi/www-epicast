@@ -55,7 +55,7 @@ function checkCaptcha($captcha, $ip) {
             </p><p style="text-align: left;">
                The primary contact is <?= $epicastAdmin['name'] ?> (Email: <?= $epicastAdmin['email'] ?>), and the principal investigator is Roni Rosenfeld (Email: Roni.Rosenfeld@cs.cmu.edu; Office: GHC 8002). If you have questions pertaining to your rights as a research participant, or to report concerns with this study, you should contact the Carnegie Mellon University Office of Research Integrity and Compliance (Email: irb-review@andrew.cmu.edu).
             </p>
-            <div class="box_decision_title">New User Signup</div>
+<!--             <div class="box_decision_title">New User Signup</div>
             <form id="signup" method="POST" action="signup.php">
                <div style="display: inline-block; text-align: right;">
                   <div style="height: 32px; padding-right: 4px;">I have read and understood the above:</div>
@@ -72,7 +72,7 @@ function checkCaptcha($captcha, $ip) {
                <div style="height: 1px;"></div>
                <div class="g-recaptcha" data-sitekey="6Lc4fBgUAAAAACYFwGhajRyg6LPwC03A5BdwJ_vF" style="display: inline-block;"></div>
             </form>
-             <?php button('fa-arrow-circle-right', 'Email My User ID', "submit('signup')"); ?>
+//              <?php button('fa-arrow-circle-right', 'Email My User ID', "submit('signup')"); ?> -->
          </div>
          <?php
       }
