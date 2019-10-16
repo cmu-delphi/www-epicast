@@ -11,8 +11,9 @@ if($error) {
 
 if($debug) {
    $timenow = microtime(true);
-   echo("14---------------------");
+   echo("14:    ");
    echo($timenow - $start);
+   echo("---------------------");
    $start = $timenow;
 }
 
@@ -24,8 +25,9 @@ if(getYearForCurrentSeason($output) !== 1) {
 
 if($debug) {
    $timenow = microtime(true);
-   echo("27---------------------");
+   echo("27:   ");
    echo($timenow - $start);
+   echo("---------------------");
    $start = $timenow;
 }
 
@@ -43,8 +45,9 @@ if(getEpiweekInfo($output) !== 1) {
 
 if($debug) {
    $timenow = microtime(true);
-   echo("46---------------------");
+   echo("46:   ");
    echo($timenow - $start);
+   echo("---------------------");
    $start = $timenow;
 }
 
@@ -56,8 +59,9 @@ if(getRegionsExtended($output, $output['user_id']) !== 1) {
 
 if($debug) {
    $timenow = microtime(true);
-   echo("59---------------------");
+   echo("59:   ");
    echo($timenow - $start);
+   echo("---------------------");
    $start = $timenow;
 }
 
@@ -71,8 +75,9 @@ if(isset($_REQUEST['skip_instructions'])) {
 
 if($debug) {
    $timenow = microtime(true);
-   echo("74---------------------");
+   echo("74:   ");
    echo($timenow - $start);
+   echo("---------------------");
    $start = $timenow;
 }
 
@@ -86,8 +91,9 @@ if(isset($_REQUEST['region_id'])) {
 
 if($debug) {
    $timenow = microtime(true);
-   echo("89---------------------");
+   echo("89:   ");
    echo($timenow - $start);
+   echo("---------------------");
    $start = $timenow;
 }
 
@@ -99,8 +105,9 @@ if(!isset($output['regions'][$regionID])) {
 
 if($debug) {
    $timenow = microtime(true);
-   echo("102---------------------");
+   echo("102:   ");
    echo($timenow - $start);
+   echo("---------------------");
    $start = $timenow;
 }
 
@@ -111,8 +118,9 @@ if(loadForecast($output, $output['user_id'], $regionID, true) !== 1) {
 
 if($debug) {
    $timenow = microtime(true);
-   echo("114---------------------");
+   echo("114:   ");
    echo($timenow - $start);
+   echo("---------------------");
    $start = $timenow;
 }
 
@@ -128,8 +136,9 @@ $showPandemic = getPreference($output, 'advanced_pandemic', 'int');
 
 if($debug) {
    $timenow = microtime(true);
-   echo("131---------------------");
+   echo("131:   ");
    echo($timenow - $start);
+   echo("---------------------");
    $start = $timenow;
 }
 
@@ -172,8 +181,9 @@ $seasonYears = array_reverse($seasonYears);
 
 if($debug) {
    $timenow = microtime(true);
-   echo("175---------------------");
+   echo("175:   ");
    echo($timenow - $start);
+   echo("---------------------");
    $start = $timenow;
 }
 
@@ -183,8 +193,9 @@ getNowcast($output, addEpiweeks($currentWeek, 1), $regionID);
 
 if($debug) {
    $timenow = microtime(true);
-   echo("186---------------------");
+   echo("186:   ");
    echo($timenow - $start);
+   echo("---------------------");
    $start = $timenow;
 }
 
@@ -226,8 +237,9 @@ foreach($output['regions'] as $r) {
    
 if($debug) {
    $timenow = microtime(true);
-   echo("229---------------------");
+   echo("229:   ");
    echo($timenow - $start);
+   echo("---------------------");
    $start = $timenow;
 }
 
