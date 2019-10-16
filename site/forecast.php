@@ -1,6 +1,6 @@
 <?php
 
-$debug = false;
+$debug = true;
 $start = microtime(true);
 
 require_once('common/header.php');
@@ -22,6 +22,13 @@ if(getYearForCurrentSeason($output) !== 1) {
    $current_season = $output['season']['year'];
 }
 
+if($debug) {
+   $timenow = microtime(true);
+   echo("27---------------------");
+   echo($timenow - $start);
+   $start = $timenow;
+}
+
 function getColor($regionID, $seasonID) {
    $r = intval((sin(($seasonID - 2004) * 0.4 + 0) + 1) / 2 * 15);
    $g = intval((sin(($seasonID - 2004) * 0.5 + 2) + 1) / 2 * 15);
@@ -34,10 +41,24 @@ if(getEpiweekInfo($output) !== 1) {
    fail('Error loading epiweek info');
 }
 
+if($debug) {
+   $timenow = microtime(true);
+   echo("46---------------------");
+   echo($timenow - $start);
+   $start = $timenow;
+}
+
 
 //List of all regions
 if(getRegionsExtended($output, $output['user_id']) !== 1) {
    fail('Error loading region details, history, or forecast');
+}
+
+if($debug) {
+   $timenow = microtime(true);
+   echo("59---------------------");
+   echo($timenow - $start);
+   $start = $timenow;
 }
 
 
@@ -48,6 +69,13 @@ if(isset($_REQUEST['skip_instructions'])) {
    }
 }
 
+if($debug) {
+   $timenow = microtime(true);
+   echo("74---------------------");
+   echo($timenow - $start);
+   $start = $timenow;
+}
+
 
 if(isset($_REQUEST['region_id'])) {
    $regionID = intval(mysql_real_escape_string($_REQUEST['region_id']));
@@ -55,14 +83,39 @@ if(isset($_REQUEST['region_id'])) {
    //Default to USA National
    $regionID = 1;
 }
+
+if($debug) {
+   $timenow = microtime(true);
+   echo("89---------------------");
+   echo($timenow - $start);
+   $start = $timenow;
+}
+
+
 //Specific region
 if(!isset($output['regions'][$regionID])) {
    fail('Invalid region_id');
 }
+
+if($debug) {
+   $timenow = microtime(true);
+   echo("102---------------------");
+   echo($timenow - $start);
+   $start = $timenow;
+}
+
 //Forecast from last round
 if(loadForecast($output, $output['user_id'], $regionID, true) !== 1) {
    fail('Error loading last week forecast');
 }
+
+if($debug) {
+   $timenow = microtime(true);
+   echo("114---------------------");
+   echo($timenow - $start);
+   $start = $timenow;
+}
+
 $lastForecast = $output['forecast'];
 $region = $output['regions'][$regionID];
 $num = count($output['regions']);
@@ -72,6 +125,14 @@ $output['history'] = &$output['regions'][$regionID]['history'];
 $output['forecast'] = &$output['regions'][$regionID]['forecast'];
 //Settings
 $showPandemic = getPreference($output, 'advanced_pandemic', 'int');
+
+if($debug) {
+   $timenow = microtime(true);
+   echo("131---------------------");
+   echo($timenow - $start);
+   $start = $timenow;
+}
+
 //Calculate a few helpful stats
 $firstWeekOfChart = 30;
 $currentWeek = $output['epiweek']['round_epiweek'];
@@ -108,8 +169,25 @@ if($seasonOffsets[count($seasonOffsets) - 1] != 0) {
 }
 $seasonOffsets = array_reverse($seasonOffsets);
 $seasonYears = array_reverse($seasonYears);
+
+if($debug) {
+   $timenow = microtime(true);
+   echo("175---------------------");
+   echo($timenow - $start);
+   $start = $timenow;
+}
+
+
 //Nowcast (may or may not be available)
 getNowcast($output, addEpiweeks($currentWeek, 1), $regionID);
+
+if($debug) {
+   $timenow = microtime(true);
+   echo("186---------------------");
+   echo($timenow - $start);
+   $start = $timenow;
+}
+
 if(getPreference($output, 'skip_instructions', 'int') !== 1) {
    ?>
    <div class="box_section">
@@ -139,12 +217,20 @@ if(getPreference($output, 'skip_instructions', 'int') !== 1) {
       </div>
    </div>
    <?php
-} else {
+} else { 
 ?>
 <?php
 foreach($output['regions'] as $r) {
    createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
 }
+   
+if($debug) {
+   $timenow = microtime(true);
+   echo("229---------------------");
+   echo($timenow - $start);
+   $start = $timenow;
+}
+
 ?>
 <?php fail('Whoa, your screen is too small! Please visit this site on a non-mobile device, or try to expand your browser window. Sorry about that!', 'box_nocanvas', true); ?>
 <div id="box_main_ui">
