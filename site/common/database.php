@@ -425,10 +425,6 @@ Output:
    $output['regions'] - An array of regions
 */
 function getRegionsExtended(&$output, $userID) {
-   
-   $debug = false;
-   $start = microtime(true);
-   
    $temp = array();
    if(getEpiweekInfo($temp) !== 1) {
       return getResult($temp);
@@ -446,20 +442,8 @@ function getRegionsExtended(&$output, $userID) {
          $firstWeek = 200430;
       }
       
-      if($debug) {
-         $timenow = microtime(true);
-         $start = $timenow;
-        }
-      
       if(getHistory($output, $r['id'], $firstWeek) !== 1) {
          return getResult($output);
-      }
-      
-      if($debug) {
-         $timenow = microtime(true);
-         echo($timenow - $start);
-         echo("---------------------");
-         $start = $timenow;
       }
       
       $r['history'] = $output['history'];
