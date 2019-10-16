@@ -277,7 +277,7 @@ function getEpiweekInfo_mturk(&$output) {
         );
       }
 
-       $output['epiweek']['round_epiweek'] = intval($row['round_epiweek']);
+      $output['epiweek']['round_epiweek'] = intval($row['round_epiweek']);
       $output['epiweek']['deadline'] = $row['deadline'];
       $output['epiweek']['deadline_timestamp'] = intval($row['deadline_timestamp']);
       $seconds = intval($row['remaining']);
@@ -426,7 +426,7 @@ Output:
 */
 function getRegionsExtended(&$output, $userID) {
    
-   $debug = true;
+   $debug = false;
    $start = microtime(true);
    
    $temp = array();
@@ -458,7 +458,6 @@ function getRegionsExtended(&$output, $userID) {
       if($debug) {
          $timenow = microtime(true);
          echo($timenow - $start);
-//          echo($r['id'], $firstWeek);
          echo("---------------------");
          $start = $timenow;
       }
@@ -561,9 +560,7 @@ Output:
       2 - Failure
    $output['history'] - Arrays of epiweeks and historical incidence (wILI) for the region
 */
-function getHistory(&$output, $regionID, $firstWeek) {
-   echo($regionID);
-   
+function getHistory(&$output, $regionID, $firstWeek) {   
    $result = mysql_query("SELECT fv.`epiweek`, fv.`wili` FROM epidata.`fluview` AS fv JOIN ( SELECT `epiweek`, max(`issue`) AS `latest` FROM epidata.`fluview` AS fv JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} GROUP BY fv.`epiweek` ) AS issues ON fv.`epiweek` = issues.`epiweek` AND fv.`issue` = issues.`latest` JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} ORDER BY fv.`epiweek` ASC");
    $date = array();
    $wili = array();
