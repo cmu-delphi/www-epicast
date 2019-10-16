@@ -424,6 +424,10 @@ Output:
    $output['regions'] - An array of regions
 */
 function getRegionsExtended(&$output, $userID) {
+   
+   $debug = true;
+   $start = microtime(true);
+   
    $temp = array();
    if(getEpiweekInfo($temp) !== 1) {
       return getResult($temp);
@@ -432,6 +436,15 @@ function getRegionsExtended(&$output, $userID) {
    if(getRegions($output, $userID) !== 1) {
       return getResult($output);
    }
+   
+   if($debug) {
+      $timenow = microtime(true);
+      echo("getRegions:   ");
+      echo($timenow - $start);
+      echo("---------------------");
+      $start = $timenow;
+   }
+   
    //History and forecast for every region
    foreach($output['regions'] as &$r) {
       if(getPreference($output, 'advanced_prior', 'int') === 1) {
@@ -439,18 +452,43 @@ function getRegionsExtended(&$output, $userID) {
       } else {
          $firstWeek = 200430;
       }
+      
+      if($debug) {
+         $timenow = microtime(true);
+         $start = $timenow;
+        }
+      
       if(getHistory($output, $r['id'], $firstWeek) !== 1) {
          return getResult($output);
       }
+      
+      if($debug) {
+         $timenow = microtime(true);
+         echo("getHistory:   ");
+         echo($timenow - $start);
+         echo("---------------------");
+         $start = $timenow;
+      }
+      
       $r['history'] = $output['history'];
       if(loadForecast($output, $userID, $r['id']) !== 1) {
          return getResult($output);
       }
+      
+      if($debug) {
+         $timenow = microtime(true);
+         echo("loadForecast:   ");
+         echo($timenow - $start);
+         echo("---------------------");
+         $start = $timenow;
+      }
+      
       $r['forecast'] = $output['forecast'];
    }
    setResult($output, 1);
    return getResult($output);
 }
+
 
 function getRegionsExtended_mturk(&$output, $userID) {
    $temp = array();
