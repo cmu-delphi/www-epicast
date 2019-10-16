@@ -1,6 +1,6 @@
 <?php
 
-$debug = true;
+$debug = false;
 $start = microtime(true);
 
 require_once('common/header.php');
