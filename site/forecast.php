@@ -1,14 +1,27 @@
 <?php
+
+$debug = true;
+$start = microtime(true);
+
 require_once('common/header.php');
 require_once('common/navigation.php');
 if($error) {
    return;
 }
+
+if($debug) {
+   $timenow = microtime(true);
+   echo("14---------------------");
+   echo($timenow - $start);
+   $start = $timenow;
+}
+
 if(getYearForCurrentSeason($output) !== 1) {
    die('unable to get year for current season');
 } else {
    $current_season = $output['season']['year'];
 }
+
 function getColor($regionID, $seasonID) {
    $r = intval((sin(($seasonID - 2004) * 0.4 + 0) + 1) / 2 * 15);
    $g = intval((sin(($seasonID - 2004) * 0.5 + 2) + 1) / 2 * 15);
@@ -20,16 +33,22 @@ function getColor($regionID, $seasonID) {
 if(getEpiweekInfo($output) !== 1) {
    fail('Error loading epiweek info');
 }
+
+
 //List of all regions
 if(getRegionsExtended($output, $output['user_id']) !== 1) {
    fail('Error loading region details, history, or forecast');
 }
+
+
 if(isset($_REQUEST['skip_instructions'])) {
    $output['user_preferences']['skip_instructions'] = 1;
    if(saveUserPreferences($output, $output['user_id'], $output['user_preferences']) !== 1) {
       fail('Error updating preferences');
    }
 }
+
+
 if(isset($_REQUEST['region_id'])) {
    $regionID = intval(mysql_real_escape_string($_REQUEST['region_id']));
 } else {
