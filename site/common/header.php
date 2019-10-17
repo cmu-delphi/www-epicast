@@ -20,9 +20,18 @@ $output = array();
       <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
       <script src="js/utils.js"></script>
       <script src="js/rAF.js"></script>
-      <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-      <link href='//fonts.googleapis.com/css?family=Yanone+Kaffeesatz:700|Alegreya+SC:700' rel='stylesheet' type='text/css'>
-      <link href="css/style.css" rel="stylesheet" />
+      <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" media="none" onload="if(media!='all')media='all'" />
+      <noscript>
+      			<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
+      </noscript>
+      <link href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz:700|Alegreya+SC:700" rel="stylesheet" media="none" onload="if(media!='all')media='all'" />
+      <noscript>
+      			<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz:700|Alegreya+SC:700" />
+      </noscript>
+      <link href="css/style.css" rel="stylesheet" media="none" onload="if(media!='all')media='all'" />
+      <noscript>
+      			<link rel="stylesheet" href="css/style.css" />
+      </noscript>
    </head>
    <body>
       <a name="top"></a>
