@@ -52,7 +52,7 @@ if(!$dbh) {
                <span class="effect_fluv">&lt;Influenza Edition&gt;</span>
             </a>
          </div>
-         <div class="box_subtitle">Epidemiological Forecasting by <span class="effect_delphi"><a class="delphi" target="_blank" href="https://delphi.midas.cs.cmu.edu/">DELPHI</a></span></div>
+         <div class="box_subtitle">Epidemiological Forecasting by <span class="effect_delphi"><a class="delphi" target="_blank" rel="noopener" href="https://delphi.midas.cs.cmu.edu/">DELPHI</a></span></div>
       </div>
       <?php
       if(!isset($skipLogin) || !$skipLogin) {
