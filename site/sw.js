@@ -1,19 +1,29 @@
 //Initialize Service Worker Properly
 "use strict";
-var workbox = 0;
+// var workbox = 0;
+
 "function" == typeof importScripts &&
   importScripts (
     "https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js"
   );
+
+var precacheList = [{
+    url: 'forecast.php',
+    revision: 'fc386e2'
+}];
+
+var workbox = new WorkboxSW();
 
 console.log('Was Workbox able to load?');
   if (workbox) {
     console.log('Workbox loaded correctly.');
   } else {
     console.log('Workbox did not load correctly, please check your service worker for errors.');
-  }
+}
 
-workbox.googleAnalytics.initialize();
+workbox.precache(precacheList);
+
+//workbox.googleAnalytics.initialize();
 
 workbox.routing.registerRoute(
   // Cache PHP files
