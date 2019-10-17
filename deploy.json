@@ -20,7 +20,7 @@
     "// service worker",
     {
       "type": "move",
-      "src": "site/.htaccess",
+      "src": "site/sw.js",
       "dst": "/var/www/html/epicast/sw.js",
       "add-header-comment": true
     },
