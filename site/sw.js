@@ -5,7 +5,7 @@
 "function" == typeof importScripts &&
   importScripts (
     "https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js"
-  ); 
+  );
 
 console.log('Was Workbox able to load?');
   if (workbox) {
@@ -15,7 +15,10 @@ console.log('Was Workbox able to load?');
 }
 
 workbox.precaching.precacheAndRoute([
-    { url: 'forecast.php', revision: 'fc386e2' },
+    { url: 'index.php', revision: 'g9k4ra3' },
+    { url: 'home.php', revision: 'd3rf3r4' },
+    // If forecast.php gets cached it will show inaccurate data when accessing different regions
+    // { url: 'forecast.php', revision: 'fc386e2' },
 ]);
 
 //workbox.googleAnalytics.initialize();
@@ -74,7 +77,7 @@ workbox.routing.registerRoute(
 );
 
 workbox.routing.registerRoute(
-  /.*(?:googleapis|ajax.googleapis|fonts.googleapis|fonts.gstatic|maxcdn.bootstrapcdn)\.com.*$/,
+  /.*(?:facebook|googleapis|ajax.googleapis|fonts.googleapis|fonts.gstatic|maxcdn.bootstrapcdn)\.com.*$/,
   workbox.strategies.staleWhileRevalidate({
   cacheName: 'external-cache',
   })
