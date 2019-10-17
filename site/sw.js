@@ -5,12 +5,7 @@
 "function" == typeof importScripts &&
   importScripts (
     "https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js"
-  );
-
-var precacheList = [{
-    url: 'forecast.php',
-    revision: 'fc386e2'
-}]; 
+  ); 
 
 console.log('Was Workbox able to load?');
   if (workbox) {
@@ -19,7 +14,9 @@ console.log('Was Workbox able to load?');
     console.log('Workbox did not load correctly, please check your service worker for errors.');
 }
 
-workbox.precache(precacheList);
+workbox.precaching.precacheAndRoute([
+    { url: 'forecast.php', revision: 'fc386e2' },
+]);
 
 //workbox.googleAnalytics.initialize();
 
