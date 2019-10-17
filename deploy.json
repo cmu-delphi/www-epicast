@@ -10,15 +10,20 @@
       "dst": "/var/www/html/epicast/css/.htaccess",
       "add-header-comment": true
     },
-
-    "//.htaccess file",
+    "// .htaccess file",
     {
       "type": "move",
       "src": "site/.htaccess",
       "dst": "/var/www/html/epicast/.htaccess",
       "add-header-comment": false
     },
-
+    "// service worker",
+    {
+      "type": "move",
+      "src": "site/.htaccess",
+      "dst": "/var/www/html/epicast/sw.js",
+      "add-header-comment": true
+    },
     "// web sources",
     {
       "type": "move",
