@@ -3,7 +3,7 @@
 var workbox = 0;
 "function" == typeof importScripts &&
   importScripts (
-    "https://storage.googleapis.com/workbox-cdn/releases/3.0.0/workbox-sw.js"
+    "https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js"
   );
 
 console.log('Was Workbox able to load?');
@@ -16,7 +16,7 @@ console.log('Was Workbox able to load?');
 workbox.googleAnalytics.initialize();
 
 workbox.routing.registerRoute(
-  // Cache JS files
+  // Cache PHP files
   /.*\.php/,
   // Use cache but update in the background ASAP
   workbox.strategies.staleWhileRevalidate({
