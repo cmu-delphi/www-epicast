@@ -10,9 +10,7 @@
 var precacheList = [{
     url: 'forecast.php',
     revision: 'fc386e2'
-}];
-
-var workbox = new WorkboxSW();
+}]; 
 
 console.log('Was Workbox able to load?');
   if (workbox) {
