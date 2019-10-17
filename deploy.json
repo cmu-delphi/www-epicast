@@ -11,6 +11,14 @@
       "add-header-comment": true
     },
 
+    "//.htaccess file",
+    {
+      "type": "move",
+      "src": "site/.htaccess",
+      "dst": "/var/www/html/epicast/.htaccess",
+      "add-header-comment": false
+    },
+
     "// web sources",
     {
       "type": "move",
