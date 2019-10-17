@@ -14,8 +14,7 @@ console.log('Was Workbox able to load?');
     console.log('Workbox did not load correctly, please check your service worker for errors.');
 }
 
-workbox.precaching.precacheAndRoute([ 
-    { url: 'home.php', revision: 'd3rf3r4' },
+workbox.precaching.precacheAndRoute([  
     // If forecast.php gets cached it will show inaccurate data when accessing different regions
     // { url: 'forecast.php', revision: 'fc386e2' },
 ]);
