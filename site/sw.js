@@ -51,9 +51,11 @@ workbox.routing.registerRoute(
     plugins: [
       new workbox.expiration.Plugin({
         // Cache up to 50 images
-        maxEntries: 50,
+        maxEntries: 25,
         // Cache for a maximum of 28 days
         maxAgeSeconds: 28 * 24 * 60 * 60,
+        // Automatically cleanup if quota is exceeded.
+        purgeOnQuotaError: true,
       })
     ],
   })
