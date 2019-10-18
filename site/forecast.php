@@ -647,14 +647,14 @@ foreach($output['regions'] as $r) {
       drawText(g, regionNames[regionID] + ', ' + Math.round(xRange[0] / 100) + '+', x2 - 3, y, 0, Align.right, Align.center);
       style.dash = [];
       drawLine(x1, y - 3, x2, y + 3, style);
-      for(var i = 0; i < selectedSeasons.length; i++) {
-         y += dy;
-         var r = selectedSeasons[i][0];
-         var s = selectedSeasons[i][1];
-         var style = curveStyles[r][s];
-         drawText(g, regionNames[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
-         drawLine(x1, y - 3, x2, y + 3, style);
-      }
+//       for(var i = 0; i < selectedSeasons.length; i++) {
+//          y += dy;
+//          var r = selectedSeasons[i][0];
+//          var s = selectedSeasons[i][1];
+//          var style = curveStyles[r][s];
+//          drawText(g, regionNames[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
+//          drawLine(x1, y - 3, x2, y + 3, style);
+//       }
       
       
 // //       error bar legend
