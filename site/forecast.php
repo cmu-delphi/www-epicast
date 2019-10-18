@@ -167,9 +167,9 @@ foreach($output['regions'] as $r) {
          <?php
          foreach($output['regions'] as $r) {
             if($r['id'] !== $regionID) continue;
-            // print $regionID;
             ?>
 
+            <div>Seasons: </div>
             <div class="any_bold any_cursor_pointer" onclick="toggleSeasonList(<?= $r['id'] ?>)"><i id="checkbox_region_<?= $r['id'] ?>" class="fa fa-plus-square-o"></i>&nbsp;<?= htmlspecialchars($r['name']) ?></div>
             <div id="container_<?= $r['id'] ?>_all" class="any_hidden any_cursor_pointer" onclick="toggleAllSeasons(<?= $r['id'] ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $r['id'] ?>_all" class="fa fa-square-o"></i>&nbsp;<span class="effect_tiny effect_italics">Show all</span></div>
             <?php
@@ -202,7 +202,7 @@ foreach($output['regions'] as $r) {
                                onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
                                       id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
                                       style="color: <?= getColor($r['id'], $year) ?>"></i>
-                              <span class="effect_tiny"><?= sprintf('season %d - %s', $year, substr((string)($year + 1), 2, 2)) ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
+                              <span class="effect_tiny"><?= sprintf('%d-%s', $year, substr((string)($year + 1), 2, 2)) ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
                           </div>
                           <?php
                           }
@@ -239,7 +239,7 @@ foreach($output['regions'] as $r) {
                                onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
                                       id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
                                       style="color: <?= getColor($r['id'], $year) ?>"></i>
-                              <span class="effect_tiny"><?= sprintf('season %d - %s', $year, substr((string)($year + 1), 2, 2)) ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
+                              <span class="effect_tiny"><?= sprintf('%d-%s', $year, substr((string)($year + 1), 2, 2)) ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
                           </div>
                           <?php
                       }
@@ -585,48 +585,48 @@ foreach($output['regions'] as $r) {
       drawCurve(forecast[regionID], 0, 52, numPastWeeks + 1, style);
       stitchCurves(regionID, style);
       
-//       //nowcast
-//       if(showNowcast) {
-//          g.fillStyle = 'rgba(0, 0, 0, 0.5)';
-//          var epiweek = addEpiweeks(xRange[0], numPastWeeks + 1);
-//          var x = getX(epiweek);
-//          var y1 = getY(nowcast[0] - 2 * nowcast[1]);
-//          var y2 = getY(nowcast[0] + 2 * nowcast[1]);
-//          g.fillRect(x - 2, y1, 5, y2 - y1);
-//          y1 = getY(nowcast[0] - 1 * nowcast[1]);
-//          y2 = getY(nowcast[0] + 1 * nowcast[1]);
-//          g.fillRect(x - 4, y1, 9, y2 - y1);
-//          y1 = getY(nowcast[0]);
-//          g.fillRect(x - 5, y1, 11, 1);
-//       }
+      //nowcast
+      if(showNowcast) {
+         g.fillStyle = 'rgba(0, 0, 0, 0.5)';
+         var epiweek = addEpiweeks(xRange[0], numPastWeeks + 1);
+         var x = getX(epiweek);
+         var y1 = getY(nowcast[0] - 2 * nowcast[1]);
+         var y2 = getY(nowcast[0] + 2 * nowcast[1]);
+         g.fillRect(x - 2, y1, 5, y2 - y1);
+         y1 = getY(nowcast[0] - 1 * nowcast[1]);
+         y2 = getY(nowcast[0] + 1 * nowcast[1]);
+         g.fillRect(x - 4, y1, 9, y2 - y1);
+         y1 = getY(nowcast[0]);
+         g.fillRect(x - 5, y1, 11, 1);
+      }
       
-//       //error bars
-//       var errors = [[-0.24705835, 0.26585897, -0.15209838, 0.19588030, -0.12080783, 0.14845500, -0.10822840, 0.13591350, -0.10105576, 0.11903400],
-//                      [-0.37140890, 0.28183701, -0.22718089, 0.22283626, -0.17166020, 0.15932419, -0.15244192, 0.13857609, -0.13520489, 0.12653161],
-//                      [-0.53510369, 0.89618800, -0.29194798, 0.65376200, -0.13691200, 0.53989966, -0.12287200, 0.46070700, -0.07438098, 0.41997600],
-//                      [-0.37340794, 0.40633099, -0.28260333, 0.17494332, -0.22924145, 0.12111835, -0.18220829, 0.09744193, -0.15922900, 0.08408102],
-//                      [-0.20515699, 0.30015400, -0.11709100, 0.25312400, -0.08401870, 0.22570893, -0.06906100, 0.20316300, -0.06395200, 0.17931200],
-//                      [-0.25007300, 0.20134411, -0.13535207, 0.12399100, -0.13027507, 0.10968548, -0.12658071, 0.09060300, -0.12210600, 0.09081896],
-//                      [-0.57142423, 0.64259200, -0.26681298, 0.44821271, -0.17997876, 0.42294960, -0.18924163, 0.40526105, -0.18486160, 0.41010436],
-//                      [-0.31905190, 0.53929610, -0.28534067, 0.25807903, -0.18014395, 0.17609501, -0.09770261, 0.15003601, -0.06749161, 0.11253900],
-//                      [-0.34997449, 0.16271156, -0.30672299, 0.11085698, -0.28115293, 0.08104906, -0.24976742, 0.07652170, -0.27224423, 0.07954395],
-//                      [-1.35720500, 0.36575900, -0.83282601, 0.33934500, -0.57508135, 0.29297430, -0.25338298, 0.25961193, -0.22189758, 0.23839696],
-//                      [-0.27577982, 0.67580001, -0.13440096, 0.51631755, -0.08888274, 0.42762205, -0.08109139, 0.37271498, -0.05693280, 0.26734400]];
+      //error bars
+      var errors = [[-0.24705835, 0.26585897, -0.15209838, 0.19588030, -0.12080783, 0.14845500, -0.10822840, 0.13591350, -0.10105576, 0.11903400],
+                     [-0.37140890, 0.28183701, -0.22718089, 0.22283626, -0.17166020, 0.15932419, -0.15244192, 0.13857609, -0.13520489, 0.12653161],
+                     [-0.53510369, 0.89618800, -0.29194798, 0.65376200, -0.13691200, 0.53989966, -0.12287200, 0.46070700, -0.07438098, 0.41997600],
+                     [-0.37340794, 0.40633099, -0.28260333, 0.17494332, -0.22924145, 0.12111835, -0.18220829, 0.09744193, -0.15922900, 0.08408102],
+                     [-0.20515699, 0.30015400, -0.11709100, 0.25312400, -0.08401870, 0.22570893, -0.06906100, 0.20316300, -0.06395200, 0.17931200],
+                     [-0.25007300, 0.20134411, -0.13535207, 0.12399100, -0.13027507, 0.10968548, -0.12658071, 0.09060300, -0.12210600, 0.09081896],
+                     [-0.57142423, 0.64259200, -0.26681298, 0.44821271, -0.17997876, 0.42294960, -0.18924163, 0.40526105, -0.18486160, 0.41010436],
+                     [-0.31905190, 0.53929610, -0.28534067, 0.25807903, -0.18014395, 0.17609501, -0.09770261, 0.15003601, -0.06749161, 0.11253900],
+                     [-0.34997449, 0.16271156, -0.30672299, 0.11085698, -0.28115293, 0.08104906, -0.24976742, 0.07652170, -0.27224423, 0.07954395],
+                     [-1.35720500, 0.36575900, -0.83282601, 0.33934500, -0.57508135, 0.29297430, -0.25338298, 0.25961193, -0.22189758, 0.23839696],
+                     [-0.27577982, 0.67580001, -0.13440096, 0.51631755, -0.08888274, 0.42762205, -0.08109139, 0.37271498, -0.05693280, 0.26734400]];
 
-//       if (regionID <= 11) {
-//          var epiweek = addEpiweeks(xRange[0], numPastWeeks + 1);
-//          var error = errors[regionID-1];
-//          for (var i=0; i<9; i = i + 2) {
-//             var above = -error[i]*scale;
-//             var below = error[i+1]*scale;
-//             var x_weekNumber = addEpiweeks(epiweek, -(i/2)-1)
-//             var x = getX(x_weekNumber);
-//             var y = getY(pastWili[regionID][pastWili[regionID].length - i/2 - 1]);
-//             g.fillStyle = 'rgba(0, 0, 0, 0.5)';
-//             g.fillRect(x-2.5, y-above, 5, above);
-//             g.fillRect(x-2.5, y, 5, below);
-//          }
-//       }
+      if (regionID <= 11) {
+         var epiweek = addEpiweeks(xRange[0], numPastWeeks + 1);
+         var error = errors[regionID-1];
+         for (var i=0; i<9; i = i + 2) {
+            var above = -error[i]*scale;
+            var below = error[i+1]*scale;
+            var x_weekNumber = addEpiweeks(epiweek, -(i/2)-1)
+            var x = getX(x_weekNumber);
+            var y = getY(pastWili[regionID][pastWili[regionID].length - i/2 - 1]);
+            g.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            g.fillRect(x-2.5, y-above, 5, above);
+            g.fillRect(x-2.5, y, 5, below);
+         }
+      }
     
       
       
