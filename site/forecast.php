@@ -169,8 +169,8 @@ foreach($output['regions'] as $r) {
             if($r['id'] !== $regionID) continue;
             ?>
 
-            <div>Seasons: </div>
             <div class="any_bold any_cursor_pointer" onclick="toggleSeasonList(<?= $r['id'] ?>)"><i id="checkbox_region_<?= $r['id'] ?>" class="fa fa-plus-square-o"></i>&nbsp;<?= htmlspecialchars($r['name']) ?></div>
+            <div>Seasons: </div>
             <div id="container_<?= $r['id'] ?>_all" class="any_hidden any_cursor_pointer" onclick="toggleAllSeasons(<?= $r['id'] ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $r['id'] ?>_all" class="fa fa-square-o"></i>&nbsp;<span class="effect_tiny effect_italics">Show all</span></div>
             <?php
             $currentYear = $seasonYears[count($seasonYears) - 1];
@@ -623,8 +623,9 @@ foreach($output['regions'] as $r) {
             var x = getX(x_weekNumber);
             var y = getY(pastWili[regionID][pastWili[regionID].length - i/2 - 1]);
             g.fillStyle = 'rgba(0, 0, 0, 0.5)';
-            g.fillRect(x-2.5, y-above, 5, above);
-            g.fillRect(x-2.5, y, 5, below);
+            var bar_width = 5;
+            g.fillRect(x-2.5, y-above, bar_width, above);
+            g.fillRect(x-2.5, y, bar_width, below);
          }
       }
     
@@ -657,13 +658,13 @@ foreach($output['regions'] as $r) {
 //       }
       
       
-// //       error bar legend
-//       if (regionID <= 11) {
-//          // error bar legend
-//          drawText(g, '90% Confidence Interval', x2 - 3, y+25, 0, Align.right, Align.center);
-//          g.fillStyle = 'rgba(0, 0, 0, 0.5)';
-//          g.fillRect(x2+5, y+10, 5, 35);
-//       }
+//       error bar legend
+      if (regionID <= 11) {
+         // error bar legend
+         drawText(g, '90% Confidence Interval', x2 - 3, y+25, 0, Align.right, Align.center);
+         g.fillStyle = 'rgba(0, 0, 0, 0.5)';
+         g.fillRect(x2+5, y+10, 5, 35);
+      }
       
       //tooltip
       if(tooltip != null) {
