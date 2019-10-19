@@ -144,9 +144,11 @@ Output:
    $output['stat_completed'] - The number of regions completed on the given epiweek
 */
 function getUserStats(&$output, $userID, $epiweek) {
+   echo "in getUserStats";
    $result = mysql_query("SELECT count(1) `completed` FROM ec_fluv_submissions WHERE `user_id` = {$userID} AND `epiweek_now` = {$epiweek}");
    if($row = mysql_fetch_array($result)) {
       $output['stat_completed'] = intval($row['completed']);
+      echo $output['stat_completed'];
       setResult($output, 1);
    } else {
       setResult($output, 2);
@@ -331,6 +333,7 @@ Output:
    $output['regions'] - An array of regions, indexed by region ID
 */
 function getRegions(&$output, $userID) {
+   echo "in getRegions";
    $temp = array();
    if(getEpiweekInfo($temp) !== 1) {
       return getResult($temp);
@@ -348,6 +351,12 @@ function getRegions(&$output, $userID) {
       $regions[$region['id']] = $region;
    }
    $output['regions'] = &$regions;
+   
+   foreach($output['regions'] as $r) {
+      echo $r["id"];
+      echo $r["completed"];
+   }
+   
    setResult($output, count($regions) == NUM_CURRENT_REGIONS ? 1 : 2);
    return getResult($output);
 }
