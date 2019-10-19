@@ -685,9 +685,9 @@ function saveForecast(&$output, $userID, $regionID, $forecast, $commit) {
    }
    setResult($output, 1);
    
-   getRegions($output, );
+   getRegions($output, $userID);
    
-   return getResult($output, $userID);
+   return getResult($output);
 }
 
 function saveForecast_mturk(&$output, $userID, $regionID, $forecast, $commit) {
