@@ -684,7 +684,10 @@ function saveForecast(&$output, $userID, $regionID, $forecast, $commit) {
       mysql_query("INSERT INTO ec_fluv_submissions (`user_id`, `region_id`, `epiweek_now`, `date`) VALUES ({$userID}, {$regionID}, {$temp['epiweek']['round_epiweek']}, now())");
    }
    setResult($output, 1);
-   return getResult($output);
+   
+   getRegions($output, );
+   
+   return getResult($output, $userID);
 }
 
 function saveForecast_mturk(&$output, $userID, $regionID, $forecast, $commit) {
