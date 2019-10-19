@@ -28,9 +28,9 @@ if($_offline) {
    echo "in home, called getUserStats";
    echo $output['stat_completed'];
    
-   if(getUserStats_hosp($output, $output['user_id'], $output['epiweek']['round_epiweek']) != 1) {
-      fail('Error loading user info');
-   }
+//    if(getUserStats_hosp($output, $output['user_id'], $output['epiweek']['round_epiweek']) != 1) {
+//       fail('Error loading user info');
+//    }
    
    
    //List of all regions
@@ -44,10 +44,10 @@ if($_offline) {
    echo "in home, called getRegions";
    echo $output['stat_completed'];
    
-   //List of all age groups
-   if(getAgeGroups($output, $output['user_id']) != 1) {
-      fail('Error loading age group info');
-   }
+//    //List of all age groups
+//    if(getAgeGroups($output, $output['user_id']) != 1) {
+//       fail('Error loading age group info');
+//    }
    ?>
    <div class="box_section">
       <div class="box_section_title">
@@ -134,14 +134,15 @@ if($_offline) {
    <div id="map_container"></div>
 
 
-    <?php
+<!--     <?php
       $ifForecastHosp = getPreference($output, 'advanced_hospitalization', 'int');
       if ($ifForecastHosp) {
         $getUrl = 'forecast_hosp.php';
         showNavigation_hosp($output, $getUrl);
        }
      ?>
-
+ -->
+   
    <div class="box_section">
 
    <div class="box_section">
