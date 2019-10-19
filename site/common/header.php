@@ -83,7 +83,7 @@ if(!$dbh) {
          <div class="box_mininav">
             <span class="effect_tiny_header">Epicaster: <?= $output['user_name'] ?> [<?= $hash ?>]<br /></span>
             <?php
-            createLink('Home', 'home.php');
+            createLink('Home', 'home.php#top');
             createDivider('&middot;');
             createLink('Preferences', 'preferences.php');
             createDivider('&middot;');
