@@ -32,8 +32,11 @@ if($_offline) {
       fail('Error loading user info');
    }
    
+   
    //List of all regions
-   echo "calling getRegions";
+   echo "calling getRegions, stat_completed:";
+   echo $output['stat_completed'];
+   
    if(getRegions($output, $output['user_id']) != 1) {
       fail('Error loading region info');
    }
