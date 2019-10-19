@@ -131,8 +131,6 @@ function showNavigation($output, $regionID=-1) {
            <?php
            $regionsList = $output['regions'];
            foreach ($regionIDs as $i) {
-               echo $i;
-               echo $regionsList[$i]['completed'];
                showRegionButton($regionsList[$i]);
            }
            ?>
