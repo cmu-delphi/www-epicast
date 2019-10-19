@@ -98,7 +98,7 @@ if($_offline) {
       </div>
    </div>
    <?php
-   $numRegion = 13;
+   $numRegion = 14;
    if($output['stat_completed'] >= $numRegion) {
       ?>
       <div class="box_section">
