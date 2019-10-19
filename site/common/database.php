@@ -354,6 +354,7 @@ function getRegions(&$output, $userID) {
    
    foreach($output['regions'] as $r) {
       echo $r["id"];
+      echo ' ';
       echo $r["completed"];
    }
    
