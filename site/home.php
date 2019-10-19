@@ -19,16 +19,28 @@ if($_offline) {
       fail('Error loading epiweek info');
    }
    //User stats
+   
+   echo "calling getUserStats";
    if(getUserStats($output, $output['user_id'], $output['epiweek']['round_epiweek']) != 1) {
       fail('Error loading user info');
    }
+   
+   echo "in home, called getUserStats";
+   echo $output['stat_completed'];
+   
    if(getUserStats_hosp($output, $output['user_id'], $output['epiweek']['round_epiweek']) != 1) {
       fail('Error loading user info');
    }
+   
    //List of all regions
+   echo "calling getRegions";
    if(getRegions($output, $output['user_id']) != 1) {
       fail('Error loading region info');
    }
+   
+   echo "in home, called getRegions";
+   echo $output['stat_completed'];
+   
    //List of all age groups
    if(getAgeGroups($output, $output['user_id']) != 1) {
       fail('Error loading age group info');
