@@ -165,7 +165,7 @@ if(isAdmin($output)) {
       </div>
    </div>
 
-   <div class="box_section">
+<!--    <div class="box_section">
       <div class="box_section_title">
          Hospitalization
          <div class="box_section_subtitle">
@@ -187,7 +187,7 @@ if(isAdmin($output)) {
          </div>
       </div>
    </div>
-
+ -->
    <div class="box_section">
       <div class="box_section_title">
          Userbase
@@ -246,14 +246,14 @@ if(isAdmin($output)) {
                      }
                      printf('Total: %d<br />', $u['total_submissions']);
                   ?></td>
-                  <td class="any_extrasmall"><?php
+<!--                   <td class="any_extrasmall"><?php
                      printf('Hospitalization');
                      printf('<br />');
                      foreach($u['submissions_hosp'] as &$s) {
                         printf('%s: %d<br />', formatEpiweek($s[0]), $s[1]);
                      }
                      printf('Total: %d<br />', $u['total_submissions_hosp']);
-                  ?></td>
+                  ?></td> -->
                </tr>
                <?php
             }
