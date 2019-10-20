@@ -19,23 +19,14 @@ workbox.precaching.precacheAndRoute([
     // { url: 'forecast.php', revision: 'fc386e2' },
 ]);
 
-//workbox.googleAnalytics.initialize(); 
+//workbox.googleAnalytics.initialize();
 
 workbox.routing.registerRoute(
-  // Cache CSS files
-  /.*\.css/,
+  // Cache JS, CSS, JSON files
+  /.*\.(?:css|js|json)/,
   // Use cache but update in the background ASAP
   workbox.strategies.staleWhileRevalidate({
-    cacheName: 'css-cache',
-  })
-);
-
-workbox.routing.registerRoute(
-  // Cache JS files
-  /.*\.js/,
-  // Use cache but update in the background ASAP
-  workbox.strategies.staleWhileRevalidate({
-    cacheName: 'js-cache',
+    cacheName: 'filetype-cache',
   })
 );
 
@@ -55,13 +46,6 @@ workbox.routing.registerRoute(
         purgeOnQuotaError: true,
       })
     ],
-  })
-);
-
-workbox.routing.registerRoute(
-  /.*(?:epicast)\.org.*$/,
-  workbox.strategies.staleWhileRevalidate({
-  cacheName: 'internal-cache',
   })
 );
 
