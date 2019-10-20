@@ -148,7 +148,7 @@ function getUserStats(&$output, $userID, $epiweek) {
    $result = mysql_query("SELECT count(1) `completed` FROM ec_fluv_submissions WHERE `user_id` = {$userID} AND `epiweek_now` = {$epiweek}");
    if($row = mysql_fetch_array($result)) {
       $output['stat_completed'] = intval($row['completed']);
-      echo $output['stat_completed'];
+//       echo $output['stat_completed'];
       setResult($output, 1);
    } else {
       setResult($output, 2);
