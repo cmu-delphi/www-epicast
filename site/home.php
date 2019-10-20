@@ -20,13 +20,13 @@ if($_offline) {
    }
    //User stats
    
-   echo "calling getUserStats";
+//    echo "calling getUserStats";
    if(getUserStats($output, $output['user_id'], $output['epiweek']['round_epiweek']) != 1) {
       fail('Error loading user info');
    }
    
-   echo "in home, called getUserStats";
-   echo $output['stat_completed'];
+//    echo "in home, called getUserStats";
+//    echo $output['stat_completed'];
    
 //    if(getUserStats_hosp($output, $output['user_id'], $output['epiweek']['round_epiweek']) != 1) {
 //       fail('Error loading user info');
@@ -34,15 +34,15 @@ if($_offline) {
    
    
    //List of all regions
-   echo "calling getRegions, stat_completed:";
-   echo $output['stat_completed'];
+//    echo "calling getRegions, stat_completed:";
+//    echo $output['stat_completed'];
    
    if(getRegions($output, $output['user_id']) != 1) {
       fail('Error loading region info');
    }
    
-   echo "in home, called getRegions";
-   echo $output['stat_completed'];
+//    echo "in home, called getRegions";
+//    echo $output['stat_completed'];
    
 //    //List of all age groups
 //    if(getAgeGroups($output, $output['user_id']) != 1) {
