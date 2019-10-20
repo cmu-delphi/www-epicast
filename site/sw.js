@@ -14,21 +14,12 @@ console.log('Was Workbox able to load?');
     console.log('Workbox did not load correctly, please check your service worker for errors.');
 }
 
-workbox.precaching.precacheAndRoute([  
+workbox.precaching.precacheAndRoute([
     // If forecast.php gets cached it will show inaccurate data when accessing different regions
     // { url: 'forecast.php', revision: 'fc386e2' },
 ]);
 
-//workbox.googleAnalytics.initialize();
-
-workbox.routing.registerRoute(
-  // Cache PHP files
-  /.*\.php/,
-  // Use cache but update in the background ASAP
-  workbox.strategies.staleWhileRevalidate({
-    cacheName: 'php-cache',
-  })
-);
+//workbox.googleAnalytics.initialize(); 
 
 workbox.routing.registerRoute(
   // Cache CSS files
