@@ -54,7 +54,6 @@ if(loadForecast($output, $output['user_id'], $regionID, true) !== 1) {
 }
 
 $lastForecast = $output['forecast'];
-echo $lastForecast;
 $region = $output['regions'][$regionID];
 $num = count($output['regions']);
 //History for this region
