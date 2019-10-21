@@ -770,7 +770,6 @@ function loadForecast(&$output, $userID, $regionID, $submitted=false) {
    }
    if($row = mysql_fetch_array($result)) {
       $epiweek = intval($row['epiweek']);
-      echo $epiweek;
    } else {
       setResult($output, 2);
       return getResult($output);
@@ -778,11 +777,17 @@ function loadForecast(&$output, $userID, $regionID, $submitted=false) {
    $date = array();
    $wili = array();
    $result = mysql_query("SELECT `epiweek_now`, `epiweek`, `wili` FROM ec_fluv_forecast f WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` = {$epiweek} ORDER BY f.`epiweek` ASC");
+   echo "$userID";
+   echo "\n";
+   echo "$regionID";
+   echo "\n";
    while($row = mysql_fetch_array($result)) {
       array_push($date, intval($row['epiweek']));
       array_push($wili, floatval($row['wili']));
       echo intval($row['epiweek']);
+      echo "\t";
       echo floatval($row['wili']);
+      echo "\n";
    }
    $output['forecast'] = array('date' => &$date, 'wili' => &$wili);
    setResult($output, 1);
