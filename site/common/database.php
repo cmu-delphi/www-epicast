@@ -770,6 +770,7 @@ function loadForecast(&$output, $userID, $regionID, $submitted=false) {
    }
    if($row = mysql_fetch_array($result)) {
       $epiweek = intval($row['epiweek']);
+      echo $epiweek;
    } else {
       setResult($output, 2);
       return getResult($output);
@@ -780,6 +781,8 @@ function loadForecast(&$output, $userID, $regionID, $submitted=false) {
    while($row = mysql_fetch_array($result)) {
       array_push($date, intval($row['epiweek']));
       array_push($wili, floatval($row['wili']));
+      echo intval($row['epiweek']);
+      echo floatval($row['wili']);
    }
    $output['forecast'] = array('date' => &$date, 'wili' => &$wili);
    setResult($output, 1);
