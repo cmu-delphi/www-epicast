@@ -759,15 +759,20 @@ Output:
    $output['forecast'] - Arrays of epiweeks and forecast (wILI) for the region made by the user
 */
 function loadForecast(&$output, $userID, $regionID, $submitted=false) {
+//    echo "-----";
+//    echo $userID;
+//    echo $regionID; 
+//    echo $submitted;
+   
    if($submitted) {
       $temp = array();
       if(getEpiweekInfo($temp) !== 1) {
          return getResult($temp);
       }
-      echo "round epiweek";
-      echo "\n";
-      echo $temp['epiweek']['round_epiweek'];
-      echo "\n";
+//       echo "round epiweek";
+//       echo "\n";
+//       echo $temp['epiweek']['round_epiweek'];
+//       echo "\n";
       $result = mysql_query("SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_submissions WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` < {$temp['epiweek']['round_epiweek']}");
    } else {
       $result = mysql_query("SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_forecast WHERE `user_id` = {$userID} AND `region_id` = {$regionID}");
@@ -781,17 +786,17 @@ function loadForecast(&$output, $userID, $regionID, $submitted=false) {
    $date = array();
    $wili = array();
    $result = mysql_query("SELECT `epiweek_now`, `epiweek`, `wili` FROM ec_fluv_forecast f WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` = {$epiweek} ORDER BY f.`epiweek` ASC");
-   echo "$userID";
-   echo "\n";
-   echo "$regionID";
-   echo "\n";
+//    echo "$userID";
+//    echo "\n";
+//    echo "$regionID";
+//    echo "\n";
    while($row = mysql_fetch_array($result)) {
       array_push($date, intval($row['epiweek']));
       array_push($wili, floatval($row['wili']));
-      echo intval($row['epiweek']);
-      echo "\t";
-      echo floatval($row['wili']);
-      echo "\n";
+//       echo intval($row['epiweek']);
+//       echo "\t";
+//       echo floatval($row['wili']);
+//       echo "\n";
    }
    $output['forecast'] = array('date' => &$date, 'wili' => &$wili);
    setResult($output, 1);
