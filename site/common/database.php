@@ -683,10 +683,10 @@ function saveForecast(&$output, $userID, $regionID, $forecast, $commit) {
       mysql_query("INSERT INTO ec_fluv_forecast (`user_id`, `region_id`, `epiweek_now`, `epiweek`, `wili`, `date`) VALUES ({$userID}, {$regionID}, {$temp['epiweek']['round_epiweek']}, {$epiweek}, {$wili}, now()) ON DUPLICATE KEY UPDATE `wili` = {$wili}, `date` = now()");
    }
    if($commit) {
-      mysql_query("INSERT INTO ec_fluv_submissions (`user_id`, `region_id`, `epiweek_now`, `date`) VALUES ({$userID}, {$regionID}, {$temp['epiweek']['round_epiweek']}, now()) ON DUPLICATE KEY UPDATE `date` = now()");
+      mysql_query("INSERT INTO ec_fluv_submissions (`user_id`, `region_id`, `epiweek_now`, `date`) VALUES ({$userID}, {$regionID}, {$temp['epiweek']['round_epiweek']}, now())");
    }
    
-   $debug = true;
+   $debug = false;
    if ($debug) {
       echo "-------saveForecast----\n";
       echo $commit;
@@ -769,7 +769,7 @@ Output:
 */
 function loadForecast(&$output, $userID, $regionID, $submitted=false) {
    $debug = true;
-   if ($debug) {
+   if ($debug and ($regionID == 1 or $regionID == 8)) {
       echo "-----inside loadForecast------\n";
       echo "user ID, region ID, submitted:  ";
       echo $userID;
@@ -783,14 +783,6 @@ function loadForecast(&$output, $userID, $regionID, $submitted=false) {
          return getResult($temp);
       }
       
-      if ($debug) {
-         echo "------inside submitted----\n";
-         echo "round epiweek";
-         echo "\n";
-         echo $temp['epiweek']['round_epiweek'];
-         echo "\n";
-      }
-
       $result = mysql_query("SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_submissions WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` < {$temp['epiweek']['round_epiweek']}");
    } else {
       $result = mysql_query("SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_forecast WHERE `user_id` = {$userID} AND `region_id` = {$regionID}");
@@ -805,12 +797,17 @@ function loadForecast(&$output, $userID, $regionID, $submitted=false) {
    $wili = array();
    $result = mysql_query("SELECT `epiweek_now`, `epiweek`, `wili` FROM ec_fluv_forecast f WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` = {$epiweek} ORDER BY f.`epiweek` ASC");
    
+   if ($debug and ($regionID == 1 or $regionID == 8)) {
+      echo "epiweek: ";
+      echo $epiweek;
+      echo "\n";
+   }
    
    while($row = mysql_fetch_array($result)) {
       array_push($date, intval($row['epiweek']));
       array_push($wili, floatval($row['wili']));
       
-      if ($debug) {
+      if ($debug and ($regionID == 1 or $regionID == 8)) {
          echo intval($row['epiweek']);
          echo ", ";
          echo floatval($row['wili']);
