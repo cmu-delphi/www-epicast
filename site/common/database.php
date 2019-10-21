@@ -768,7 +768,7 @@ Output:
    $output['forecast'] - Arrays of epiweeks and forecast (wILI) for the region made by the user
 */
 function loadForecast(&$output, $userID, $regionID, $submitted=false) {
-   $debug = true;
+   $debug = false;
    if ($debug and ($regionID == 1 or $regionID == 8)) {
       echo "-----inside loadForecast------\n";
       echo "user ID, region ID, submitted:  ";
