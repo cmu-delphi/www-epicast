@@ -764,6 +764,10 @@ function loadForecast(&$output, $userID, $regionID, $submitted=false) {
       if(getEpiweekInfo($temp) !== 1) {
          return getResult($temp);
       }
+      echo "round epiweek";
+      echo "\n";
+      echo $temp['epiweek']['round_epiweek'];
+      echo "\n";
       $result = mysql_query("SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_submissions WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` < {$temp['epiweek']['round_epiweek']}");
    } else {
       $result = mysql_query("SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_forecast WHERE `user_id` = {$userID} AND `region_id` = {$regionID}");
