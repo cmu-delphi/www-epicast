@@ -49,7 +49,6 @@ if(!isset($output['regions'][$regionID])) {
 }
 
 //Forecast from last round
-echo "-----calling loadForecast------------\n";
 if(loadForecast($output, $output['user_id'], $regionID, true) !== 1) {
    fail('Error loading last week forecast');
 }
