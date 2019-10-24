@@ -241,7 +241,7 @@ div.box_section_subtitle_alert {
    font-weight: bold;
    margin-top: -4px;
    padding-bottom: 4px;
-   color: '#DC143C';
+   color: #DC143C;
 }
 div.box_stat {
    display: inline-block;
