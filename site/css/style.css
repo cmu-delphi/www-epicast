@@ -236,6 +236,13 @@ div.box_section_subtitle {
    padding-bottom: 4px;
    color: <?= $foregroundColor2 ?>;
 }
+div.box_section_subtitle_alert {
+   font-size: 0.6em;
+   font-weight: bold;
+   margin-top: -4px;
+   padding-bottom: 4px;
+   color: '#DC143C';
+}
 div.box_stat {
    display: inline-block;
    min-width: 200px;
