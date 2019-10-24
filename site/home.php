@@ -56,7 +56,7 @@ if($_offline) {
          <div class="box_section_subtitle">
             Due by 10:00 AM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
          </div>
-         <div class="box_section_title">
+         <div class="box_section_subtitle">
             The competition is starting this Friday, October 25.  You will get an email when the new data becomes available.
          </div>
 <!--          <div class="box_section_subtitle">
