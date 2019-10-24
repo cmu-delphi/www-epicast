@@ -66,7 +66,7 @@ if($_offline) {
       <div>
          <?php
          $time = $output['epiweek']['remaining'];
-         $time['days'] = $time['days'];
+         $time['days'] = $time['days'] + 2;
          $value = '';
          $unit = ' until due';
          if($time['days'] < 2) {
