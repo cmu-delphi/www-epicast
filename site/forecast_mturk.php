@@ -59,6 +59,9 @@ $region = $output['regions'][$regionID];
 $num = count($output['regions']);
 //History for this region
 $output['history'] = &$output['regions'][$regionID]['history'];
+
+echo $output['history'];
+
 //User's previous forecast for this region
 $output['forecast'] = &$output['regions'][$regionID]['forecast'];
 
