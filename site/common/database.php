@@ -2,7 +2,7 @@
 require_once('utils.php');
 require_once('settings.php');
 
-define("NUM_REGIONS", 60);
+define("NUM_REGIONS", 64);
 define("NUM_CURRENT_REGIONS", 14);
 define("NUM_AGEGROUPS", 6);
 
