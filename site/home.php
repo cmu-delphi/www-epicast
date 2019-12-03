@@ -93,8 +93,7 @@ if($_offline) {
 //             $unit = 'seconds' . $unit;
          } else {
             $value = '<i class="fa fa-exclamation-triangle"></i>';
-//             $unit = 'past due';
-            $unit = 'due very soon';
+            $unit = 'past due';
          }
          ?>
          <div class="box_stat">
