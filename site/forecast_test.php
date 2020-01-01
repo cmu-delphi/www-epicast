@@ -1,68 +1,70 @@
 <?php
-
-require_once('common/header.php');
+require_once('common/header_mturk.php');
 require_once('common/navigation.php');
 if($error) {
    return;
 }
+
 
 if(getYearForCurrentSeason($output) !== 1) {
    die('unable to get year for current season');
 } else {
    $current_season = $output['season']['year'];
 }
-
 function getColor($regionID, $seasonID) {
-   $r = intval((sin(($seasonID - 2004) * 0.4 + 0) + 1) / 2 * 15);
-   $g = intval((sin(($seasonID - 2004) * 0.5 + 2) + 1) / 2 * 15);
-   $b = intval((sin(($seasonID - 2004) * 0.6 + 4) + 1) / 2 * 15);
-   return sprintf('#%x%x%x', $r, $g, $b);
+   $colors =  ["#FF90C9","#B903AA","#D16100","#CC0744","#000035","#7B4F4B","#A1C299", // 1997-2003 (hidden by default)
+ "#A079BF","#1CE6FF","#FF34FF","#FF4A46","#008941","#006FA6","#A30059","#7A4900","#0000A6","#63FFAC","#004D43","#FFAA00","#4FC601"]; // 2004~current, 2009 is hidden on the graph
+   $idx = $seasonID - 1997;
+   $color = $colors[$idx];
+   return $color;
 }
 
-//Epiweek info
-if(getEpiweekInfo($output) !== 1) {
-   fail('Error loading epiweek info');
-}
+$regionID = intval($_GET["id"]);
+$mturkID = $_GET['mturkId'];
+$userID = getUserIDByMturkID($mturkID);
 
-//List of all regions
-if(getRegionsExtended($output, $output['user_id']) !== 1) {
-   fail('Error loading region details, history, or forecast');
-}
+loadUserPreferences_mturk($output, $userID);
 
 if(isset($_REQUEST['skip_instructions'])) {
    $output['user_preferences']['skip_instructions'] = 1;
-   if(saveUserPreferences($output, $output['user_id'], $output['user_preferences']) !== 1) {
+   if(saveUserPreferences_mturk($output, $userID, $output['user_preferences']) !== 1) {
       fail('Error updating preferences');
    }
 }
 
-if(isset($_REQUEST['region_id'])) {
-   $regionID = intval(mysql_real_escape_string($_REQUEST['region_id']));
-} else {
-   //Default to USA National
-   $regionID = 1;
+//Epiweek info
+if(getEpiweekInfo_mturk($output) !== 1) {
+   fail('Error loading epiweek info');
 }
+//List of all regions
+if(getRegionsExtended_mturk($output, $userID) !== 1) {
+   fail('Error loading region details, history, or forecast');
+}
+?>
 
+<?php
 //Specific region
 if(!isset($output['regions'][$regionID])) {
    fail('Invalid region_id');
 }
 
 //Forecast from last round
-if(loadForecast($output, $output['user_id'], $regionID, true) !== 1) {
+if(loadForecast_mturk($output, $userID, $regionID, true) !== 1) {
    fail('Error loading last week forecast');
 }
 
 $lastForecast = $output['forecast'];
+
 $region = $output['regions'][$regionID];
 $num = count($output['regions']);
 //History for this region
 $output['history'] = &$output['regions'][$regionID]['history'];
+
 //User's previous forecast for this region
 $output['forecast'] = &$output['regions'][$regionID]['forecast'];
+
 //Settings
 $showPandemic = getPreference($output, 'advanced_pandemic', 'int');
-
 //Calculate a few helpful stats
 $firstWeekOfChart = 30;
 $currentWeek = $output['epiweek']['round_epiweek'];
@@ -99,10 +101,7 @@ if($seasonOffsets[count($seasonOffsets) - 1] != 0) {
 }
 $seasonOffsets = array_reverse($seasonOffsets);
 $seasonYears = array_reverse($seasonYears);
-
-
-//Nowcast (may or may not be available)
-getNowcast($output, addEpiweeks($currentWeek, 1), $regionID);
+//$seasonYears = array_slice($seasonYears, 0, count($seasonYears));
 
 if(getPreference($output, 'skip_instructions', 'int') !== 1) {
    ?>
@@ -126,8 +125,8 @@ if(getPreference($output, 'skip_instructions', 'int') !== 1) {
          </video>
          <p>
             <?php
-            createForm('reload', 'forecast.php#top', array('region_id', $regionID, 'skip_instructions', '1'));
-            button('fa-check', 'I Understand', "submit('reload')");
+           createForm('reload', 'forecast_mturk.php?id='.$regionID.'&mturkId='.$mturkID, array('region_id', $regionID, 'skip_instructions', '1'));
+           button('fa-check', 'I Understand', "submit('reload')");
             ?>
          </p>
       </div>
@@ -137,11 +136,11 @@ if(getPreference($output, 'skip_instructions', 'int') !== 1) {
 ?>
 <?php
 foreach($output['regions'] as $r) {
-   createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
+   createForm('forecast_' . $r['id'], 'forecast_mturk.php#top', array('region_id', $r['id']));
 }
-
 ?>
 <?php fail('Whoa, your screen is too small! Please visit this site on a non-mobile device, or try to expand your browser window. Sorry about that!', 'box_nocanvas', true); ?>
+
 <div id="box_main_ui">
    <div id="box_status" class="box_status any_neutral right">
       <div class="box_status_line">
@@ -164,94 +163,50 @@ foreach($output['regions'] as $r) {
    <div id="box_side_bar">
       <div id="box_histories">
          <div class="box_decision_title centered" style="width: 100%;">History</div>
+
          <?php
          foreach($output['regions'] as $r) {
             if($r['id'] !== $regionID) continue;
             ?>
 
             <div class="any_bold any_cursor_pointer" onclick="toggleSeasonList(<?= $r['id'] ?>)"><i id="checkbox_region_<?= $r['id'] ?>" class="fa fa-plus-square-o"></i>&nbsp;<?= htmlspecialchars($r['name']) ?></div>
-            <div>Seasons: </div>
             <div id="container_<?= $r['id'] ?>_all" class="any_hidden any_cursor_pointer" onclick="toggleAllSeasons(<?= $r['id'] ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $r['id'] ?>_all" class="fa fa-square-o"></i>&nbsp;<span class="effect_tiny effect_italics">Show all</span></div>
-            <?php
+
+             <?php
             $currentYear = $seasonYears[count($seasonYears) - 1];
-            $numHHS = 11;
-            if($regionID <= $numHHS) {
-               foreach($seasonYears as $year) {
-                  if($year == 2009) {
-                     continue;
-                  }
-                  if($r['id'] == $regionID && $year == $currentYear) {
-                     ?>
-                     <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
-                        <span class="effect_tiny"><?= sprintf('current year') ?></span>
-                     </div>
-                     <?php
-                  } else {
-                      if ($year == $currentYear) {
-                          ?>
-                          <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer"
-                               onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
-                                      id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
-                                      style="color: <?= getColor($r['id'], $year) ?>"></i>
-                              <span class="effect_tiny"><?= sprintf('current year') ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
-                          </div>
-                          <?php
-                      } else {
-                          ?>
-                          <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer"
-                               onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
-                                      id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
-                                      style="color: <?= getColor($r['id'], $year) ?>"></i>
-                              <span class="effect_tiny"><?= sprintf('%d-%s', $year, substr((string)($year + 1), 2, 2)) ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
-                          </div>
-                          <?php
-                          }
-                  }
-                  }
-            } else { // for each states, data are only available starting 2010-2011 season
-               foreach($seasonYears as $year) {
-                  if($year <= 2009) {
-                     continue;
-                  }
-
-                  if($year == 2009 && $showPandemic !== 1) {
-                     continue;
-                  }
-                  if($r['id'] == $regionID && $year == $currentYear) {
-                      ?>
-                      <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
-                          <span class="effect_tiny"><?= sprintf('current year') ?></span>
-                      </div>
-                      <?php
-                  } else {
-                      if ($year == $currentYear) {
-                          ?>
-                          <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer"
-                               onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
-                                      id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
-                                      style="color: <?= getColor($r['id'], $year) ?>"></i>
-                              <span class="effect_tiny"><?= sprintf('current year') ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
-                          </div>
-                          <?php
-                      } else {
-                          ?>
-                          <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer"
-                               onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
-                                      id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
-                                      style="color: <?= getColor($r['id'], $year) ?>"></i>
-                              <span class="effect_tiny"><?= sprintf('%d-%s', $year, substr((string)($year + 1), 2, 2)) ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
-                          </div>
-                          <?php
-                      }
-                  }
-               }
-            }
-
+            // for each states, data are only available starting 2010-2011 season
+           foreach($seasonYears as $year) {
+              if($year <= 2009) {
+                 continue;
+              }
+              if($r['id'] == $regionID && $year == $currentYear) {
+                 ?>
+                 <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
+                    <span class="effect_tiny"><?= sprintf('%d-now', $year) ?></span>
+                 </div>
+                 <?php
+              } else {
+                 ?>
+                 <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer" onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o" style="color: <?= getColor($r['id'], $year) ?>"></i>
+                    <span class="effect_tiny"><?= sprintf('%d-%s', $year, ($year == $currentYear) ? 'now' : '' . ($year + 1)) ?><?= ($year == 2009 ? ' pdm' : '')?></span>
+                 </div>
+                 <?php
+              }
+           }
          }
          ?>
+
+
+
       </div></div><div id="box_canvas"><canvas id="canvas" width="800" height="400"></canvas></div>
 </div>
+
+
+
+
+
 <script src="js/forecast.js"></script>
+
 <script>
    //globals
    //var DEBUG = <?= $output['user_id'] == 9 ? 'true' : 'false' ?>;
@@ -475,8 +430,6 @@ foreach($output['regions'] as $r) {
       var x2 = getX(xRange[1]);
       var y1 = getY(yRange[0]);
       var y2 = getY(yRange[1]);
-      var scale_y0 = 0;
-      var scale_y1 = 0;
       //past
       g.fillStyle = '#eee';
       g.fillRect(x1, y2, weekX - x1, y1 - y2);
@@ -495,10 +448,10 @@ foreach($output['regions'] as $r) {
       {
          var row1 = 12.5 * uiScale;
          var row2 = marginLeft() - 12.5 * uiScale;
+         //ticks and lines
          scale_y0 = getY(yRange[0]);
          scale_y1 = getY(yRange[0]+yInterval);
-         var scale = scale_y0 - scale_y1;
-         //ticks and lines
+         var scale = scale_y1 - scale_y0
          for(var incidence = yRange[0]; incidence <= yRange[1]; incidence += yInterval) {
             var y = getY(incidence);
             drawText(g, '' + incidence, row2, y, 0, Align.right, Align.center);
@@ -584,7 +537,6 @@ foreach($output['regions'] as $r) {
       style.dash = DASH_STYLE;
       drawCurve(forecast[regionID], 0, 52, numPastWeeks + 1, style);
       stitchCurves(regionID, style);
-
       //nowcast
       if(showNowcast) {
          g.fillStyle = 'rgba(0, 0, 0, 0.5)';
@@ -599,38 +551,7 @@ foreach($output['regions'] as $r) {
          y1 = getY(nowcast[0]);
          g.fillRect(x - 5, y1, 11, 1);
       }
-
-      //error bars
-      var errors = [[-0.24705835, 0.26585897, -0.15209838, 0.19588030, -0.12080783, 0.14845500, -0.10822840, 0.13591350, -0.10105576, 0.11903400],
-                     [-0.37140890, 0.28183701, -0.22718089, 0.22283626, -0.17166020, 0.15932419, -0.15244192, 0.13857609, -0.13520489, 0.12653161],
-                     [-0.53510369, 0.89618800, -0.29194798, 0.65376200, -0.13691200, 0.53989966, -0.12287200, 0.46070700, -0.07438098, 0.41997600],
-                     [-0.37340794, 0.40633099, -0.28260333, 0.17494332, -0.22924145, 0.12111835, -0.18220829, 0.09744193, -0.15922900, 0.08408102],
-                     [-0.20515699, 0.30015400, -0.11709100, 0.25312400, -0.08401870, 0.22570893, -0.06906100, 0.20316300, -0.06395200, 0.17931200],
-                     [-0.25007300, 0.20134411, -0.13535207, 0.12399100, -0.13027507, 0.10968548, -0.12658071, 0.09060300, -0.12210600, 0.09081896],
-                     [-0.57142423, 0.64259200, -0.26681298, 0.44821271, -0.17997876, 0.42294960, -0.18924163, 0.40526105, -0.18486160, 0.41010436],
-                     [-0.31905190, 0.53929610, -0.28534067, 0.25807903, -0.18014395, 0.17609501, -0.09770261, 0.15003601, -0.06749161, 0.11253900],
-                     [-0.34997449, 0.16271156, -0.30672299, 0.11085698, -0.28115293, 0.08104906, -0.24976742, 0.07652170, -0.27224423, 0.07954395],
-                     [-1.35720500, 0.36575900, -0.83282601, 0.33934500, -0.57508135, 0.29297430, -0.25338298, 0.25961193, -0.22189758, 0.23839696],
-                     [-0.27577982, 0.67580001, -0.13440096, 0.51631755, -0.08888274, 0.42762205, -0.08109139, 0.37271498, -0.05693280, 0.26734400]];
-
-      if (regionID <= 11) {
-         var epiweek = addEpiweeks(xRange[0], numPastWeeks + 1);
-         var error = errors[regionID-1];
-         for (var i=0; i<9; i = i + 2) {
-            var above = -error[i]*scale;
-            var below = error[i+1]*scale;
-            var x_weekNumber = addEpiweeks(epiweek, -(i/2)-1);
-//             var x_weekNumber = addEpiweeks(epiweek, -(i/2)-2);
-            var x = getX(x_weekNumber);
-            var y = getY(pastWili[regionID][pastWili[regionID].length - i/2 - 1]);
-            g.fillStyle = 'rgba(0, 0, 0, 0.5)';
-            var bar_width = 5;
-            g.fillRect(x-2.5, y-above, bar_width, above);
-            g.fillRect(x-2.5, y, bar_width, below);
-         }
-      }
-
-
+      g.fillStyle = 'rgba(0, 0, 0, 0.5)';
 
       //legend
       var x1 = canvas.width - marginRight();
@@ -649,23 +570,19 @@ foreach($output['regions'] as $r) {
       drawText(g, regionNames[regionID] + ', ' + Math.round(xRange[0] / 100) + '+', x2 - 3, y, 0, Align.right, Align.center);
       style.dash = [];
       drawLine(x1, y - 3, x2, y + 3, style);
-//       for(var i = 0; i < selectedSeasons.length; i++) {
-//          y += dy;
-//          var r = selectedSeasons[i][0];
-//          var s = selectedSeasons[i][1];
-//          var style = curveStyles[r][s];
-//          drawText(g, regionNames[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
-//          drawLine(x1, y - 3, x2, y + 3, style);
-//       }
-
-
-//       error bar legend
-      if (regionID <= 11) {
-         // error bar legend
-         drawText(g, '90% Confidence Interval', x2 - 3, y+25, 0, Align.right, Align.center);
-         g.fillStyle = 'rgba(0, 0, 0, 0.5)';
-         g.fillRect(x2+5, y+10, 5, 35);
+      for(var i = 0; i < selectedSeasons.length; i++) {
+         y += dy;
+         var r = selectedSeasons[i][0];
+         var s = selectedSeasons[i][1];
+         var style = curveStyles[r][s];
+         drawText(g, regionNames[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
+         drawLine(x1, y - 3, x2, y + 3, style);
       }
+
+      // error bars
+      drawText(g, '90% Confidence Interval', x2 - 3, y+25, 0, Align.right, Align.center);
+      g.fillStyle = 'rgba(0, 0, 0, 0.5)';
+      g.fillRect(x2+5, y+10, 5, 35);
 
       //tooltip
       if(tooltip != null) {
@@ -861,19 +778,35 @@ foreach($output['regions'] as $r) {
             alert('Some points are still at zero. Please double check your forecast and try again.');
             return;
          }
-         timeoutID = setTimeout(submitTimeout, 10000);
+         timeoutID = setTimeout(submitTimeout, 100000);
          submitStatus = SubmitStatus.sent;
          updateStatus();
          $('#button_submit').addClass('box_button_disabled');
       }
       var params = {
-         'action': commit ? 'forecast' : 'autosave',
-         'hash': '<?= $output['user_hash'] ?>',
-         'region_id': regionID,
-         'f[]': f,
-      };
-      $.get("api.php", params, handleResponse, 'json');
+           'action': commit ? 'forecast' : 'autosave',
+           'mturkID': "<?= $mturkID ?>",
+           'userID': "<?= $userID ?>",
+           'region_id': regionID,
+           'f[]': f,
+       };
+
+//      console.log("inside submitForecast, sending params");
+//      console.log(params);
+     var hjj = $.get("api_mturk.php", params, handleResponse, 'json');
+//      hjj.error(function(jqXHR, textStatus, errorThrown) {
+//          console.log('The server is not responding');
+//          console.log(jqXHR);
+//          console.log(errorThrown);
+//          console.log(textStatus);
+//      });
+
+//      hjj.success(function(result) {
+//           console.log(result);
+//      });
+//      console.log("sent");
    }
+
    function updateStatus() {
       $('#box_status').removeClass('any_success any_failure any_neutral');
       if(submitStatus == SubmitStatus.sent) {
@@ -884,63 +817,57 @@ foreach($output['regions'] as $r) {
          $('#status_icon').html('<i class="fa fa-check-circle"></i>');
          $('#status_message').html('Forecast submitted successfully!');
          $('#box_status').addClass('any_success');
-         //Move to the next missing region, or go home
-
 
          <?php
-         $next = null;
-          $numRegion = 14;
-          $listIdxToId = array(1 => 1, 2 => 2, 3 => 3, 4 => 4,
-                            5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11,
-                            12 => 13, 13 => 14, 14 => 56);
-          $idToListIdx = array(1 => 1, 2 => 2, 3 => 3, 4 => 4,
-                          5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11,
-                          13 => 12, 14 => 13, 56 => 14);
-          $currentID = $region['id'];
-          $currentListIdx = $idToListIdx[$currentID];
+          //Move to the next missing region, or go home
+          $next = null;
+          $unfinishedStates = getNextLocation($mturkID, $regionID);
 
-          if ($currentListIdx <= $numRegion) {
+          if (sizeof($unfinishedStates) !== 0) {
+             foreach ($unfinishedStates as $i) {
+                 $r = $output['regions'][$i];
+                 if($r['id'] > $region['id'] && !$r['completed'] && $next === null) {
+                     $next = $r['id'];
+                 }
+             }
 
-              for ($i = 1; $i <= $numRegion; $i++) {
-                  $otherRegionID = $listIdxToId[$i];
-                  $otherRegion = $output['regions'][$otherRegionID];
-                  if($i > $currentListIdx && !$otherRegion['completed'] && $next === null) {
-                      $next = $otherRegion['id'];
-                  }
-              }
-
-              for ($i = 1; $i <= $numRegion; $i++) {
-                  $otherRegionID = $listIdxToId[$i];
-                  $otherRegion = $output['regions'][$otherRegionID];
-                  if($i < $currentListIdx && !$otherRegion['completed'] && $next === null) {
-                      $next = $otherRegion['id'];
-                  }
-              }
-
-          }
-
+             foreach ($unfinishedStates as $i) {
+                 $r = $output['regions'][$i];
+                 if($r['id'] < $region['id'] && !$r['completed'] && $next === null) {
+                     $next = $r['id'];
+                 }
+             }
+         }
 
          if($next !== null) {
             ?>
-            submit('forecast_<?= $next ?>');
+            console.log(<?= $next ?>);
+            redirect('forecast_mturk.php?id=<?= $next ?>&mturkId=<?= $mturkID ?>&isFirsRegion=false');
             <?php
          } else {
             ?>
-            navigate('home.php');
+            redirect('endOfSurvey.php');
             <?php
          }
          ?>
+
       } else if(submitStatus == SubmitStatus.failure) {
          $('#status_icon').html('<i class="fa fa-times-circle"></i>');
          $('#status_message').html('Uh oh, something went wrong. Please try again later.');
          $('#box_status').addClass('any_failure');
       }
    }
+
    //other events
    function submitTimeout() {
+      console.log("inside submitTimeout, calling handleResponse");
       handleResponse({result: 0, action: 'forecast'});
+      console.log("handleResponse called");
    }
+
    function handleResponse(data) {
+       console.log('inside handleResponse');
+       console.log(data);
       if(data.action != 'forecast') {
          //don't really care what the result was unless it has to do with the submit forecast button
          return;
@@ -957,6 +884,7 @@ foreach($output['regions'] as $r) {
       }
       updateStatus();
    }
+
    function resize() {
       //Find the right fit for the canvas
       var w = $('body').innerWidth() - $('#box_histories').width() - 48;
@@ -998,6 +926,7 @@ foreach($output['regions'] as $r) {
       }
       repaint();
    }
+
    function toggleAllSeasons(regionID) {
       var uncheckedClass = 'fa-square-o';
       var checkedClass = 'fa-check-square-o';
@@ -1085,6 +1014,7 @@ foreach($output['regions'] as $r) {
       resize();
    });
 </script>
+
 <?php
 }
 require_once('common/footer.php');
