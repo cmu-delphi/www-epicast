@@ -36,7 +36,7 @@ if (!$_GET['mturkId']) {
 ?>
 
   <script type='text/javascript'>
-    window.location.href = 'forecast_mturk.php?id=<?= $firstLocationID ?>&mturkId=<?= $_GET['mturkId'] ?>';
+    window.location.href = 'forecast_test.php?id=<?= $firstLocationID ?>&mturkId=<?= $_GET['mturkId'] ?>';
   </script>
 <?php
 }

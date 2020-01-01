@@ -37,7 +37,7 @@ if(getEpiweekInfo_mturk($output) !== 1) {
    fail('Error loading epiweek info');
 }
 //List of all regions
-if(getRegionsExtended_mturk($output, $userID) !== 1) {
+if(getRegionsExtended_mturk_pastSeason($output, $userID, $targetWeek) !== 1) {
    fail('Error loading region details, history, or forecast');
 }
 ?>
@@ -48,8 +48,9 @@ if(!isset($output['regions'][$regionID])) {
    fail('Invalid region_id');
 }
 
-//Forecast from last round
-if(loadForecast_mturk($output, $userID, $regionID, true) !== 1) {
+//Forecast from targetWeek
+$targetWeek = 201845;
+if(loadForecast_mturk_pastSeason($output, $userID, $regionID, $targetWeek, true) !== 1) {
    fail('Error loading last week forecast');
 }
 
@@ -125,7 +126,7 @@ if(getPreference($output, 'skip_instructions', 'int') !== 1) {
          </video>
          <p>
             <?php
-           createForm('reload', 'forecast_mturk.php?id='.$regionID.'&mturkId='.$mturkID, array('region_id', $regionID, 'skip_instructions', '1'));
+           createForm('reload', 'forecast_test.php?id='.$regionID.'&mturkId='.$mturkID, array('region_id', $regionID, 'skip_instructions', '1'));
            button('fa-check', 'I Understand', "submit('reload')");
             ?>
          </p>
@@ -136,7 +137,7 @@ if(getPreference($output, 'skip_instructions', 'int') !== 1) {
 ?>
 <?php
 foreach($output['regions'] as $r) {
-   createForm('forecast_' . $r['id'], 'forecast_mturk.php#top', array('region_id', $r['id']));
+   createForm('forecast_' . $r['id'], 'forecast_test.php#top', array('region_id', $r['id']));
 }
 ?>
 <?php fail('Whoa, your screen is too small! Please visit this site on a non-mobile device, or try to expand your browser window. Sorry about that!', 'box_nocanvas', true); ?>
@@ -842,7 +843,7 @@ foreach($output['regions'] as $r) {
          if($next !== null) {
             ?>
             console.log(<?= $next ?>);
-            redirect('forecast_mturk.php?id=<?= $next ?>&mturkId=<?= $mturkID ?>&isFirsRegion=false');
+            redirect('forecast_test.php?id=<?= $next ?>&mturkId=<?= $mturkID ?>&isFirsRegion=false');
             <?php
          } else {
             ?>

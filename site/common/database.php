@@ -498,6 +498,37 @@ function getRegionsExtended_mturk(&$output, $userID) {
 }
 
 
+function getRegionsExtended_mturk_pastSeason(&$output, $userID, $epiweek) {
+   $temp = array();
+   if(getEpiweekInfo_mturk($temp) !== 1) {
+      return getResult($temp);
+   }
+   //Basic region information
+   if(getRegions_mturk($output, $userID) !== 1) {
+      return getResult($output);
+   }
+
+   //History and forecast for every region
+   foreach($output['regions'] as &$r) {
+      if(getPreference($output, 'advanced_prior', 'int') === 1) {
+         $firstWeek = 199730;
+      } else {
+         $firstWeek = 200430;
+      }
+      if(getHistory_mturk_pastSeason($output, $r['id'], $firstWeek, $epiweek) !== 1) {
+         return getResult($output);
+      }
+      $r['history'] = $output['history'];
+      if(loadForecast_mturk_pastSeason($output, $userID, $r['id'], $epiweek) !== 1) {
+         return getResult($output);
+      }
+      $r['forecast'] = $output['forecast'];
+   }
+   setResult($output, 1);
+   return getResult($output);
+}
+
+
 /*
 ===== getAgeGroupsExtended =====
 Purpose:
@@ -634,6 +665,28 @@ function getHistory_mturk(&$output, $regionID, $firstWeek) {
    setResult($output, 1);
    return getResult($output);
 }
+
+
+function getHistory_mturk_pastSeason(&$output, $regionID, $firstWeek, $epiweek) {
+   $result = mysql_query("SELECT fv.`epiweek`, fv.`wili` FROM epidata.`fluview` AS fv JOIN ( SELECT `epiweek`, max(`issue`) AS `latest` FROM epidata.`fluview` AS fv JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} GROUP BY fv.`epiweek` ) AS issues ON fv.`epiweek` = issues.`epiweek` AND fv.`issue` = issues.`latest` JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} ORDER BY fv.`epiweek` ASC");
+   $date = array();
+   $wili = array();
+   while($row = mysql_fetch_array($result)) {
+      $ew = intval($row['epiweek']);
+      while(($firstWeek < $ew) or ($ew > $epiweek)) {
+        array_push($date, $firstWeek);
+        array_push($wili, -1);
+        $firstWeek = addEpiweeks($firstWeek, 1);
+     }
+     array_push($date, $ew);
+     array_push($wili, floatval($row['wili']));
+     $firstWeek = addEpiweeks($firstWeek, 1);
+   }
+   $output['history'] = array('date' => &$date, 'wili' => &$wili);
+   setResult($output, 1);
+   return getResult($output);
+}
+
 
 
 /**
@@ -845,6 +898,21 @@ function loadForecast_mturk(&$output, $userID, $regionID, $submitted=false) {
    setResult($output, 1);
    return getResult($output);
 }
+
+function loadForecast_mturk_pastSeason(&$output, $userID, $regionID, $epiweek, $submitted=false) {
+   $date = array();
+   $wili = array();
+   $query = "SELECT `epiweek_now`, `epiweek`, `wili` FROM ec_fluv_forecast_mturk f WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` = {$epiweek} ORDER BY f.`epiweek` ASC";
+   $result = mysql_query($query);
+   while($row = mysql_fetch_array($result)) {
+      array_push($date, intval($row['epiweek']));
+      array_push($wili, floatval($row['wili']));
+   }
+   $output['forecast'] = array('date' => &$date, 'wili' => &$wili);
+   setResult($output, 1);
+   return getResult($output);
+}
+
 
 /*
 ===== loadForecast_hosp =====
