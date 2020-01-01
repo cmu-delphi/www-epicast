@@ -15,9 +15,9 @@ if (!$_GET['mturkId']) {
 ?>
   <!-- <script type='text/javascript'>
     var answer = prompt('Please enter your full mturkID to start the survey. Please make sure to forecast for all of the 16 locations to get paid.');
-    window.location.href = 'mturk_entry.php?mturkId=' + answer;
+    window.location.href = 'mturk_test_entry.php?mturkId=' + answer;
   </script> -->
-  <form id="frm1" action="mturk_entry.php">
+  <form id="frm1" action="mturk_test_entry.php">
     Mturk ID: <input type="text" name="mturkId"><br>
     <input type="button" onclick="myFunction()" value="Submit">
   </form>
@@ -30,9 +30,8 @@ if (!$_GET['mturkId']) {
 
 <?php
 } else {
-  // If provided, set session variable and redirect to forecast_mturk
+  // If provided, set session variable and redirect to forecast_test
   $firstLocationID = getNextLocation($_GET['mturkId'], -1)[0];
-  echo($firstLocationID);
 ?>
 
   <script type='text/javascript'>
