@@ -36,11 +36,16 @@ if(isset($_REQUEST['skip_instructions'])) {
 if(getEpiweekInfo_mturk($output) !== 1) {
    fail('Error loading epiweek info');
 }
+
+echo("before getRegionsExtended_mturk_pastSeason");
+
 //List of all regions
 if(getRegionsExtended_mturk_pastSeason($output, $userID, $targetWeek) !== 1) {
    fail('Error loading region details, history, or forecast');
 }
 ?>
+
+echo("after getRegionsExtended_mturk_pastSeason");
 
 <?php
 //Specific region
@@ -53,6 +58,8 @@ $targetWeek = 201845;
 if(loadForecast_mturk_pastSeason($output, $userID, $regionID, $targetWeek, true) !== 1) {
    fail('Error loading last week forecast');
 }
+
+echo("before loadForecast_mturk_pastSeason");
 
 $lastForecast = $output['forecast'];
 
