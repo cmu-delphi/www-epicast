@@ -690,7 +690,7 @@ function getHistory_mturk_pastSeason(&$output, $regionID, $firstWeek, $lastweek)
       while($firstWeek < $ew) {
         echo("case 1: ");
         echo($ew);
-        echo("     ")
+        echo("     ");
         array_push($date, $firstWeek);
         array_push($wili, -1);
         $firstWeek = addEpiweeks($firstWeek, 1);
@@ -699,7 +699,7 @@ function getHistory_mturk_pastSeason(&$output, $regionID, $firstWeek, $lastweek)
       while($ew > $lastweek) {
         echo("case 2: ");
         echo($ew);
-        echo("     ")
+        echo("     ");
         array_push($date, $firstWeek);
         array_push($wili, -1);
         $firstWeek = addEpiweeks($firstWeek, 1);
@@ -707,7 +707,7 @@ function getHistory_mturk_pastSeason(&$output, $regionID, $firstWeek, $lastweek)
 
      echo("case 3: ");
      echo($ew);
-     echo("     ")
+     echo("     ");
      array_push($date, $ew);
      array_push($wili, floatval($row['wili']));
      $firstWeek = addEpiweeks($firstWeek, 1);
