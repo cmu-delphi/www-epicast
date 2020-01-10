@@ -682,13 +682,23 @@ function getHistory_mturk_pastSeason(&$output, $regionID, $firstWeek, $epiweek) 
    $result = mysql_query("SELECT fv.`epiweek`, fv.`wili` FROM epidata.`fluview` AS fv JOIN ( SELECT `epiweek`, max(`issue`) AS `latest` FROM epidata.`fluview` AS fv JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} GROUP BY fv.`epiweek` ) AS issues ON fv.`epiweek` = issues.`epiweek` AND fv.`issue` = issues.`latest` JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} ORDER BY fv.`epiweek` ASC");
    $date = array();
    $wili = array();
+   echo("$firstWeek");
+
    while($row = mysql_fetch_array($result)) {
       $ew = intval($row['epiweek']);
-      while(($firstWeek < $ew) or ($ew > $epiweek)) {
+
+      while($firstWeek < $ew) {
         array_push($date, $firstWeek);
         array_push($wili, -1);
         $firstWeek = addEpiweeks($firstWeek, 1);
      }
+
+      while($ew > $epiweek) {
+        array_push($date, $firstWeek);
+        array_push($wili, -1);
+        $firstWeek = addEpiweeks($firstWeek, 1);
+     }
+
      array_push($date, $ew);
      array_push($wili, floatval($row['wili']));
      $firstWeek = addEpiweeks($firstWeek, 1);
