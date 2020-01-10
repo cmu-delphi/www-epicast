@@ -499,6 +499,8 @@ function getRegionsExtended_mturk(&$output, $userID) {
 
 
 function getRegionsExtended_mturk_pastSeason(&$output, $userID, $epiweek) {
+   echo("inside getRegionsExtended_mturk_pastSeason");
+
    $temp = array();
    if(getEpiweekInfo_mturk($temp) !== 1) {
       return getResult($temp);
@@ -515,13 +517,22 @@ function getRegionsExtended_mturk_pastSeason(&$output, $userID, $epiweek) {
       } else {
          $firstWeek = 200430;
       }
+
+      echo("before getHistory_mturk_pastSeason");
+
       if(getHistory_mturk_pastSeason($output, $r['id'], $firstWeek, $epiweek) !== 1) {
          return getResult($output);
       }
+
+      echo("after getHistory_mturk_pastSeason");
+
       $r['history'] = $output['history'];
       if(loadForecast_mturk_pastSeason($output, $userID, $r['id'], $epiweek) !== 1) {
          return getResult($output);
       }
+
+      echo("after loadForecast_mturk_pastSeason");
+
       $r['forecast'] = $output['forecast'];
    }
    setResult($output, 1);
