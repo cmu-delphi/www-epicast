@@ -688,33 +688,17 @@ function getHistory_mturk_pastSeason(&$output, $regionID, $firstWeek, $lastweek)
       $ew = intval($row['epiweek']);
 
       while($firstWeek < $ew) {
-        echo("case 1: ");
-        echo($ew);
-        echo("     ");
         array_push($date, $firstWeek);
         array_push($wili, -1);
         $firstWeek = addEpiweeks($firstWeek, 1);
      }
 
-      while($ew > $lastweek) {
-        echo("case 2: ");
-        echo($ew);
-        echo("     ");
-        array_push($date, $firstWeek);
-        array_push($wili, -1);
+      if($ew < $lastweek) {
+        array_push($date, $ew);
+        array_push($wili, floatval($row['wili']));
         $firstWeek = addEpiweeks($firstWeek, 1);
      }
-
-     echo("case 3: ");
-     echo($ew);
-     echo("     ");
-     array_push($date, $ew);
-     array_push($wili, floatval($row['wili']));
-     $firstWeek = addEpiweeks($firstWeek, 1);
    }
-
-
-
    $output['history'] = array('date' => &$date, 'wili' => &$wili);
    setResult($output, 1);
    return getResult($output);
