@@ -25,17 +25,10 @@ if($_offline) {
       fail('Error loading user info');
    }
    
-//    echo "in home, called getUserStats";
-//    echo $output['stat_completed'];
-   
+// Hospitalization forecasts: turned off for this season.
 //    if(getUserStats_hosp($output, $output['user_id'], $output['epiweek']['round_epiweek']) != 1) {
 //       fail('Error loading user info');
 //    }
-   
-   
-   //List of all regions
-//    echo "calling getRegions, stat_completed:";
-//    echo $output['stat_completed'];
    
    if(getRegions($output, $output['user_id']) != 1) {
       fail('Error loading region info');
@@ -47,7 +40,7 @@ if($_offline) {
          Post <?= formatEpiweek($output['epiweek']['round_epiweek']) ?> Forecast
          
          <div class="box_section_subtitle">
-            Due by 6:00 PM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
+            Due by 10:00 AM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
          </div>
       </div>
       <div>
