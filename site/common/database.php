@@ -1007,8 +1007,8 @@ function registerUser(&$output, $name, $email, $adminEmail) {
    }
    //Send an email to the user
    $hash = strtoupper(substr($output['user_hash'], 0, 8));
-   $subject = mysql_real_escape_string('Welcome to Epicast');
-   $body = mysql_real_escape_string(sprintf("Hi %s,\r\n\r\nWelcome to Epicast! Here's your User ID: %s\r\nYou can login and begin forecasting here: https://epicast.org/launch.php?user=%s\r\n\r\nThank you,\r\nThe Delphi Team\r\n\r\n[This is an automated message. Please direct all replies to: %s. Unsubscribe: https://epicast.org/preferences.php?user=%s]", $name, $hash, $hash, $adminEmail, $hash));
+   $subject = mysql_real_escape_string('Welcome to Crowdcast!');
+   $body = mysql_real_escape_string(sprintf("Hi %s,\r\n\r\nWelcome to Crowdcast (formerly known as Epicast)! Here's your User ID: %s\r\nYou can login and begin forecasting here: https://delphi.cmu.edu/epicast/launch.php?user=%s\r\n\r\nThank you,\r\nThe Delphi Team\r\n\r\n[This is an automated message. Please direct all replies to: %s. Unsubscribe: https://delphi.cmu.edu/epicast/preferences.php?user=%s]", $name, $hash, $hash, $adminEmail, $hash));
    mysql_query("INSERT INTO automation.email_queue (`from`, `to`, `subject`, `body`) VALUES ('delphi@epicast.net', '{$email}', '{$subject}', '{$body}')");
    mysql_query("CALL automation.RunStep(2)");
    setResult($output, 1);
