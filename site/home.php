@@ -39,8 +39,12 @@ if($_offline) {
       <div class="box_section_title">
          Post <?= formatEpiweek($output['epiweek']['round_epiweek']) ?> Forecast
          
-         <div class="box_section_subtitle">
+<!--          <div class="box_section_subtitle">
             Due by 10:00 AM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
+         </div> -->
+         
+         <div class="box_section_subtitle">
+            Due by 10:00 AM (ET) on Thursday.
          </div>
       </div>
       <div>
@@ -145,7 +149,7 @@ if($_offline) {
       <div class="box_section_title">
          Help Spread The Word
          <div class="box_section_subtitle">
-            Please share Epicast with your colleagues, friends, and family!
+            Please share Crowdcast with your colleagues, friends, and family!
          </div>
       </div>
       <div>
