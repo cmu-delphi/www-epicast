@@ -50,6 +50,7 @@ if(!$dbh) {
                <span class="effect_delphi">Crowdcast</span>
                <br />
                <span class="effect_fluv">&lt;Influenza Edition&gt;</span>
+               <br />
                <span class="effect_fluv">&lt;Now gearing up to forecast COVID-19&gt;</span>
             </a>
          </div>
