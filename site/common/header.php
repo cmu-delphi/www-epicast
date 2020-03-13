@@ -14,7 +14,7 @@ $output = array();
 <!DOCTYPE html>
 <html>
    <head>
-      <title>Delphi Epicast-FLUV</title>
+      <title>Delphi Crowdcast-FLUV</title>
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
       <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -47,9 +47,10 @@ if(!$dbh) {
       <div class="box_header">
          <div class="box_title box_title_mega">
             <a href="/" style="text-decoration: none; color: inherit;">
-               <span class="effect_delphi">Epicast</span>
+               <span class="effect_delphi">Crowdcast</span>
                <br />
                <span class="effect_fluv">&lt;Influenza Edition&gt;</span>
+               <span class="effect_fluv">&lt;Now gearing up to forecast COVID-19&gt;</span>
             </a>
          </div>
          <div class="box_subtitle">Epidemiological Forecasting by <span class="effect_delphi"><a class="delphi" target="_blank" rel="noopener" href="https://delphi.midas.cs.cmu.edu/">DELPHI</a></span></div>
@@ -81,7 +82,7 @@ if(!$dbh) {
       <div class="box_header box_header_narrow box_header_fixed1">
          <div class="box_title box_title_mini"><span class="effect_delphi">Epicast</span>&nbsp;<span class="effect_fluv">FLUV</span></div>
          <div class="box_mininav">
-            <span class="effect_tiny_header">Epicaster: <?= $output['user_name'] ?> [<?= $hash ?>]<br /></span>
+            <span class="effect_tiny_header">Crowdcaster: <?= $output['user_name'] ?> [<?= $hash ?>]<br /></span>
             <?php
             createLink('Home', 'home.php#top');
             createDivider('&middot;');
