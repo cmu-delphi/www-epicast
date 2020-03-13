@@ -81,7 +81,7 @@ if(!$dbh) {
       ?>
       <div class="box_header box_header_narrow box_header_fixed0"></div>
       <div class="box_header box_header_narrow box_header_fixed1">
-         <div class="box_title box_title_mini"><span class="effect_delphi">Epicast</span>&nbsp;<span class="effect_fluv">FLUV</span></div>
+         <div class="box_title box_title_mini"><span class="effect_delphi">Crowdcast</span>&nbsp;<span class="effect_fluv">FLUV</span></div>
          <div class="box_mininav">
             <span class="effect_tiny_header">Crowdcaster: <?= $output['user_name'] ?> [<?= $hash ?>]<br /></span>
             <?php
