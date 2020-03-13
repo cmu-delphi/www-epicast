@@ -44,7 +44,7 @@ if($_offline) {
          </div> -->
          
          <div class="box_section_subtitle">
-            Due by 10:00 AM (ET) on Thursday ?>.
+            Due by 10:00 AM (ET) on Thursday.
          </div>
       </div>
       <div>
