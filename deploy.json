@@ -1,0 +1,66 @@
+{
+  "type": "delphi deploy config",
+  "version": 1,
+  "actions": [
+
+    "// css is actually php",
+    {
+      "type": "move",
+      "src": "site/css/.htaccess",
+      "dst": "/var/www/html/epicast/css/.htaccess",
+      "add-header-comment": true
+    },
+    "// .htaccess file",
+    {
+      "type": "move",
+      "src": "site/.htaccess",
+      "dst": "/var/www/html/epicast/.htaccess",
+      "add-header-comment": false
+    },
+    "// service worker",
+    {
+      "type": "move",
+      "src": "site/sw.js",
+      "dst": "/var/www/html/epicast/sw.js",
+      "add-header-comment": true
+    },
+    "// web sources",
+    {
+      "type": "move",
+      "src": "site/",
+      "dst": "/var/www/html/epicast/",
+      "match": "^.*\\.php$",
+      "add-header-comment": true
+    },
+    {
+      "type": "move",
+      "src": "site/common/",
+      "dst": "/var/www/html/epicast/common/",
+      "match": "^.*\\.php$",
+      "add-header-comment": true
+    },
+    {
+      "type": "move",
+      "src": "site/css/",
+      "dst": "/var/www/html/epicast/css/",
+      "match": "^.*\\.(css|php)$",
+      "add-header-comment": true
+    },
+    {
+      "type": "move",
+      "src": "site/js/",
+      "dst": "/var/www/html/epicast/js/",
+      "match": "^.*\\.js$",
+      "add-header-comment": true
+    },
+
+    "// images",
+    {
+      "type": "move",
+      "src": "site/images/flags/",
+      "dst": "/var/www/html/epicast/images/flags/",
+      "match": "^.*\\.png$"
+    }
+
+  ]
+}
