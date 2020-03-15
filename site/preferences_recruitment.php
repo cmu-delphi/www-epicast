@@ -179,7 +179,7 @@ $account_fields = array();
       <div class="left">
          <p class="text_title left">Email</p>
          <p class="text_body">
-            We will only use your email to communicate with you about Epicast, and we will never share your email with anyone else.
+            We will only use your email to communicate with you about Crowdcast, and we will never share your email with anyone else.
          </p>
          <p class="text_title left">Forecasts</p>
          <p class="text_body">

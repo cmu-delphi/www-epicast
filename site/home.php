@@ -6,7 +6,7 @@ if($error) {
 }
 $_offline = false;
 if($_offline) {
-   print("<h2 style=\"text-align: center\">Epicast is temporarily unavailable. Please check back soon.</h2>");
+   print("<h2 style=\"text-align: center\">Crowdcast is temporarily unavailable. Please check back soon.</h2>");
 } else {
 ?>
 <script src="js/state_colors.js"></script>

@@ -21,7 +21,7 @@ function checkCaptcha($captcha, $ip) {
          $name = mysql_real_escape_string($_REQUEST['name']);
          $email = mysql_real_escape_string($_REQUEST['email']);
          if(empty($name)) {
-           $name = 'Anonymous Epicaster';
+           $name = 'Anonymous Crowdcaster';
          }
          if(!isset($_REQUEST['check_terms']) || !isset($_REQUEST['check_age'])) {
             fail('Sorry, we need you to indicate your agreement with the research terms and verify that you are old enough to participate. Please try again.');
