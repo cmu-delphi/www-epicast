@@ -16,7 +16,7 @@ function getColor($regionID, $seasonID) {
    $r = intval((sin(($seasonID - 2004) * 0.4 + 0) + 1) / 2 * 15);
    $g = intval((sin(($seasonID - 2004) * 0.5 + 2) + 1) / 2 * 15);
    $b = intval((sin(($seasonID - 2004) * 0.6 + 4) + 1) / 2 * 15);
-   return sprintf('#%x%x%x', $r, $g, $b);
+   return sprintf('#66%x%x%x', $r, $g, $b);
 }
 
 //Epiweek info
