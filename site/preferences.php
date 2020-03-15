@@ -147,7 +147,7 @@ $account_fields = array();
       ?>
       <div class="box_section">
          <div class="box_section_title">
-            Welcome to Epicast
+            Welcome to Crowdcast
             <div class="box_section_subtitle">Thank you for joining us!</div>
          </div>
          <div class="left">
@@ -158,7 +158,7 @@ $account_fields = array();
                By default, we will notify you by email every week as soon as the new weekly flu data is available (this usually happens by Friday afternoon), and provide a convenient link to your forecasting page.
                If you like, we can also send an email reminder before each deadline.
                The survey is completely optional, but it would help us analyze the data.
-               The next time you login you will be taken straight to your forecasting home page, but you can always come back to this page by clicking the "Preferences" link in the top right corner of any Epicast page.
+               The next time you login you will be taken straight to your forecasting home page, but you can always come back to this page by clicking the "Preferences" link in the top right corner of any Crowdcast page.
             </p>
          </div>
       </div>
@@ -173,7 +173,7 @@ $account_fields = array();
       <div class="left">
          <p class="text_title left">Email</p>
          <p class="text_body">
-            We will only use your email to communicate with you about Epicast, and we will never share your email with anyone else.
+            We will only use your email to communicate with you about Crowdcast, and we will never share your email with anyone else.
          </p>
          <p class="text_title left">Forecasts</p>
          <p class="text_body">
