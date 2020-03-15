@@ -64,15 +64,15 @@ $output['forecast'] = &$output['regions'][$regionID]['forecast'];
 $showPandemic = getPreference($output, 'advanced_pandemic', 'int');
 
 //Calculate a few helpful stats
-$firstWeekOfChart = 1;
+$firstWeekOfChart = 30;
 $currentWeek = $output['epiweek']['round_epiweek'];
 if(($currentWeek % 100) >= $firstWeekOfChart) {
    $yearStart = intval($currentWeek / 100);
 } else {
    $yearStart = intval($currentWeek / 100) - 1;
 }
-$seasonStart = $yearStart * 100 + $firstWeekOfChart;
-$seasonEnd = ($yearStart + 1) * 100 + ($firstWeekOfChart - 1);
+$seasonStart = 202001;
+$seasonEnd = 202052;
 $numPastWeeks = getDeltaWeeks($seasonStart, $currentWeek);
 $numFutureWeeks = getDeltaWeeks($currentWeek, $seasonEnd);
 $maxRegionalWILI = 0;
