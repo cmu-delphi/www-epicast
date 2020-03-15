@@ -571,11 +571,14 @@ foreach($output['regions'] as $r) {
             stitchCurves(r, style);
          }
       }
+
       //last forecast
       var lfStyle = {color: '#aaa', size: 2, dash: DASH_STYLE};
       if(showLastForecast) {
-         // drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length, lfStyle);
+         # shift x axis by 30 weeks.
+         drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length + 30, lfStyle);
       }
+
       //current region and latest season
       var style = {color: '#000', size: 2, dash: []};
       var start = seasonOffsets[seasonOffsets.length - 1];
