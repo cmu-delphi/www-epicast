@@ -293,9 +293,15 @@ foreach($output['regions'] as $r) {
       curveStyles[<?= $r['id'] ?>] = {};
       <?php
       foreach($seasonYears as $year) {
-         ?>
-         curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= getColor($r['id'], $year) ?>', size: 1, dash: []};
-         <?php
+         if  ($year == 2009) {
+            ?>
+            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= getColor($r['id'], $year) ?>', size: 1, dash: [], alpha: 1};
+            <?php
+         } else {
+            ?>
+            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= getColor($r['id'], $year) ?>', size: 1, dash: [], alpha: 0.4};
+            <?php
+         }
       }
    }
    ?>
@@ -402,7 +408,7 @@ foreach($output['regions'] as $r) {
       g.strokeStyle = style.color;
       g.lineWidth = style.size * uiScale;
       g.setLineDash(style.dash);
-      g.globalAlpha = 0.5;
+      g.globalAlpha = style.alpha;
       g.beginPath();
       var first = true;
       var epiweek = addEpiweeks(xRange[0], epiweekOffset);
@@ -565,6 +571,7 @@ foreach($output['regions'] as $r) {
             epiweekOffset = Math.max(0, totalWeeks - length - 1);
          }
          var end = Math.min(pastWili[r].length, start + length);
+
          drawCurve(pastWili[r], start, end, epiweekOffset, style);
          if(isCurrentSeason) {
             style = {color: style.color, size: style.size, dash: DASH_STYLE};
