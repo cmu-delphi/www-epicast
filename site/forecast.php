@@ -177,7 +177,7 @@ foreach($output['regions'] as $r) {
             $numHHS = 11;
             if($regionID <= $numHHS) {
                foreach($seasonYears as $year) {
-                  if($year == 2009) {
+                  if($year == 2009 && $showPandemic !== 1) {
                      continue;
                   }
                   if($r['id'] == $regionID && $year == $currentYear) {
@@ -214,7 +214,7 @@ foreach($output['regions'] as $r) {
                      continue;
                   }
 
-                  if($year == 2009 && $showPandemic !== 1) {
+                  if($year == 2009) {
                      continue;
                   }
                   if($r['id'] == $regionID && $year == $currentYear) {
