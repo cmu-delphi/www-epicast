@@ -16,7 +16,7 @@ function getColor($regionID, $seasonID) {
    $r = intval((sin(($seasonID - 2004) * 0.4 + 0) + 1) / 2 * 15);
    $g = intval((sin(($seasonID - 2004) * 0.5 + 2) + 1) / 2 * 15);
    $b = intval((sin(($seasonID - 2004) * 0.6 + 4) + 1) / 2 * 15);
-   return sprintf('#66%x%x%x', $r, $g, $b);
+   return sprintf('#%x%x%x', $r, $g, $b);
 }
 
 //Epiweek info
@@ -402,6 +402,7 @@ foreach($output['regions'] as $r) {
       g.strokeStyle = style.color;
       g.lineWidth = style.size * uiScale;
       g.setLineDash(style.dash);
+      g.globalAlpha = 0.5;
       g.beginPath();
       var first = true;
       var epiweek = addEpiweeks(xRange[0], epiweekOffset);
