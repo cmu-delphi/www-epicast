@@ -576,7 +576,7 @@ foreach($output['regions'] as $r) {
       var lfStyle = {color: '#aaa', size: 2, dash: DASH_STYLE};
       if(showLastForecast) {
          // shift x axis by 30 weeks.
-         drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length + 30, lfStyle);
+         drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length - 12, lfStyle);
       }
 
       //current region and latest season
