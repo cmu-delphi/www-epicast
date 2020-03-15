@@ -4,7 +4,7 @@
 
 # About
 
-The Crowdcast website for collecting flu forecasts.
+The Crowdcast website for collecting flu forecasts..
 
 The site is live at:
 - https://delphi.cmu.edu/crowdcast
