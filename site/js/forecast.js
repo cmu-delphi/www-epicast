@@ -14,7 +14,7 @@ var AXIS_STYLE = {color: '#000', size: 1, dash: []};
 var GRID_STYLE = {color: '#bbb', size: 1, dash: DASH_STYLE};
 var ZOOM_AMOUNT = 1.1;
 var BUTTON_SIZE = 25;
-var WILI_MAX = 20;
+var WILI_MAX = 26;
 var WILI_MIN = 3;
 
 //Number of axis tick marks
