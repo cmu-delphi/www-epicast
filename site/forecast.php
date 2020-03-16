@@ -261,7 +261,7 @@ foreach($output['regions'] as $r) {
    var numFutureWeeks = <?= $numFutureWeeks ?>;
    var totalWeeks = (numPastWeeks + 1 + numFutureWeeks);
    var xRange = [addEpiweeks(currentWeek, -numPastWeeks), addEpiweeks(currentWeek, +numFutureWeeks)];
-   var yRange = [0, <?= ($maxRegionalWILI * 2) ?>];
+   var yRange = [0, <?= ($maxRegionalWILI * 1.8) ?>];
    var regionID = <?= $regionID ?>;
    var seasonOffsets = [<?php foreach($seasonOffsets as $o){printf('%d,',$o);} ?>];
    var seasonYears = [<?php foreach($seasonYears as $y){printf('%d,',$y);} ?>];
