@@ -71,8 +71,8 @@ if(($currentWeek % 100) >= $firstWeekOfChart) {
 } else {
    $yearStart = intval($currentWeek / 100) - 1;
 }
-$seasonStart = $yearStart * 100 + $firstWeekOfChart;
-$seasonEnd = ($yearStart + 1) * 100 + ($firstWeekOfChart - 1);
+$seasonStart = 201942;
+$seasonEnd = 202052;
 $numPastWeeks = getDeltaWeeks($seasonStart, $currentWeek);
 $numFutureWeeks = getDeltaWeeks($currentWeek, $seasonEnd);
 $maxRegionalWILI = 0;
@@ -177,7 +177,7 @@ foreach($output['regions'] as $r) {
             $numHHS = 11;
             if($regionID <= $numHHS) {
                foreach($seasonYears as $year) {
-                  if($year == 2009) {
+                  if($year == 2009 && $showPandemic !== 1) {
                      continue;
                   }
                   if($r['id'] == $regionID && $year == $currentYear) {
@@ -214,7 +214,7 @@ foreach($output['regions'] as $r) {
                      continue;
                   }
 
-                  if($year == 2009 && $showPandemic !== 1) {
+                  if($year == 2009) {
                      continue;
                   }
                   if($r['id'] == $regionID && $year == $currentYear) {
@@ -261,7 +261,7 @@ foreach($output['regions'] as $r) {
    var numFutureWeeks = <?= $numFutureWeeks ?>;
    var totalWeeks = (numPastWeeks + 1 + numFutureWeeks);
    var xRange = [addEpiweeks(currentWeek, -numPastWeeks), addEpiweeks(currentWeek, +numFutureWeeks)];
-   var yRange = [0, <?= ($maxRegionalWILI * 1.1) ?>];
+   var yRange = [0, <?= ($maxRegionalWILI * 1.8) ?>];
    var regionID = <?= $regionID ?>;
    var seasonOffsets = [<?php foreach($seasonOffsets as $o){printf('%d,',$o);} ?>];
    var seasonYears = [<?php foreach($seasonYears as $y){printf('%d,',$y);} ?>];
@@ -293,9 +293,15 @@ foreach($output['regions'] as $r) {
       curveStyles[<?= $r['id'] ?>] = {};
       <?php
       foreach($seasonYears as $year) {
-         ?>
-         curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= getColor($r['id'], $year) ?>', size: 1, dash: []};
-         <?php
+         if  ($year == 2008 || $year == $currentYear) {
+            ?>
+            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= getColor($r['id'], $year) ?>', size: 2, dash: [], alpha: 1};
+            <?php
+         } else {
+            ?>
+            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= getColor($r['id'], $year) ?>', size: 1, dash: [], alpha: 0.4};
+            <?php
+         }
       }
    }
    ?>
@@ -402,6 +408,7 @@ foreach($output['regions'] as $r) {
       g.strokeStyle = style.color;
       g.lineWidth = style.size * uiScale;
       g.setLineDash(style.dash);
+      g.globalAlpha = style.alpha;
       g.beginPath();
       var first = true;
       var epiweek = addEpiweeks(xRange[0], epiweekOffset);
@@ -564,6 +571,7 @@ foreach($output['regions'] as $r) {
             epiweekOffset = Math.max(0, totalWeeks - length - 1);
          }
          var end = Math.min(pastWili[r].length, start + length);
+
          drawCurve(pastWili[r], start, end, epiweekOffset, style);
          if(isCurrentSeason) {
             style = {color: style.color, size: style.size, dash: DASH_STYLE};
@@ -571,11 +579,14 @@ foreach($output['regions'] as $r) {
             stitchCurves(r, style);
          }
       }
+
       //last forecast
       var lfStyle = {color: '#aaa', size: 2, dash: DASH_STYLE};
       if(showLastForecast) {
-         drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length, lfStyle);
+         // shift x axis by 30 weeks.
+         drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length - 23, lfStyle);
       }
+
       //current region and latest season
       var style = {color: '#000', size: 2, dash: []};
       var start = seasonOffsets[seasonOffsets.length - 1];

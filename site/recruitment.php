@@ -9,7 +9,7 @@ if($error) {
 
 $_offline = false;
 if($_offline) {
-    print("<h2 style=\"text-align: center\">Epicast is temporarily unavailable. Please check back soon.</h2>");
+    print("<h2 style=\"text-align: center\">Crowdcast is temporarily unavailable. Please check back soon.</h2>");
 } else {
 ?>
 
@@ -150,7 +150,7 @@ $map = array(
             <div class="box_section_title">
                 Help Spread The Word
                 <div class="box_section_subtitle">
-                    Please share Epicast with your colleagues, friends, and family!
+                    Please share Crowdcast with your colleagues, friends, and family!
                 </div>
             </div>
             <div>

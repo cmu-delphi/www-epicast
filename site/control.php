@@ -41,8 +41,8 @@ if(isAdmin($output)) {
          </div>
       </div>
       <div class="any_warning">
-         This page allows you to modify Epicast's database and to control Epicast's scheduled execution.
-         Invalid inputs can break Epicast, <em>or worse</em>.
+         This page allows you to modify Crowdcast's database and to control Crowdcast's scheduled execution.
+         Invalid inputs can break Crowdcast, <em>or worse</em>.
          Be extra cautious.
          When in doubt, ask!
       </div>
@@ -97,7 +97,7 @@ if(isAdmin($output)) {
    </div>
    <div class="box_section">
       <div class="box_section_title">
-         Epicast Settings
+         Crowdcast Settings
          <div class="box_section_subtitle">
             Update season info, round info, and timing of emails and submission.
          </div>
@@ -205,7 +205,7 @@ if(isAdmin($output)) {
             task. The tasks repeat on an exact interval of
             604,800 seconds, or one week&mdash;except when daylight savings time
             starts or ends, then one week plus or minus an hour. To effectively
-            disable Epicast, set these far into the future (e.g. 2030).
+            disable Crowdcast, set these far into the future (e.g. 2030).
             <span class="any_warning">If you set these values in the past, the
             corresponding tasks will be executed immediately.</span>
          </p><?php
@@ -247,9 +247,9 @@ if(isAdmin($output)) {
          }
          $temp = array();
          if(!$ok || resetEpicast($temp, $year1, $firstEpiweek, $lastEpiweek, $deadline, $epicastAdmin) !== 1) {
-            fail('Unable to reset Epicast.');
+            fail('Unable to reset Crowdcast.');
          } else {
-            success('Epicast has been reset.');
+            success('Crowdcast has been reset.');
          }
       }
       ?>
@@ -265,7 +265,7 @@ if(isAdmin($output)) {
             created. It is not easy to restore this backup, so make sure you
             really, really want to do this. Good luck!
          </p><p>
-            This will reset Epicast for the <?php printf('%d&ndash;%d', $year1, $year2); ?> season.
+            This will reset Crowdcast for the <?php printf('%d&ndash;%d', $year1, $year2); ?> season.
          </p><?php
             createInput('First Contest Round', 'first_contest_round', $year1 . '??');
             createInput('Last Contest Round', 'last_contest_round', $year2 . '??');
