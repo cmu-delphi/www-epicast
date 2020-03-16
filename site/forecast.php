@@ -71,7 +71,7 @@ if(($currentWeek % 100) >= $firstWeekOfChart) {
 } else {
    $yearStart = intval($currentWeek / 100) - 1;
 }
-$seasonStart = 202001;
+$seasonStart = 201942;
 $seasonEnd = 202052;
 $numPastWeeks = getDeltaWeeks($seasonStart, $currentWeek);
 $numFutureWeeks = getDeltaWeeks($currentWeek, $seasonEnd);
@@ -293,7 +293,7 @@ foreach($output['regions'] as $r) {
       curveStyles[<?= $r['id'] ?>] = {};
       <?php
       foreach($seasonYears as $year) {
-         if  ($year == 2009) {
+         if  ($year == 2009 || $year == $currentYear) {
             ?>
             curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= getColor($r['id'], $year) ?>', size: 2, dash: [], alpha: 1};
             <?php
