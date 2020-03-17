@@ -47,8 +47,12 @@ if($_offline) {
             Due by 10:00 AM (ET) on Thursday.
          </div>
 
+   </div>
+
+      <div class="box_section">
+
          <div class="box_section_subtitle">
-         <b> *** The following few paragraphs are new and important – please read them carefully *** </b>
+         *** The following few paragraphs are new and important – please read them carefully ***
 
              </br>
 
@@ -58,8 +62,9 @@ if($_offline) {
              </br>
          Starting this week, we will change the Crowdcast interface to provide you with more COVID-related and pandemic-related information and links.
          </div>
+        </div>
 
-      </div>
+
       <div>
          <?php
          $time = $output['epiweek']['remaining'];
