@@ -295,7 +295,7 @@ foreach($output['regions'] as $r) {
       foreach($seasonYears as $year) {
          if  ($year == 2008 || $year == $currentYear) {
             ?>
-            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: rgba(255,0,0,0.3), size: 2, dash: [], alpha: 1};
+            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: rgba(255,0,0,0.3)', size: 2, dash: [], alpha: 1};
             <?php
          } else {
             ?>
