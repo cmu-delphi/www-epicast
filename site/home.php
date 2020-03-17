@@ -35,6 +35,8 @@ if($_offline) {
    }
    
    ?>
+
+
    <div class="box_section">
       <div class="box_section_title">
          Post <?= formatEpiweek($output['epiweek']['round_epiweek']) ?> Forecast
@@ -49,6 +51,23 @@ if($_offline) {
 
    </div>
 
+
+   <div class="box_section">
+      <div class="box_section_title">
+         Post <?= formatEpiweek($output['epiweek']['round_epiweek']) ?> Forecast
+
+<!--          <div class="box_section_subtitle">
+            Due by 10:00 AM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
+         </div> -->
+
+         <div class="box_section_subtitle">
+            Due by 10:00 AM (ET) on Thursday.
+         </div>
+
+   </div>
+
+   
+
       <div class="box_section">
 
          <div class="box_section_subtitle">
@@ -62,7 +81,7 @@ if($_offline) {
              </br>
          Starting this week, we will change the Crowdcast interface to provide you with more COVID-related and pandemic-related information and links.
          </div>
-        </div>
+      </div>
 
 
       <div>
