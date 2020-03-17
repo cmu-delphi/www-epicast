@@ -295,11 +295,11 @@ foreach($output['regions'] as $r) {
       foreach($seasonYears as $year) {
          if  ($year == 2008 || $year == $currentYear) {
             ?>
-            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: rgba(255,0,0,0.3), size: 2, dash: []};
+            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= getColor($r['id'], $year) ?>', size: 2, dash: [], alpha: 1};
             <?php
          } else {
             ?>
-            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: rgba(255,0,0,0.3), size: 1, dash: []};
+            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= getColor($r['id'], $year) ?>', size: 1, dash: [], alpha: 0.4};
             <?php
          }
       }
@@ -408,6 +408,7 @@ foreach($output['regions'] as $r) {
       g.strokeStyle = style.color;
       g.lineWidth = style.size * uiScale;
       g.setLineDash(style.dash);
+      g.globalAlpha = style.alpha;
       g.beginPath();
       var first = true;
       var epiweek = addEpiweeks(xRange[0], epiweekOffset);
