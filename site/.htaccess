@@ -5,7 +5,7 @@ AuthType Basic
 AuthName "Restricted Site: Crowdcast"
 AuthBasicProvider file
 AuthUserFile /var/www/passwords
-Require user dfarrow roni jiaxians lishengg automation
+Require user dfarrow roni jiaxians lishengg automation cctest
 ## Temporarily resrtict access to known user ##
 
 ## Compress Files ##
