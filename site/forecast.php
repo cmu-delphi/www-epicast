@@ -213,10 +213,6 @@ foreach($output['regions'] as $r) {
                   if($year <= 2009) {
                      continue;
                   }
-
-                  if($year == 2009) {
-                     continue;
-                  }
                   if($r['id'] == $regionID && $year == $currentYear) {
                       ?>
                       <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
@@ -408,6 +404,7 @@ foreach($output['regions'] as $r) {
       g.strokeStyle = style.color;
       g.lineWidth = style.size * uiScale;
       g.setLineDash(style.dash);
+      g.globalAlpha = style.alpha;
       g.beginPath();
       var first = true;
       var epiweek = addEpiweeks(xRange[0], epiweekOffset);
