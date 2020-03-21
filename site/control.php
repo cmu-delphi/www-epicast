@@ -108,7 +108,7 @@ if(isAdmin($output)) {
          fail('Unable to get season info.');
       }
       $minEpiweek = $output['season']['year'] * 100 + 30;
-      $maxEpiweek = ($output['season']['year'] + 1) * 100 + 29;
+      $maxEpiweek = ($output['season']['year'] + 1) * 100 + 35;
       // attempt to update
       if(hasSubmission('update_season')) {
          $firstEpiweek = intval(getSafeValue('first_contest_round'));
@@ -231,7 +231,7 @@ if(isAdmin($output)) {
          $lastEpiweek = intval(getSafeValue('last_contest_round'));
          $deadline = getSafeValue('round_deadline');
          $minEpiweek = $year1 * 100 + 30;
-         $maxEpiweek = $year2 * 100 + 29;
+         $maxEpiweek = $year2 * 100 + 35;
          $ok = true;
          if($firstEpiweek < $minEpiweek || $firstEpiweek > $maxEpiweek) {
             fail('First epiweek was not in the season.');
