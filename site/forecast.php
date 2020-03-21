@@ -508,7 +508,7 @@ foreach($output['regions'] as $r) {
             drawLine(getX(xRange[0]), y, getX(xRange[1]), y, GRID_STYLE);
          }
          //label
-         drawText(g, LABEL_Y, row1, canvas.height / 2, -Math.PI / 2, Align.center, Align.center, 1.5, ['bold', 'Calibri']);
+         drawText(g, "Flu Activity (% of all doctors’ office visits that involve flu-like symptoms)", row1, canvas.height / 2, -Math.PI / 2, Align.center, Align.center, 1.5, ['bold', 'Calibri']);
          //zoom controls
          var x = 16 * uiScale;
          var dy = BUTTON_SIZE * uiScale;
