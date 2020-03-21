@@ -563,7 +563,7 @@ foreach($output['regions'] as $r) {
             var nextStart = seasonOffsets[seasonIndices[s + 1]];
             length = nextStart - start;
             //todo: that -1 at the end should only be there if current season has 53 weeks and past season has 52 weeks
-            epiweekOffset = Math.max(0, totalWeeks - length - 1);
+            epiweekOffset = Math.max(0, totalWeeks - length);
          }
          var end = Math.min(pastWili[r].length, start + length);
 
