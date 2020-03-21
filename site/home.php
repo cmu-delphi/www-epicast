@@ -151,14 +151,14 @@ if($_offline) {
 
    <div class="box_section">
       <div class="box_section_title">
-         Flu in the News
+         COVID-19 in the News
          <div class="box_section_subtitle">
             Use the latest flu news to make better forecasts!
          </div>
       </div>
       <!-- news -->
       <div class="center" style="width: 75%; margin-left: auto; margin-right: auto;">
-        <a target="_blank" href="https://www.google.com/search?hl=en&gl=us&tbm=nws&q=flu+news">Google News</a>
+        <a target="_blank" href="https://www.google.com/search?q=COVID-19&rlz=1C5CHFA_enUS845US845&oq=COVID-19&aqs=chrome..69i57j0l5j69i61l2.2171j0j1&sourceid=chrome&ie=UTF-8">Google News</a>
       </div>
       <!-- /news -->
    </div>
@@ -201,11 +201,15 @@ if($_offline) {
       <div class="box_section_title">
          External Resources
          <div class="box_section_subtitle">
-            Flu Information and Data
+            Other Information and Data
          </div>
       </div>
       <div class="box_list left">
          <div class="box_decision_title centered" style="width: 100%"><i class="fa fa-info-circle"></i> Information</div>
+         <div>
+            <i class="fa fa-external-link"></i>
+            <a target="_blank" href="https://www.cdc.gov/coronavirus/2019-ncov/index.html">CDC's COVID-19 Portal</a>
+         </div>
          <div>
             <i class="fa fa-external-link"></i>
             <a target="_blank" href="https://www.cdc.gov/flu/index.htm">CDC's Flu Portal</a>
@@ -225,6 +229,10 @@ if($_offline) {
       </div>
       <div class="box_list left">
          <div class="box_decision_title centered" style="width: 100%"><i class="fa fa-line-chart"></i> Data</div>
+         <div>
+            <i class="fa fa-external-link"></i>
+            <a target="_blank" href="https://coronavirus.jhu.edu/map.html">JHU's COVID-19 Page</a>
+         </div>
          <div>
             <i class="fa fa-external-link"></i>
             <a target="_blank" href="https://gis.cdc.gov/grasp/fluview/fluportaldashboard.html">CDC's FluView WebApp</a>
