@@ -209,13 +209,13 @@ function getEpiweekInfo(&$output) {
         $output['epiweek']['season'] = array(
           'year' => $current_year,
           'start' => $current_year * 100 + 40,
-          'end' => ($current_year + 1) * 100 + 20,
+          'end' => ($current_year + 1) * 100 + 35,
         );
       } else {
         $output['epiweek']['season'] = array(
           'year' => $current_year - 1,
           'start' => ($current_year - 1) * 100 + 40,
-          'end' => $current_year * 100 + 20,
+          'end' => $current_year * 100 + 35,
         );
       }
       $output['epiweek']['round_epiweek'] = intval($row['round_epiweek']);
