@@ -508,7 +508,7 @@ foreach($output['regions'] as $r) {
             drawLine(getX(xRange[0]), y, getX(xRange[1]), y, GRID_STYLE);
          }
          //label
-         drawText(g, "Flu Activity", row1 - 5 * uiScale, canvas.height / 2, -Math.PI / 2, Align.center, Align.center, 1.5, ['bold', 'Calibri']);
+         drawText(g, "Flu Activity", row1 - 15 * uiScale, canvas.height / 2, -Math.PI / 2, Align.center, Align.center, 1.5, ['bold', 'Calibri']);
          drawText(g, "(% of all doctors’ office visits that involve flu-like symptoms)", row1, canvas.height / 2, -Math.PI / 2, Align.center, Align.center, 1.5, ['', 'Calibri']);
 
          //zoom controls
