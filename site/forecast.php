@@ -570,7 +570,7 @@ foreach($output['regions'] as $r) {
       //last forecast
       var lfStyle = {color: '#aaa', size: 2, dash: DASH_STYLE};
       if(showLastForecast) {
-         drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length, lfStyle);
+         drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length - 6, lfStyle);
       }
       //current region and latest season
       var style = {color: '#000', size: 2, dash: []};
