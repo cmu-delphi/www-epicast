@@ -71,7 +71,7 @@ if(($currentWeek % 100) >= $firstWeekOfChart) {
 } else {
    $yearStart = intval($currentWeek / 100) - 1;
 }
-$seasonStart = 201936;
+$seasonStart = 201934;
 $seasonEnd = 202035;
 $numPastWeeks = getDeltaWeeks($seasonStart, $currentWeek);
 $numFutureWeeks = getDeltaWeeks($currentWeek, $seasonEnd);
