@@ -64,7 +64,7 @@ $output['forecast'] = &$output['regions'][$regionID]['forecast'];
 $showPandemic = getPreference($output, 'advanced_pandemic', 'int');
 
 //Calculate a few helpful stats
-$firstWeekOfChart = 30;
+$firstWeekOfChart = 36;
 $currentWeek = $output['epiweek']['round_epiweek'];
 if(($currentWeek % 100) >= $firstWeekOfChart) {
    $yearStart = intval($currentWeek / 100);
