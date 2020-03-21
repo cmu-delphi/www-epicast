@@ -71,8 +71,8 @@ if(($currentWeek % 100) >= $firstWeekOfChart) {
 } else {
    $yearStart = intval($currentWeek / 100) - 1;
 }
-$seasonStart = 201942;
-$seasonEnd = 202052;
+$seasonStart = 201936;
+$seasonEnd = 202035;
 $numPastWeeks = getDeltaWeeks($seasonStart, $currentWeek);
 $numFutureWeeks = getDeltaWeeks($currentWeek, $seasonEnd);
 $maxRegionalWILI = 0;
@@ -404,7 +404,6 @@ foreach($output['regions'] as $r) {
       g.strokeStyle = style.color;
       g.lineWidth = style.size * uiScale;
       g.setLineDash(style.dash);
-      g.globalAlpha = style.alpha;
       g.beginPath();
       var first = true;
       var epiweek = addEpiweeks(xRange[0], epiweekOffset);
