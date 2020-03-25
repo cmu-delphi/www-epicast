@@ -105,7 +105,36 @@ if($seasonOffsets[count($seasonOffsets) - 1] != 0) {
 }
 $seasonOffsets = array_reverse($seasonOffsets);
 $seasonYears = array_reverse($seasonYears);
+// okay for international and COVID-19 data, we're going to treat them
+// as magic additional seasons with years that start with some absurd
+// number (maybe we have a limited number of other sources and each
+// source can get its own absurd prefix e.g. 9xxx=COVID-19, 8xxx=ECDC,
+// etc). These will be added after the year-based calculations from
+// the block above.
+//
+// We also want to make sure the not-actually-WILI data shakes out in
+// the correct order for when we fill the `pastWili` javascript array
+// with it in a minute.
+//
+// Maybe we want to make the set of additional data selectable in the
+// future, but for now it has to be hard-coded.
 
+// A rough sketch:
+// sources = {
+//    "COVID-19":{"Italy":9001, "Spain":9002, "France":9003, "USA":9010},
+//    "ECDC":{"Italy":80012019, "Spain":80022019, "France":80032019}, #ECDC publishes the last two seasons, for now we just want 2019-2020 but maybe we'll want both later? Will SK and UK have multiple seasons of ILI data too?
+//    "SKorea":{"South Korea":70002019},
+//    "UK":{"UK":60002019}
+// }
+//
+// $lastOffset = $seasonOffsets[end]
+// for $src,$map in $sources {
+//   for $name,$rid in $map {
+//      push $output['regions'][$rid]['history'] onto the end of $region['history']
+//      push $lastOffset + count($output['regions'][$rid]['history']['date'] onto the end of $seasonOffsets
+//      push $rid onto the end of $seasonYears
+//   }
+// }
 
 //Nowcast (may or may not be available)
 getNowcast($output, addEpiweeks($currentWeek, 1), $regionID);
@@ -410,6 +439,27 @@ foreach($output['regions'] as $r) {
       g.stroke();
       g.setLineDash([]);
    }
+    function drawPoints(points, start, end, epiweekOffset, style, g) {
+	if typeof g == 'undefined' {
+	    var g = getGraphics();
+	    g.strokeStyle = style.color;
+	    g.lineWidth = style.size * uiScale;
+	    g.setLineDash([]);
+	}
+	g.lineWidth = 3 * style.size * uiScale;
+         epiweek = addEpiweeks(xRange[0], epiweekOffset);
+         for(var i = start; i < end; i++) {
+            if(curve[i] >= 0) {
+               g.beginPath();
+               var x = getX(epiweek);
+               var y = getY(curve[i]);
+               g.moveTo(x, y);
+               g.lineTo(x + 1, y);
+               g.stroke();
+            }
+            epiweek = addEpiweeks(epiweek, 1);
+         }
+   }
    function drawCurve(curve, start, end, epiweekOffset, style) {
       var g = getGraphics();
       g.strokeStyle = style.color;
@@ -433,21 +483,7 @@ foreach($output['regions'] as $r) {
       }
       g.stroke();
       g.setLineDash([]);
-      if(DRAW_POINTS) {
-         g.lineWidth = 3 * style.size * uiScale;
-         epiweek = addEpiweeks(xRange[0], epiweekOffset);
-         for(var i = start; i < end; i++) {
-            if(curve[i] >= 0) {
-               g.beginPath();
-               var x = getX(epiweek);
-               var y = getY(curve[i]);
-               g.moveTo(x, y);
-               g.lineTo(x + 1, y);
-               g.stroke();
-            }
-            epiweek = addEpiweeks(epiweek, 1);
-         }
-      }
+       if(DRAW_POINTS) drawPoints(curve, start, end, epiweekOffset, style, g);
    }
    function stitchCurves(regionID, style) {
       if(forecast[regionID][0] < 0) {
