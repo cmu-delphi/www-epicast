@@ -440,7 +440,7 @@ foreach($output['regions'] as $r) {
       g.setLineDash([]);
    }
     function drawPoints(points, start, end, epiweekOffset, style, g) {
-	if typeof g == 'undefined' {
+	if (typeof g == 'undefined') {
 	    var g = getGraphics();
 	    g.strokeStyle = style.color;
 	    g.lineWidth = style.size * uiScale;
