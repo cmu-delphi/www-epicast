@@ -58,10 +58,15 @@ $region = $output['regions'][$regionID];
 $num = count($output['regions']);
 //History for this region
 $output['history'] = &$output['regions'][$regionID]['history'];
+
+// We only want history back to 2009
+$minEpiweek = 200936;
+
 //User's previous forecast for this region
 $output['forecast'] = &$output['regions'][$regionID]['forecast'];
 //Settings
-$showPandemic = getPreference($output, 'advanced_pandemic', 'int');
+// Crowdcast: always show pandemic
+$showPandemic = true; //getPreference($output, 'advanced_pandemic', 'int');
 
 //Calculate a few helpful stats
 $firstWeekOfChart = 35;
@@ -78,11 +83,12 @@ $numFutureWeeks = getDeltaWeeks($currentWeek, $seasonEnd);
 $maxRegionalWILI = 0;
 for($i = 0; $i < count($region['history']['wili']); $i++) {
    $epiweek = $region['history']['date'][$i];
+   if ($epiweek < $minEpiweek) { continue; }
    if($showPandemic || $epiweek < 200940 || $epiweek > 201020) {
       $maxRegionalWILI = max($maxRegionalWILI, $region['history']['wili'][$i]);
    }
 }
-max($region['history']['wili']);
+max($region['history']['wili']); // what is this for? -kmm
 $target = $seasonStart;
 $seasonOffsets = array();
 $seasonYears = array();
@@ -175,8 +181,9 @@ foreach($output['regions'] as $r) {
             <?php
             $currentYear = $seasonYears[count($seasonYears) - 1];
             $numHHS = 11;
-            if($regionID <= $numHHS) {
+            if($regionID <= $numHHS) { // for USA CDC National and Regional regions
                foreach($seasonYears as $year) {
+	          if($year*100+36 < $minEpiweek) { continue; }
                   if($year == 2009 && $showPandemic !== 1) {
                      continue;
                   }
@@ -205,14 +212,16 @@ foreach($output['regions'] as $r) {
                               <span class="effect_tiny"><?= sprintf('%d-%s', $year, substr((string)($year + 1), 2, 2)) ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
                           </div>
                           <?php
-                          }
+                      }
                   }
-                  }
+               }
             } else { // for each states, data are only available starting 2010-2011 season
                foreach($seasonYears as $year) {
-                  if($year <= 2009) {
-                     continue;
-                  }
+	          if($year*100+36 < $minEpiweek) { continue; }
+                  //if($year <= 2009) {
+                  //   continue;
+                  //} // not sure why this was here -kmm
+		  ?><!-- r['id'] <?= $r['id'] ?>; regionId <?= $regionID ?>; year <?= $year ?> --><?php
                   if($r['id'] == $regionID && $year == $currentYear) {
                       ?>
                       <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
@@ -267,7 +276,7 @@ foreach($output['regions'] as $r) {
    var forecast = [];
    var curveStyles = {};
    <?php
-   foreach($output['regions'] as $r) {
+   foreach($output['regions'] as $r) { // why are we doing all the regions instead of just the one being forecast? -kmm
       ?>
       regionNames[<?= $r['id'] ?>] = '<?= $r['name'] ?>';
       pastWili[<?= $r['id'] ?>] = [<?php
@@ -289,7 +298,7 @@ foreach($output['regions'] as $r) {
       curveStyles[<?= $r['id'] ?>] = {};
       <?php
       foreach($seasonYears as $year) {
-         if  ($year == 2008 || $year == $currentYear) {
+         if  ($year == 2008 || $year == $currentYear) { // why is 2008 bold? -kmm
             ?>
             curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= getColor($r['id'], $year) ?>', size: 2, dash: [], alpha: 1};
             <?php
@@ -608,7 +617,7 @@ foreach($output['regions'] as $r) {
          g.fillRect(x - 5, y1, 11, 1);
       }
       
-      //error bars
+      //error bars // what the actual what is this??? -kmm
       var errors = [[-0.24705835, 0.26585897, -0.15209838, 0.19588030, -0.12080783, 0.14845500, -0.10822840, 0.13591350, -0.10105576, 0.11903400],
                      [-0.37140890, 0.28183701, -0.22718089, 0.22283626, -0.17166020, 0.15932419, -0.15244192, 0.13857609, -0.13520489, 0.12653161],
                      [-0.53510369, 0.89618800, -0.29194798, 0.65376200, -0.13691200, 0.53989966, -0.12287200, 0.46070700, -0.07438098, 0.41997600],
@@ -637,8 +646,6 @@ foreach($output['regions'] as $r) {
             g.fillRect(x-2.5, y, bar_width, below);
          }
       }
-    
-      
       
       //legend
       var x1 = canvas.width - marginRight();
@@ -656,16 +663,7 @@ foreach($output['regions'] as $r) {
       y += dy;
       drawText(g, regionNames[regionID] + ', ' + Math.round(xRange[0] / 100) + '+', x2 - 3, y, 0, Align.right, Align.center);
       style.dash = [];
-      drawLine(x1, y - 3, x2, y + 3, style);
-//       for(var i = 0; i < selectedSeasons.length; i++) {
-//          y += dy;
-//          var r = selectedSeasons[i][0];
-//          var s = selectedSeasons[i][1];
-//          var style = curveStyles[r][s];
-//          drawText(g, regionNames[r] + ', ' + s + '+', x2 - 3, y, 0, Align.right, Align.center);
-//          drawLine(x1, y - 3, x2, y + 3, style);
-//       }
-      
+      drawLine(x1, y - 3, x2, y + 3, style);      
       
 //       error bar legend
       if (regionID <= 11) {
@@ -916,7 +914,8 @@ foreach($output['regions'] as $r) {
                       $next = $otherRegion['id'];
                   }
               }
-
+	      
+	      // why twice? -kmm
               for ($i = 1; $i <= $numRegion; $i++) {
                   $otherRegionID = $listIdxToId[$i];
                   $otherRegion = $output['regions'][$otherRegionID];
