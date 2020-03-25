@@ -440,7 +440,7 @@ foreach($output['regions'] as $r) {
             if(curve[i] >= 0) {
                g.beginPath();
                var x = getX(epiweek);
-               var y = getY(curve[i]);
+               var y = getY(curve[i]) - g.lineWidth/2.; // make sure we're centered vertically
                g.moveTo(x, y);
                g.lineTo(x + 1, y);
                g.stroke();
@@ -639,13 +639,12 @@ foreach($output['regions'] as $r) {
             var above = -error[i]*scale;
             var below = error[i+1]*scale;
             var x_weekNumber = addEpiweeks(epiweek, -(i/2)-1);
-//             var x_weekNumber = addEpiweeks(epiweek, -(i/2)-2);
             var x = getX(x_weekNumber);
             var y = getY(pastWili[regionID][pastWili[regionID].length - i/2 - 1]);
             g.fillStyle = 'rgba(0, 0, 0, 0.5)';
             var bar_width = 5;
-            g.fillRect(x-2.5, y-above, bar_width, above);
-            g.fillRect(x-2.5, y, bar_width, below);
+            g.fillRect(x-(bar_width/2.), y-above, bar_width, above);
+            g.fillRect(x-(bar_width/2.), y,       bar_width, below);
          }
       }
       
