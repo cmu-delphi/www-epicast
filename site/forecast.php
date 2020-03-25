@@ -85,6 +85,7 @@ for($i = 0; $i < count($region['history']['wili']); $i++) {
    $epiweek = $region['history']['date'][$i];
    if ($epiweek < $minEpiweek) { continue; }
    if($showPandemic || $epiweek < 200940 || $epiweek > 201020) {
+   ?><!-- considering for maxRegionalWILI: epiweek <?= $epiweek ?> value <?= $region['history']['wili'][$i] ?> --><?php
       $maxRegionalWILI = max($maxRegionalWILI, $region['history']['wili'][$i]);
    }
 }
@@ -221,9 +222,10 @@ foreach($output['regions'] as $r) {
                   //if($year <= 2009) {
                   //   continue;
                   //} // not sure why this was here -kmm
-		  ?><!-- r['id'] <?= $r['id'] ?>; regionId <?= $regionID ?>; year <?= $year ?> --><?php
+		  
                   if($r['id'] == $regionID && $year == $currentYear) {
                       ?>
+		      <!-- In theory this never happens? -kmm r['id'] <?= $r['id'] ?>; regionId <?= $regionID ?>; year <?= $year ?> -->
                       <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
                           <span class="effect_tiny"><?= sprintf('current year') ?></span>
                       </div>
