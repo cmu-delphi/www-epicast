@@ -449,10 +449,10 @@ foreach($output['regions'] as $r) {
 	g.lineWidth = 3 * style.size * uiScale;
          epiweek = addEpiweeks(xRange[0], epiweekOffset);
          for(var i = start; i < end; i++) {
-            if(curve[i] >= 0) {
+            if(points[i] >= 0) {
                g.beginPath();
                var x = getX(epiweek);
-               var y = getY(curve[i]);
+               var y = getY(points[i]);
                g.moveTo(x, y);
                g.lineTo(x + 1, y);
                g.stroke();
