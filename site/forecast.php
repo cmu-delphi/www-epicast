@@ -440,7 +440,7 @@ foreach($output['regions'] as $r) {
             if(curve[i] >= 0) {
                g.beginPath();
                var x = getX(epiweek);
-               var y = getY(curve[i]) + g.lineWidth/2.; // make sure we're centered vertically
+               var y = getY(curve[i]);
                g.moveTo(x, y);
                g.lineTo(x + 1, y);
                g.stroke();
