@@ -66,7 +66,7 @@ $minEpiweek = 200936;
 $output['forecast'] = &$output['regions'][$regionID]['forecast'];
 //Settings
 // Crowdcast: always show pandemic
-$showPandemic = true; //getPreference($output, 'advanced_pandemic', 'int');
+$showPandemic = 1; //getPreference($output, 'advanced_pandemic', 'int');
 
 //Calculate a few helpful stats
 $firstWeekOfChart = 35;
@@ -85,7 +85,9 @@ for($i = 0; $i < count($region['history']['wili']); $i++) {
    $epiweek = $region['history']['date'][$i];
    if ($epiweek < $minEpiweek) { continue; }
    if($showPandemic || $epiweek < 200940 || $epiweek > 201020) {
-   ?><!-- considering for maxRegionalWILI: epiweek <?= $epiweek ?> value <?= $region['history']['wili'][$i] ?> --><?php
+   ?>
+   <!-- considering for maxRegionalWILI: epiweek <?= $epiweek ?> value <?= $region['history']['wili'][$i] ?> -->
+   <?php
       $maxRegionalWILI = max($maxRegionalWILI, $region['history']['wili'][$i]);
    }
 }
@@ -184,7 +186,7 @@ foreach($output['regions'] as $r) {
             $numHHS = 11;
             if($regionID <= $numHHS) { // for USA CDC National and Regional regions
                foreach($seasonYears as $year) {
-	          if($year*100+36 < $minEpiweek) { continue; }
+	          if(($year*100+36) < $minEpiweek) { continue; }
                   if($year == 2009 && $showPandemic !== 1) {
                      continue;
                   }
