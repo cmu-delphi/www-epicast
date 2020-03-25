@@ -85,9 +85,6 @@ for($i = 0; $i < count($region['history']['wili']); $i++) {
    $epiweek = $region['history']['date'][$i];
    if ($epiweek < $minEpiweek) { continue; }
    if($showPandemic || $epiweek < 200940 || $epiweek > 201020) {
-   ?>
-   <!-- considering for maxRegionalWILI: epiweek <?= $epiweek ?> value <?= $region['history']['wili'][$i] ?> -->
-   <?php
       $maxRegionalWILI = max($maxRegionalWILI, $region['history']['wili'][$i]);
    }
 }
@@ -270,7 +267,7 @@ foreach($output['regions'] as $r) {
    var numFutureWeeks = <?= $numFutureWeeks ?>;
    var totalWeeks = (numPastWeeks + 1 + numFutureWeeks);
    var xRange = [addEpiweeks(currentWeek, -numPastWeeks), addEpiweeks(currentWeek, +numFutureWeeks)];
-   var yRange = [0, <?= ($maxRegionalWILI * 1.8) ?>];
+   var yRange = [0, <?= ($maxRegionalWILI * 1.8) ?>]; // 1.8, really? -kmm
    var regionID = <?= $regionID ?>;
    var seasonOffsets = [<?php foreach($seasonOffsets as $o){printf('%d,',$o);} ?>];
    var seasonYears = [<?php foreach($seasonYears as $y){printf('%d,',$y);} ?>];
@@ -281,6 +278,7 @@ foreach($output['regions'] as $r) {
    var curveStyles = {};
    <?php
    foreach($output['regions'] as $r) { // why are we doing all the regions instead of just the one being forecast? -kmm
+      if($r['id'] !== $regionID) continue; // what happens if we don't?
       ?>
       regionNames[<?= $r['id'] ?>] = '<?= $r['name'] ?>';
       pastWili[<?= $r['id'] ?>] = [<?php
