@@ -633,7 +633,7 @@ foreach($output['regions'] as $r) {
                      [-0.27577982, 0.67580001, -0.13440096, 0.51631755, -0.08888274, 0.42762205, -0.08109139, 0.37271498, -0.05693280, 0.26734400]];
 
       if (regionID <= 11) {
-         var epiweek = addEpiweeks(xRange[0], numPastWeeks + 1);
+         var epiweek = addEpiweeks(xRange[0], numPastWeeks);
          var error = errors[regionID-1];
          for (var i=0; i<9; i = i + 2) {
             var above = -error[i]*scale;
