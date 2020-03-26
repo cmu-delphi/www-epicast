@@ -154,9 +154,9 @@ $sourceIDs = array(
 // }
 
 $lastOffset_i = count($seasonOffsets);
-$lastOffset = $seasonOffsets[$lastOffset_i-1];
 $currentYear = $seasonYears[$lastOffset_i-1];
 $lastHistory_i = count($region['history']['date']);
+$nextOffset = $lastHistory_i;
 foreach ($sources as $src => $meta) {
     $fn = $meta["fn"];
     foreach ($meta["members"] as $name => $rid) {
@@ -177,6 +177,9 @@ foreach ($sources as $src => $meta) {
             }
         }
         $unit_scale = $unit_scale - $unit_offset;
+	    $seasonYears[$lastOffset_i] = $rid;
+        $seasonOffsets[$lastOffset_i] = $nextOffset;
+	    $lastOffset_i++;
 	    for($i=0;$i<$n;$i++) {
             $wili = $output[$meta["key"]][$rid]["wili"][$i];
             $wili = ($wili - $unit_offset) / $unit_scale;
@@ -184,14 +187,7 @@ foreach ($sources as $src => $meta) {
 	        $region['history']['wili'][$lastHistory_i] = $wili;
 	        $lastHistory_i++;
 	    }
-	    $lastOffset = ($seasonOffsets[$lastOffset_i] = $lastOffset + $n);
-        ?>
-        
-        <!-- international offset <?= $name ?>: <?= $lastOffset ?> from <?= $n ?> -->
-        <!-- unit offset <?= $unit_offset ?> ; unit scale <?= $unit_scale ?> -->
-        <?php
-	    $seasonYears[$lastOffset_i] = $rid;
-	    $lastOffset_i++;
+	    $nextOffset = $nextOffset + $n;
     }
 }
 
