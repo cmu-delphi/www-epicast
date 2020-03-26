@@ -1110,7 +1110,7 @@ function getNextLocation($mturkID, $regionID) {
 
 function get_user_forecast_regions($user_ID) {
     $num_task_groups = 6;
-    $task_group = $user_ID % $num_task_groups;
+    $task_group = $user_ID % ($num_task_groups - 1);
     // default location arrays.
     // $regionIDs = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 56); // 56: CA, 13, 14: GA, DC
 
