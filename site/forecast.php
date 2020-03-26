@@ -762,7 +762,7 @@ foreach($output['regions'] as $r) {
       if (regionID <= 11) {
          var epiweek = addEpiweeks(xRange[0], numPastWeeks);
      var error = errors[regionID-1];
-     var end = seasonIndices[s]+1 < seasonOffsets.length ? seasonOffsets[seasonIndices[s]+1] : pastWili[r].length;
+     var end = seasonIndices[<?= $currentYear ?>]+1 < seasonOffsets.length ? seasonOffsets[seasonIndices[<?= $currentYear ?>]+1] : pastWili[regionId].length;
          for (var i=0; i<9; i = i + 2) {
              var currentSeasonIndex = end - i/2 - 1;
             var above = -error[i]*scale;
