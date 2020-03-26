@@ -702,7 +702,7 @@ foreach($output['regions'] as $r) {
          //}
          
            var end = seasonIndices[s]+1 < seasonOffsets.length ? seasonOffsets[seasonIndices[s]+1] : pastWili[r].length;
-           drawCurveXY(pastWili[r], pastEpiweek[r], start, end, style);
+           drawCurveXY(pastEpiweek[r], pastWili[r], start, end, style);
          if(s == <?= $currentYear ?>) {
             style = {color: style.color, size: style.size, dash: DASH_STYLE};
             drawCurve(forecast[r], 0, 52, numPastWeeks + 1, style);
