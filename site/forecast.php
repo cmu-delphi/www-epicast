@@ -126,6 +126,11 @@ $seasonYears = array_reverse($seasonYears);
 //    "SKorea":{"South Korea":70002019},
 //    "UK":{"UK":60002019}
 // }
+
+?>
+<!-- breadcrumb: before setting up intl data sources -->
+<?php
+
 $sources = array(
     "ECDC" => array(
 	"fn" => "getECDCILI",
@@ -147,6 +152,12 @@ $souceIDs = array(
 //      push $rid onto the end of $seasonYears
 //   }
 // }
+
+
+?>
+<!-- breadcrumb: before fetching from intl data sources -->
+<?php
+
 $lastOffset_i = count($seasonOffsets);
 $lastOffset = $seasonOffsets[$lastOffset_i-1];
 $lastHistory_i = count($region['history']['date']);

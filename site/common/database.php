@@ -1547,7 +1547,7 @@ function getECDCILI(&$output, $regionID, $firstWeek) {
     
     $date = array();
     $wili = array();
-    while($row=mysql_fetch_arry($result)) {
+    while($row=mysql_fetch_array($result)) {
         $ew = intval($row['epiweek']);
         while($firstWeek < $ew) {
             array_push($date, $firstWeek);
