@@ -140,9 +140,9 @@ $sources = array(
 	    "Spain" => 8002,
 	    "France" => 8003)));
 $souceIDs = array(
-    8001 => "Italy",
-    8002 => "Spain",
-    8003 => "France");
+    8001 => "ECDC it 2019-20",
+    8002 => "ECDC es 2019-20",
+    8003 => "ECDC fr 2019-20");
 
 // $lastOffset = $seasonOffsets[end]
 // for $src,$map in $sources {
@@ -153,28 +153,41 @@ $souceIDs = array(
 //   }
 // }
 
-
-?>
-<!-- breadcrumb: before fetching from intl data sources -->
-<?php
-
 $lastOffset_i = count($seasonOffsets);
 $lastOffset = $seasonOffsets[$lastOffset_i-1];
+$currentYear = $seasonYears[$lastOffset_i-1];
 $lastHistory_i = count($region['history']['date']);
 foreach ($sources as $src => $meta) {
     $fn = $meta["fn"];
     foreach ($meta["members"] as $name => $rid) {
-	$fn($output, $rid, $seasonStart);
-	$n = count($output[$meta["key"]][$rid]["date"]);
-	for($i=0;$i<$n;$i++) {
-	    $region['history']['date'][$lastHistory] = $output[$meta["key"]][$rid]["date"][$i];
-	    $region['history']['wili'][$lastHistory] = $output[$meta["key"]][$rid]["wili"][$i];
-	    $lastHistory++;
-	}
-	$seasonOffsets[$lastOffset_i] = $lastOffset + n;
-	$seasonYears[$lastOffset_i] = $rid;
-	$lastOffset = $seasonOffsets[$lastOffset_i];
-	$lastOffset_i++;
+	    $fn($output, $rid, $seasonStart);
+        $n = count($output[$meta["key"]][$rid]["date"]);
+        // none of the international data have the same units as us,
+        // so we're scaling all data from 0 to 1 so we can display it
+        // more easily below
+        $unit_offset = -1;
+        $unit_scale = 1;
+	    for($i=0;$i<$n;$i++) {
+            $wili = $output[$meta["key"]][$rid]["wili"][$i];
+            if ($unit_offset < 0 or $wili < $unit_offset) {
+                $unit_offset = $wili;
+            }
+            if ($unit_scale < $wili) {
+                $unit_scale = $wili;
+            }
+        }
+        $unit_scale = $unit_scale - $unit_offset;
+	    for($i=0;$i<$n;$i++) {
+            $wili = $output[$meta["key"]][$rid]["wili"][$i];
+            $wili = ($wili - $unit_offset) / $unit_scale;
+	        $region['history']['date'][$lastHistory] = $output[$meta["key"]][$rid]["date"][$i];
+	        $region['history']['wili'][$lastHistory] = $wili;
+	        $lastHistory++;
+	    }
+	    $seasonOffsets[$lastOffset_i] = $lastOffset + n;
+	    $seasonYears[$lastOffset_i] = $rid;
+	    $lastOffset = $seasonOffsets[$lastOffset_i];
+	    $lastOffset_i++;
     }
 }
 
@@ -249,11 +262,10 @@ foreach($output['regions'] as $r) {
             <div>Seasons: </div>
             <div id="container_<?= $r['id'] ?>_all" class="any_hidden any_cursor_pointer" onclick="toggleAllSeasons(<?= $r['id'] ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $r['id'] ?>_all" class="fa fa-square-o"></i>&nbsp;<span class="effect_tiny effect_italics">Show all</span></div>
             <?php
-            $currentYear = $seasonYears[count($seasonYears) - 1];
             $numHHS = 11;
             if($regionID <= $numHHS) { // for USA CDC National and Regional regions
                foreach($seasonYears as $year) {
-	          if(($year*100+36) < $minEpiweek) { continue; }
+	            if(($year*100+36) < $minEpiweek) { continue; }
                   if($year == 2009 && $showPandemic !== 1) {
                      continue;
                   }
@@ -264,21 +276,25 @@ foreach($output['regions'] as $r) {
                      </div>
                      <?php
                   } else {
-                      if ($year == $currentYear) {
-                          ?>
+                      ?>
                           <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer"
                                onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
                                       id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
                                       style="color: <?= getColor($r['id'], $year) ?>"></i>
+                    <?php
+                      if ($year == $currentYear) {
+                          ?>
                               <span class="effect_tiny"><?= sprintf('current year') ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
                           </div>
                           <?php
+                    } elseif ($year > 3000) {
+                        // this indicates an international dataset. See preamble for setup.
+                        ?>
+                              <span class="effect_tiny"><?= $sourceIDs[$year] ?></span>
+                          </div>
+                        <?php
                       } else {
                           ?>
-                          <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer"
-                               onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
-                                      id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
-                                      style="color: <?= getColor($r['id'], $year) ?>"></i>
                               <span class="effect_tiny"><?= sprintf('%d-%s', $year, substr((string)($year + 1), 2, 2)) ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
                           </div>
                           <?php
