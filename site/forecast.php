@@ -705,7 +705,7 @@ foreach($output['regions'] as $r) {
       }
 
        //current region and latest season
-       repaintSelection(iForCurrentRegionCurrentSeason);
+       if (iForCurrentRegionCurrentSeason>=0) repaintSelection(iForCurrentRegionCurrentSeason);
       var style = {color: '#000', size: 2, dash: []};
       //var start = seasonOffsets[seasonOffsets.length - 1];
       //var end = Math.min(pastWili[regionID].length, start + totalWeeks);
