@@ -376,7 +376,7 @@ foreach($output['regions'] as $r) {
       pastWili[<?= $r['id'] ?>] = [<?php
          foreach($r['history']['wili'] as $v){printf('%.2f,',$v);}
          ?>];
-      pastEpiweek[<?= $r['id'] ?>] = [<?php foreach($r['history']['date'] as $v){printf('%s',$v);}?>];
+      pastEpiweek[<?= $r['id'] ?>] = [<?php foreach($r['history']['date'] as $v){printf('%s,',$v);}?>];
       forecast[<?= $r['id'] ?>] = [<?php
          $offset = count($r['forecast']['date']);
          foreach($r['forecast']['date'] as $d) {
