@@ -1107,6 +1107,14 @@ function getNextLocation($mturkID, $regionID) {
     }
 }
 
+
+function get_user_forecast_regions($user_ID) {
+    $regionIDs = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14); // 56: CA, 13, 14: GA, DC
+    return $regionIDs;
+}
+
+
+
 function save_random_code_mturk($userID, $code) {
     $result = mysql_query("INSERT INTO ec_fluv_mturk_code_match (`user_id`, `code`) VALUES ({$userID}, {$code})");
   if ($result == FALSE) {

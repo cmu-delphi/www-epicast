@@ -10,9 +10,7 @@
 
 
 <?php
-echo("1");
 require_once('common/database.php');
-echo("2");
 ?>
 
 
