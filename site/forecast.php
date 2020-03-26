@@ -659,12 +659,7 @@ foreach($output['regions'] as $r) {
          drawText(g, LABEL_X, canvas.width / 2, canvas.height - row1, 0, Align.center, Align.center, 1.5, ['bold', 'Calibri']);
       }
       //other regions or past seasons
-      for(var i = 0; i < selectedSeasons.length; i++) {
-         var isCurrentSeason = (selectedSeasons[i][1] == <?= $currentYear ?>);
-         if(selectedSeasons[i][0] == regionID && isCurrentSeason) {
-            //Skip the current region's latest season
-            //continue;
-         }
+      function repaintSelection(i) {
          var r = selectedSeasons[i][0];
          var s = selectedSeasons[i][1];
          var style = curveStyles[r][s];
@@ -691,6 +686,16 @@ foreach($output['regions'] as $r) {
             stitchCurves(r, style);
          }
       }
+       var iForCurrentRegionCurrentSeason = -1;
+      for(var i = 0; i < selectedSeasons.length; i++) {
+         var isCurrentSeason = (selectedSeasons[i][1] == <?= $currentYear ?>);
+         if(selectedSeasons[i][0] == regionID && isCurrentSeason) {
+             //Skip the current region's latest season
+	     iForCurrentRegionCurrentSeason = i;
+            continue;
+         }
+	  repaintSelection(i);
+      }
 
       //last forecast
       var lfStyle = {color: '#aaa', size: 2, dash: DASH_STYLE};
@@ -699,14 +704,15 @@ foreach($output['regions'] as $r) {
          drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length - 11, lfStyle);
       }
 
-      //current region and latest season
-      //var style = {color: '#000', size: 2, dash: []};
+       //current region and latest season
+       repaintSelection(iForCurrentRegionCurrentSeason);
+      var style = {color: '#000', size: 2, dash: []};
       //var start = seasonOffsets[seasonOffsets.length - 1];
       //var end = Math.min(pastWili[regionID].length, start + totalWeeks);
       //drawCurve(pastWili[regionID], start, end, 0, style);
-      //style.dash = DASH_STYLE;
-      //drawCurve(forecast[regionID], 0, 52, numPastWeeks + 1, style);
-      //stitchCurves(regionID, style);
+      style.dash = DASH_STYLE;
+      drawCurve(forecast[regionID], 0, 52, numPastWeeks + 1, style);
+      stitchCurves(regionID, style);
       
       //nowcast
       if(showNowcast) {
@@ -753,6 +759,7 @@ foreach($output['regions'] as $r) {
       }
       
       //legend
+      var style = {color: '#000', size: 2, dash: []};}
       var x1 = canvas.width - marginRight();
       var x2 = canvas.width - marginRight() - (15 * uiScale);
       var dy = 12 * uiScale;
