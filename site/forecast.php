@@ -290,7 +290,8 @@ foreach($output['regions'] as $r) {
                     } elseif ($year > 3000) {
                         // this indicates an international dataset. See preamble for setup.
                         ?>
-                              <span class="effect_tiny"><?= $sourceIDs[$year] ?></span>
+                              <!-- [<?php foreach($sourceIDs as $y => $label) printf("%s:%s, ",$y,$label); ?>] -->
+                              <span class="effect_tiny"><?= sprintf('%s',$sourceIDs[$year]) ?></span>
                           </div>
                         <?php
                       } else {
