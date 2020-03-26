@@ -531,7 +531,7 @@ foreach($output['regions'] as $r) {
       g.setLineDash(style.dash);
       g.beginPath();
       var first = true;
-      var epiweek = addEpiweeks(xRange[0], epiweekOffset);
+       var epiweek = epiweekOffset;//addEpiweeks(xRange[0], epiweekOffset);
       for(var i = start; i < end; i++) {
          if(curve[i] >= 0) {
             var x = getX(epiweek);
