@@ -160,7 +160,7 @@ $lastHistory_i = count($region['history']['date']);
 foreach ($sources as $src => $meta) {
     $fn = $meta["fn"];
     foreach ($meta["members"] as $name => $rid) {
-	    $fn($output, $rid, $seasonStart);
+	    $fn($output, $rid, $seasonStart+5); // hard-coded for now; ECDC counts seasons from epiweek 40
         $n = count($output[$meta["key"]][$rid]["date"]);
         // none of the international data have the same units as us,
         // so we're scaling all data from 0 to 1 so we can display it
@@ -374,7 +374,8 @@ foreach($output['regions'] as $r) {
       regionNames[<?= $r['id'] ?>] = '<?= $r['name'] ?>';
       pastWili[<?= $r['id'] ?>] = [<?php
          foreach($r['history']['wili'] as $v){printf('%.2f,',$v);}
-      ?>];
+         ?>];
+      pastEpiweek[<?= $r['id'] ?>] = [<?php foreach($r['history']['date'] as $v){printf('%s',$v);}?>];
       forecast[<?= $r['id'] ?>] = [<?php
          $offset = count($r['forecast']['date']);
          foreach($r['forecast']['date'] as $d) {
@@ -658,26 +659,30 @@ foreach($output['regions'] as $r) {
       }
       //other regions or past seasons
       for(var i = 0; i < selectedSeasons.length; i++) {
-         var isCurrentSeason = (selectedSeasons[i][1] == seasonYears[seasonYears.length - 1]);
+         var isCurrentSeason = (selectedSeasons[i][1] == <?= $currentYear ?>]);
          if(selectedSeasons[i][0] == regionID && isCurrentSeason) {
             //Skip the current region's latest season
-            continue;
+            //continue;
          }
          var r = selectedSeasons[i][0];
          var s = selectedSeasons[i][1];
          var style = curveStyles[r][s];
          var start = seasonOffsets[seasonIndices[s]];
-         var length = totalWeeks;
+         // var length = totalWeeks;
          <?php if(!$showPandemic) { ?>if(s == 2008) { length -= 12; }<?php } ?>
-         var epiweekOffset = 0;
-         if(start == 0) {
-            var nextStart = seasonOffsets[seasonIndices[s + 1]];
-            length = nextStart - start;
-            //todo: that -1 at the end should only be there if current season has 53 weeks and past season has 52 weeks
-            epiweekOffset = Math.max(0, totalWeeks - length -1);
-         }
-         var end = Math.min(pastWili[r].length, start + length);
-
+         
+         
+         // re the below: nah, we stored the dates for a reason.
+         //if(start == 0) {
+         //   var nextStart = seasonOffsets[seasonIndices[s + 1]];
+         //   length = nextStart - start;
+         //   //todo: that -1 at the end should only be there if current season has 53 weeks and past season has 52 weeks
+         //   epiweekOffset = Math.max(0, totalWeeks - length -1);
+         //}
+         
+         var end = seasonIndices[s]+1 < seasonOffsets.length ? seasonOffsets[seasonIndices[s]+1] : pastWili[r].length;
+         var epiweekOffset = pastEpiweek[r][start];
+         
          drawCurve(pastWili[r], start, end, epiweekOffset, style);
          if(isCurrentSeason) {
             style = {color: style.color, size: style.size, dash: DASH_STYLE};
@@ -694,13 +699,13 @@ foreach($output['regions'] as $r) {
       }
 
       //current region and latest season
-      var style = {color: '#000', size: 2, dash: []};
-      var start = seasonOffsets[seasonOffsets.length - 1];
-      var end = Math.min(pastWili[regionID].length, start + totalWeeks);
-      drawCurve(pastWili[regionID], start, end, 0, style);
-      style.dash = DASH_STYLE;
-      drawCurve(forecast[regionID], 0, 52, numPastWeeks + 1, style);
-      stitchCurves(regionID, style);
+      //var style = {color: '#000', size: 2, dash: []};
+      //var start = seasonOffsets[seasonOffsets.length - 1];
+      //var end = Math.min(pastWili[regionID].length, start + totalWeeks);
+      //drawCurve(pastWili[regionID], start, end, 0, style);
+      //style.dash = DASH_STYLE;
+      //drawCurve(forecast[regionID], 0, 52, numPastWeeks + 1, style);
+      //stitchCurves(regionID, style);
       
       //nowcast
       if(showNowcast) {
