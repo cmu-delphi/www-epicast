@@ -1114,7 +1114,7 @@ function get_user_forecast_regions($user_ID) {
     // default location arrays.
     // $regionIDs = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 56); // 56: CA, 13, 14: GA, DC
 
-    $query = "SELECT states FROM ec_fluv_mturk_tasks WHERE `taskID` = {$userID}";
+    $query = "SELECT states FROM ec_fluv_mturk_tasks WHERE `taskID` = {$task_group}";
     $regionIDs = array();
     $regionIDs = readSqlResult($query, $regionIDs);
 
