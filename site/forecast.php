@@ -186,7 +186,9 @@ foreach ($sources as $src => $meta) {
 	    }
 	    $lastOffset = ($seasonOffsets[$lastOffset_i] = $lastOffset + $n);
         ?>
-<!-- international offset <?= $name ?>: <?= $lastOffset ?> -->
+        
+        <!-- international offset <?= $name ?>: <?= $lastOffset ?> from <?= $n ?> -->
+        <!-- unit offset <?= $unit_offset ?> ; unit scale <?= $unit_scale ?> -->
         <?php
 	    $seasonYears[$lastOffset_i] = $rid;
 	    $lastOffset_i++;
