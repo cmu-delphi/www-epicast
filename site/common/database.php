@@ -1118,7 +1118,7 @@ function get_user_forecast_regions($user_ID) {
     $regionIDs = array();
     $regionIDs = readSqlResult($query, $regionIDs);
 
-    return $regionIDs[0];
+    return array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 56);
 }
 
 
