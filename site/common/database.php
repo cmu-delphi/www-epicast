@@ -1538,10 +1538,10 @@ function getECDCILI(&$output, $regionID, $firstWeek) {
     JOIN (
             SELECT `epiweek`, max(`issue`) AS `latest`
             FROM epidata.`ecdc_ili` AS latest_ed
-        WHERE latest_ed.`region` = {$country} AND latest_ed.`epiweek` >= {$firstWeek}
+        WHERE latest_ed.`region` = \"{$country}\" AND latest_ed.`epiweek` >= {$firstWeek}
             GROUP BY latest_ed.`epiweek`
         ) AS issues ON ed.`epiweek` = issues.`epiweek` AND ed.`issue` = issues.`latest`
-    WHERE ed.`region` = {$country} AND ed.`epiweek` >= {$firstWeek}
+    WHERE ed.`region` = \"{$country}\" AND ed.`epiweek` >= {$firstWeek}
     ORDER BY ed.`epiweek` ASC";
     $result = mysql_query($query);
     
