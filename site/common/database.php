@@ -1119,7 +1119,9 @@ function get_user_forecast_regions($user_ID) {
     $regionIDs = readSqlResult($query, $regionIDs);
 
     foreach ($regionIDs as &$value) {
-        echo($value);
+       foreach ($i as &$value) {
+            echo($i);
+       }
     }
 
     return $regionIDs;
