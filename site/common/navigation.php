@@ -8,8 +8,15 @@
   }
 </script>
 
+
 <?php
-require('common/database.php');
+echo("1");
+require_once('common/database.php');
+echo("2");
+?>
+
+
+<?php
 function showRegionButton($r) {
    if($r['completed']) {
       $class = 'box_region_nav_complete';
@@ -105,7 +112,7 @@ function showNavigation($output, $regionID=-1) {
     $missing = 0;
     $submitted = 0;
     $regionIDs = get_user_forecast_regions($output['user_id']);
-    echo("here");
+    echo("3");
     echo($regionIDs);
 
    foreach ($regionIDs as $i) {
