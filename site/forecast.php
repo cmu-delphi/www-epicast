@@ -759,7 +759,7 @@ foreach($output['regions'] as $r) {
       }
       
       //legend
-      var style = {color: '#000', size: 2, dash: []};}
+      var style = {color: '#000', size: 2, dash: []};
       var x1 = canvas.width - marginRight();
       var x2 = canvas.width - marginRight() - (15 * uiScale);
       var dy = 12 * uiScale;
