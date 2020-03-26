@@ -659,7 +659,7 @@ foreach($output['regions'] as $r) {
       }
       //other regions or past seasons
       for(var i = 0; i < selectedSeasons.length; i++) {
-         var isCurrentSeason = (selectedSeasons[i][1] == <?= $currentYear ?>]);
+         var isCurrentSeason = (selectedSeasons[i][1] == <?= $currentYear ?>);
          if(selectedSeasons[i][0] == regionID && isCurrentSeason) {
             //Skip the current region's latest season
             //continue;
