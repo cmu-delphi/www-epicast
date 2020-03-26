@@ -1121,6 +1121,7 @@ function get_user_forecast_regions($user_ID) {
     foreach ($regionIDs as &$value) {
        foreach ($value as &$i) {
             echo($i);
+            echo("-----");
        }
     }
 
