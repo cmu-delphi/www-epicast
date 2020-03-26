@@ -503,7 +503,7 @@ foreach($output['regions'] as $r) {
       g.stroke();
       g.setLineDash([]);
    }
-    function drawPoints(points, start, end, epiweekOffset, style, g) {
+    function drawPoints(xs, ys, start, end, style, g) {
 	if (typeof g == 'undefined') {
 	    var g = getGraphics();
 	    g.strokeStyle = style.color;
@@ -511,19 +511,18 @@ foreach($output['regions'] as $r) {
 	    g.setLineDash([]);
 	}
 	g.lineWidth = 3 * style.size * uiScale;
-         epiweek = addEpiweeks(xRange[0], epiweekOffset);
          for(var i = start; i < end; i++) {
-            if(points[i] >= 0) {
+            if(ys[i] >= 0) {
                g.beginPath();
-               var x = getX(epiweek);
-               var y = getY(points[i]);
+               var x = getX(xs[i]);
+               var y = getY(ys[i]);
                g.moveTo(x, y);
                g.lineTo(x + 1, y);
                g.stroke();
             }
-            epiweek = addEpiweeks(epiweek, 1);
          }
-   }
+    }
+    
    function drawCurve(curve, start, end, epiweekOffset, style) {
       var g = getGraphics();
       g.strokeStyle = style.color;
@@ -531,7 +530,7 @@ foreach($output['regions'] as $r) {
       g.setLineDash(style.dash);
       g.beginPath();
       var first = true;
-       var epiweek = epiweekOffset;//addEpiweeks(xRange[0], epiweekOffset);
+       var epiweek = addEpiweeks(xRange[0], epiweekOffset);
       for(var i = start; i < end; i++) {
          if(curve[i] >= 0) {
             var x = getX(epiweek);
@@ -548,6 +547,29 @@ foreach($output['regions'] as $r) {
       g.stroke();
       g.setLineDash([]);
        if(DRAW_POINTS) drawPoints(curve, start, end, epiweekOffset, style, g);
+   }
+    function drawCurveXY(xs, ys, start, end, style) {
+      var g = getGraphics();
+      g.strokeStyle = style.color;
+      g.lineWidth = style.size * uiScale;
+      g.setLineDash(style.dash);
+      g.beginPath();
+      var first = true;
+      for(var i = start; i < end; i++) {
+         if(ys[i] >= 0) {
+            var x = getX(xs[i]);
+            var y = getY(ys[i]);
+            if(first) {
+               first = false;
+               g.moveTo(x, y);
+            } else {
+               g.lineTo(x, y);
+            }
+         }
+      }
+      g.stroke();
+      g.setLineDash([]);
+	if(DRAW_POINTS) drawPoints(xs, ys, start, end, style, g);
    }
    function stitchCurves(regionID, style) {
       if(forecast[regionID][0] < 0) {
@@ -679,10 +701,8 @@ foreach($output['regions'] as $r) {
          //   epiweekOffset = Math.max(0, totalWeeks - length -1);
          //}
          
-         var end = seasonIndices[s]+1 < seasonOffsets.length ? seasonOffsets[seasonIndices[s]+1] : pastWili[r].length;
-         var epiweekOffset = pastEpiweek[r][start];
-         
-         drawCurve(pastWili[r], start, end, epiweekOffset, style);
+           var end = seasonIndices[s]+1 < seasonOffsets.length ? seasonOffsets[seasonIndices[s]+1] : pastWili[r].length;
+           drawCurveXY(pastWili[r], pastEpiweek[r], start, end, style);
          if(s == <?= $currentYear ?>) {
             style = {color: style.color, size: style.size, dash: DASH_STYLE};
             drawCurve(forecast[r], 0, 52, numPastWeeks + 1, style);
