@@ -659,9 +659,12 @@ foreach($output['regions'] as $r) {
          drawText(g, LABEL_X, canvas.width / 2, canvas.height - row1, 0, Align.center, Align.center, 1.5, ['bold', 'Calibri']);
       }
       //other regions or past seasons
-      function repaintSelection(i) {
-         var r = selectedSeasons[i][0];
-         var s = selectedSeasons[i][1];
+       function repaintSelection(r, s) {
+	   if (typeof s == "undefined") {
+	       i = r;
+               var r = selectedSeasons[i][0];
+               var s = selectedSeasons[i][1];   
+	   } 
          var style = curveStyles[r][s];
          var start = seasonOffsets[seasonIndices[s]];
          // var length = totalWeeks;
@@ -680,18 +683,16 @@ foreach($output['regions'] as $r) {
          var epiweekOffset = pastEpiweek[r][start];
          
          drawCurve(pastWili[r], start, end, epiweekOffset, style);
-         if(isCurrentSeason) {
+         if(s == <?= $currentYear ?>) {
             style = {color: style.color, size: style.size, dash: DASH_STYLE};
             drawCurve(forecast[r], 0, 52, numPastWeeks + 1, style);
             stitchCurves(r, style);
          }
       }
-       var iForCurrentRegionCurrentSeason = -1;
       for(var i = 0; i < selectedSeasons.length; i++) {
          var isCurrentSeason = (selectedSeasons[i][1] == <?= $currentYear ?>);
          if(selectedSeasons[i][0] == regionID && isCurrentSeason) {
              //Skip the current region's latest season
-	     iForCurrentRegionCurrentSeason = i;
             continue;
          }
 	  repaintSelection(i);
@@ -705,7 +706,7 @@ foreach($output['regions'] as $r) {
       }
 
        //current region and latest season
-       if (iForCurrentRegionCurrentSeason>=0) repaintSelection(iForCurrentRegionCurrentSeason);
+       repaintSelection(regionID, <?= $currentYear ?>);
       var style = {color: '#000', size: 2, dash: []};
       //var start = seasonOffsets[seasonOffsets.length - 1];
       //var end = Math.min(pastWili[regionID].length, start + totalWeeks);
