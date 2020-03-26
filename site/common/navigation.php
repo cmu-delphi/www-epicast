@@ -110,8 +110,6 @@ function showNavigation($output, $regionID=-1) {
     $missing = 0;
     $submitted = 0;
     $regionIDs = get_user_forecast_regions($output['user_id']);
-    echo("3");
-    echo($regionIDs);
 
    foreach ($regionIDs as $i) {
         $r = $output['regions'][$i];
