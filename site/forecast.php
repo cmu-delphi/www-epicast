@@ -557,7 +557,7 @@ foreach($output['regions'] as $r) {
       var first = true;
       for(var i = start; i < end; i++) {
          if(ys[i] >= 0) {
-            var x = getX(xs[i]);
+             var x = getX(modulusEpiweek(xs[i]));
             var y = getY(ys[i]);
             if(first) {
                first = false;
@@ -838,6 +838,12 @@ foreach($output['regions'] as $r) {
       }
       return year * 100 + week;
    }
+    function modulusEpiweek(ew) {
+	var week = ew % 100;
+	var startingWeek = xRange[0] % 100;
+	if (week < startingWeek) week = week + 100;
+	return xRange[0] + week;
+    }
    function epiweekToDecimal(ew) {
       var year = Math.floor(ew / 100);
       var week = ew % 100;
