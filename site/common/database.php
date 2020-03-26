@@ -1511,4 +1511,61 @@ function resetEpicast(&$output, $year, $firstEpiweek, $lastEpiweek, $deadline, $
    return getResult($output);
 }
 
+/*
+===== getECDCILI =====
+Purpose:
+   Returns ECDC ILI history for a country
+Input:
+   $output - The array of return values (array reference)
+   $regionID - The numeric ID for the country
+   $firstWeek - The first epiweek (currently ignored; will always return data for the 2019/2020 season)
+Output:
+   $output['result'] will contain the following values:
+      1 - Success
+      1 - Failure
+   $output['history'] - Arrays of epiweeks and historical incidence (ILI per 100k) for the country
+*/
+function getECDCILI(&$output, $regionID, $firstWeek) {
+    $country = "";
+    switch($regionID) {
+    case 8001: $country = "Italy"; break;
+    case 8002: $country = "Spain"; break;
+    case 8003: $country = "France"; break;
+    default: $country = "?"; break;
+    }
+    $query = <<<SQL
+    SELECT ed.`epiweek`, ed.`incidence_rate`
+    FROM epidata.`ecdc_ili` AS ed
+    JOIN (
+            SELECT `epiweek`, max(`issue`) AS `latest`
+            FROM epidata.`ecdc_ili` AS latest_ed
+        WHERE latest_ed.`region` = {$country} AND latest_ed.`epiweek` >= {$firstWeek}
+            GROUP BY latest_ed.`epiweek`
+        ) AS issues ON ed.`epiweek` = issues.`epiweek` AND ed.`issue` = issues.`latest`
+    WHERE ed.`region` = {$country} AND ed.`epiweek` >= {$firstWeek}
+    ORDER BY ed.`epiweek` ASC
+    SQL;
+    $result = mysql_query($query);
+    
+    $date = array();
+    $wili = array();
+    while($row=mysql_fetch_arry($result)) {
+        $ew = intval($row['epiweek']);
+        while($firstWeek < $ew) {
+            array_push($date, $firstWeek);
+            array_push($wili, -1);
+            $firstWeek = addEpiweeks($firstWeek, 1);
+        }
+        array_push($date, $ew);
+        array_push($wili, floatval($row['incidence_rate']));
+        $firstWeek = addEpiweeks($firstWeek, 1);
+    }
+    if (!array_key_exists($output,"ecdc")) {
+        $output['ecdc'] = array();
+    }
+    // leaving this as wili for now even though it's not really
+    $output['ecdc'][$regionID] = array('date' => &$date, 'wili' => &$wili);
+    setResult($output, 1);
+    return getResult($output);
+}
 ?>

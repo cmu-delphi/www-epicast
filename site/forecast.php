@@ -54,7 +54,7 @@ if(loadForecast($output, $output['user_id'], $regionID, true) !== 1) {
 }
 
 $lastForecast = $output['forecast'];
-$region = $output['regions'][$regionID];
+$region = &$output['regions'][$regionID]; // reference because having two copies is not great
 $num = count($output['regions']);
 //History for this region
 $output['history'] = &$output['regions'][$regionID]['history'];
@@ -126,7 +126,19 @@ $seasonYears = array_reverse($seasonYears);
 //    "SKorea":{"South Korea":70002019},
 //    "UK":{"UK":60002019}
 // }
-//
+$sources = array(
+    "ECDC" => array(
+	"fn" => "getECDCILI",
+	"key" => "ecdc",
+	"members" => array(
+	    "Italy" => 8001,
+	    "Spain" => 8002,
+	    "France" => 8003)));
+$souceIDs = array(
+    8001 => "Italy",
+    8002 => "Spain",
+    8003 => "France");
+
 // $lastOffset = $seasonOffsets[end]
 // for $src,$map in $sources {
 //   for $name,$rid in $map {
@@ -135,6 +147,25 @@ $seasonYears = array_reverse($seasonYears);
 //      push $rid onto the end of $seasonYears
 //   }
 // }
+$lastOffset_i = count($seasonOffsets);
+$lastOffset = $seasonOffsets[$lastOffset_i-1];
+$lastHistory_i = count($region['history']['date']);
+foreach ($sources as $src => $meta) {
+    $fn = $meta["fn"];
+    foreach ($meta["members"] as $name => $rid) {
+	$fn($output, $rid, $seasonStart);
+	$n = count($output[$meta["key"]][$rid]["date"]);
+	for($i=0;$i<$n;$i++) {
+	    $region['history']['date'][$lastHistory] = $output[$meta["key"]][$rid]["date"][$i];
+	    $region['history']['wili'][$lastHistory] = $output[$meta["key"]][$rid]["wili"][$i];
+	    $lastHistory++;
+	}
+	$seasonOffsets[$lastOffset_i] = $lastOffset + n;
+	$seasonYears[$lastOffset_i] = $rid;
+	$lastOffset = $seasonOffsets[$lastOffset_i];
+	$lastOffset_i++;
+    }
+}
 
 //Nowcast (may or may not be available)
 getNowcast($output, addEpiweeks($currentWeek, 1), $regionID);
@@ -199,8 +230,7 @@ foreach($output['regions'] as $r) {
    <div id="box_side_bar">
       <div id="box_histories">
          <div class="box_decision_title centered" style="width: 100%;">History</div>
-         <?php
-         foreach($output['regions'] as $r) {
+         <?php foreach($output['regions'] as $r) {
             if($r['id'] !== $regionID) continue;
             ?>
 
