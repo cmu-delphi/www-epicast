@@ -1117,6 +1117,9 @@ function get_user_forecast_regions($user_ID) {
     $query = "SELECT states FROM ec_fluv_mturk_tasks WHERE `taskID` = {$userID}";
     $regionIDs = array();
     $regionIDs = readSqlResult($query, $regionIDs);
+    echo("1");
+    echo($regionIDs);
+    echo("2");
 
     return $regionIDs;
 }
