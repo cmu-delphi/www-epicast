@@ -365,6 +365,7 @@ foreach($output['regions'] as $r) {
    var seasonIndices = {<?php for($i = 0; $i < count($seasonYears); $i++){printf('\'%d\':%d,',$seasonYears[$i],$i);} ?>};
    var regionNames = [];
    var pastWili = [];
+   var pastEpiweek = [];
    var forecast = [];
    var curveStyles = {};
    <?php
