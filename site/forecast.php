@@ -77,7 +77,7 @@ if(($currentWeek % 100) >= $firstWeekOfChart) {
    $yearStart = intval($currentWeek / 100) - 1;
 }
 $seasonStart = 201936;
-$seasonEnd = 202035;
+$seasonEnd = 202040;
 $numPastWeeks = getDeltaWeeks($seasonStart, $currentWeek);
 $numFutureWeeks = getDeltaWeeks($currentWeek, $seasonEnd);
 $maxRegionalWILI = 0;
@@ -718,7 +718,7 @@ foreach($output['regions'] as $r) {
       var lfStyle = {color: '#aaa', size: 2, dash: DASH_STYLE};
       if(showLastForecast) {
          // shift x axis by 30 weeks.
-         drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length - 11, lfStyle);
+         drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length - 5, lfStyle);
       }
 
        //current region and latest season
