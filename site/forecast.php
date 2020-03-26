@@ -839,10 +839,10 @@ foreach($output['regions'] as $r) {
       return year * 100 + week;
    }
     function modulusEpiweek(ew) {
-	var week = ew % 100;
 	var startingWeek = xRange[0] % 100;
-	if (week < startingWeek) week = week + 100;
-	return xRange[0] + week;
+	var weekOffset = (ew % 100) - startingWeek;
+	if (weekOffset < 0) weekOffset = weekOffset + 100;
+	return xRange[0] + weekOffset;
     }
    function epiweekToDecimal(ew) {
       var year = Math.floor(ew / 100);
