@@ -180,9 +180,9 @@ foreach ($sources as $src => $meta) {
 	    for($i=0;$i<$n;$i++) {
             $wili = $output[$meta["key"]][$rid]["wili"][$i];
             $wili = ($wili - $unit_offset) / $unit_scale;
-	        $region['history']['date'][$lastHistory] = $output[$meta["key"]][$rid]["date"][$i];
-	        $region['history']['wili'][$lastHistory] = $wili;
-	        $lastHistory++;
+	        $region['history']['date'][$lastHistory_i] = $output[$meta["key"]][$rid]["date"][$i];
+	        $region['history']['wili'][$lastHistory_i] = $wili;
+	        $lastHistory_i++;
 	    }
 	    $lastOffset = ($seasonOffsets[$lastOffset_i] = $lastOffset + $n);
 	    $seasonYears[$lastOffset_i] = $rid;
