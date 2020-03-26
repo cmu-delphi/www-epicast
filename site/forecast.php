@@ -184,9 +184,8 @@ foreach ($sources as $src => $meta) {
 	        $region['history']['wili'][$lastHistory] = $wili;
 	        $lastHistory++;
 	    }
-	    $seasonOffsets[$lastOffset_i] = $lastOffset + n;
+	    $lastOffset = ($seasonOffsets[$lastOffset_i] = $lastOffset + $n);
 	    $seasonYears[$lastOffset_i] = $rid;
-	    $lastOffset = $seasonOffsets[$lastOffset_i];
 	    $lastOffset_i++;
     }
 }
