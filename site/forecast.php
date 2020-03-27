@@ -129,9 +129,6 @@ $seasonYears = array_reverse($seasonYears);
 //    "UK":{"UK":60002019}
 // }
 
-?>
-<!-- breadcrumb: before setting up intl data sources -->
-<?php
 
 $sources = array(
     "ECDC" => array(
@@ -143,14 +140,14 @@ $sources = array(
 	    "France" => 8003,
         "Netherlands" => 8004,
         "Ireland" => 8005,
-        "United Kingdom - Scotland" => 8006,
+        "UK - Scotland" => 8006,
         "Belgium" => 8007,
     )));
 $sourceIDs = array();
 foreach($sources["ECDC"]["members"] as $country => $cid) {
     $sourceIDs[$cid] = $country.", ECDC";
 }
-$sourceIDs[8006] = "UK - Scotland, ECDC";
+
 // $lastOffset = $seasonOffsets[end]
 // for $src,$map in $sources {
 //   for $name,$rid in $map {
@@ -168,8 +165,12 @@ foreach ($sources as $src => $meta) {
     $fn = $meta["fn"];
     foreach ($meta["members"] as $name => $rid) {
 	    $fn($output, $rid, $seasonStart+5); // hard-coded for now; ECDC counts seasons from epiweek 40
-        $n = count($output[$meta["key"]][$rid]["date"]);
         
+        $n = count($output[$meta["key"]][$rid]["date"]);
+?>
+<!-- <?= $name ?>: <?= $n ?> results -->
+<?php
+
         // none of the international data have the same units as us.
         // to cope, first we'll scale it from 0 to 1, then shift and scale it
         // up to look more like the other curves in the plot.
