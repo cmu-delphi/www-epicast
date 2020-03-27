@@ -1025,6 +1025,7 @@ foreach($output['regions'] as $r) {
               }
 	      
 	      // why twice? -kmm
+	      // once for regions will smaller ids and once for regions with larger ids - CS
               for ($i = 1; $i <= $numRegion; $i++) {
                   $otherRegionID = $listIdxToId[$i];
                   $otherRegion = $output['regions'][$otherRegionID];
