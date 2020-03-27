@@ -1206,19 +1206,14 @@ foreach($output['regions'] as $r) {
       });
       toggleSeasonList(regionID);
       <?php
-      // all seasons are shown by default, so hide the ones the user doesn't want to see
-      $hiddenSeasons = getPreference($output, 'hidden_seasons', 'int');
-      ?>console.log("Hide seasons preference: "+<?= $hiddenSeasons ?>);<?php
-    if (FALSE) { // temporarily disable
-      // toggle every season that has the "hide" bit set
-      for($season = 1997; $season < $current_season; $season++) {
-         if(($hiddenSeasons & 1) === 0) {
+    //show all seasons that are not hidden
+    $hiddenSeasons = getPreference($output, 'hidden_seasons', 'int');
+    foreach ($seasonYears as $season) {
+        if(($hiddenSeasons & 1) === 0) { // intl "seasons" may break hidden seasons, but that's okay for now -kmm
             ?>toggleSeason(regionID, <?= $season ?>);<?php
-         }
-         $hiddenSeasons >>= 1;
-     }
-     }
-
+        }
+        $hiddenSeasons >>= 1;
+    }
       ?>
       resize();
    });
