@@ -124,9 +124,19 @@ if($_offline) {
       </div>
    </div>
    <?php
-   $numRegion = 11;
-   if($output['stat_completed'] >= $numRegion) {
+   // This approach will work next week, but not for w12, because
+   // stat_competed counts regions the user may have already submitted
+   // but aren't assigned anymore :(
+   //$numRegion=11;
+   //if($output['stat_completed'] >= $numRegion) {
+   $missing = 0;
+   foreach (get_user_forecast_regions($output['user_id']) $ri) {
+      if (!$r['completed']) { $missing++; }
+   }
+   if ($missing == 0) {
       ?>
+      <!-- <?= $output['stat_completed'] ?> stat_completed -->
+      
       <div class="box_section">
          <div class="box_section_title">
             Nice job, you're finished!
