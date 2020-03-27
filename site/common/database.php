@@ -1110,13 +1110,17 @@ function getNextLocation($mturkID, $regionID) {
 
 function get_user_forecast_regions($user_ID) {
     $num_task_groups = 6;
-    $task_group = $user_ID % ($num_task_groups - 1);
+    $task_group = $user_ID % ($num_task_groups + 1);
 
     $query = "SELECT states FROM ec_fluv_mturk_tasks WHERE `taskID` = {$task_group}";
     $states = array();
     $states = readSqlResult($query, $states);
     $states = $states[0]['states'];
     $states = explode(",", $states);
+
+    foreach ($states as &$s) {
+        echo($s);
+    }
 
     return $states;
 }
