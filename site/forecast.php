@@ -1007,38 +1007,25 @@ foreach($output['regions'] as $r) {
          
          <?php
          $next = null;
-          $numRegion = 14;
-          $listIdxToId = array(1 => 1, 2 => 2, 3 => 3, 4 => 4,
-                            5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11,
-                            12 => 13, 13 => 14, 14 => 56);
-          $idToListIdx = array(1 => 1, 2 => 2, 3 => 3, 4 => 4,
-                          5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 10 => 10, 11 => 11,
-                          13 => 12, 14 => 13, 56 => 14);
+
+          $regionIDs = get_user_forecast_regions($output['user_id']);
           $currentID = $region['id'];
-          $currentListIdx = $idToListIdx[$currentID];
-          
-          if ($currentListIdx <= $numRegion) {
-              
-              for ($i = 1; $i <= $numRegion; $i++) {
-                  $otherRegionID = $listIdxToId[$i];
-                  $otherRegion = $output['regions'][$otherRegionID];
-                  if($i > $currentListIdx && !$otherRegion['completed'] && $next === null) {
-                      $next = $otherRegion['id'];
-                  }
-              }
-	      
-	      // why twice? -kmm
+
+          // why twice? -kmm
 	      // once for regions will smaller ids and once for regions with larger ids - CS
-              for ($i = 1; $i <= $numRegion; $i++) {
-                  $otherRegionID = $listIdxToId[$i];
-                  $otherRegion = $output['regions'][$otherRegionID];
-                  if($i < $currentListIdx && !$otherRegion['completed'] && $next === null) {
+
+          foreach($regionIDs as &$i) {
+              if($i > $currentListIdx && !$otherRegion['completed'] && $next === null) {
                       $next = $otherRegion['id'];
                   }
-              }
-              
           }
-         
+
+          foreach($regionIDs as &$i) {
+              if($i < $currentListIdx && !$otherRegion['completed'] && $next === null) {
+                      $next = $otherRegion['id'];
+                  }
+          }
+      
    
          if($next !== null) {
             ?>
