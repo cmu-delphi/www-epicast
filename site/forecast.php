@@ -298,7 +298,7 @@ foreach($output['regions'] as $r) {
                 <?php
                 if ($year == $currentYear) {
                     ?>
-                        <span class="effect_tiny"><?= sprintf('current year (CY)') ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
+                        <span class="effect_tiny"><?= sprintf('current year') ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
                     </div>
                     <?php
                 } elseif ($year > 3000) {
@@ -363,7 +363,7 @@ foreach($output['regions'] as $r) {
       <?php
       foreach($seasonYears as $year) {
           ?>
-            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= $year == $currentYear ? "#000" : getColor($r['id'], $year) ?>', size: <?= $year == $currentYear ? 2 : 1 ?>, dash: [], alpha: <?= $year == $currentYear ? 1 : 0.4 ?>};
+            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= $year == $currentYear ? "#000" : getColor($r['id'], $year) ?>', size: <?= $year == $currentYear ? 2 : $year > 3000 ? 1.5 : 1 ?>, dash: [], alpha: <?= $year == $currentYear ? 1 : 0.4 ?>};
             <?php
         }
     } // end $output['regions'] as $r
@@ -633,18 +633,29 @@ foreach($output['regions'] as $r) {
          for(var epiweek = xRange[0]; epiweek <= xRange[1]; epiweek = addEpiweeks(epiweek, 1)) {
             var x = getX(epiweek);
             if(skip == 0) {
-               drawText(g, '' + (epiweek % 100), x, canvas.height - row3, 0, Align.center, Align.center);
+               drawText(g, 'w' + (epiweek % 100), x, canvas.height - row3, 0, Align.center, Align.center);
             }
             skip = (skip + 1) % xInterval;
             drawLine(x, axisY + TICK_SIZE, x, axisY + 1, AXIS_STYLE);
          }
          //months
+	 var on = true;
          var month = Math.floor((xRange[0] % 100 - 1) / getNumWeeks(Math.floor(xRange[0] / 100)) * MONTHS.length);
          for(var epiweek = xRange[0]; epiweek <= xRange[1]; epiweek = addEpiweeks(epiweek, 4.35)) {
             var label = MONTHS[month];
             if(month == 0) {
                label += '\'' + (Math.floor(epiweek / 100) % 100);
             }
+
+	    // shade alternate months to show disjoint with weeks
+            oldFillStyle=g.fillStyle;
+            g.fillStyle = on ? '#eee' : '#fff'; on = !on;
+            x1 = max(xRange[0]-1, addEpiweeks(epiweek,-4.35/2));
+            y1 = canvas.height - row3 + row2/4;
+            x2 = min(addEpiweeks(x1, 4.35), xRange[1])
+            g.fillRect(getX(x1), y1, getX(x2)-getX(x1), row2/2);
+            g.fillStyle = oldFillStyle;
+
             drawText(g, label, getX(epiweek), canvas.height - row2, 0, Align.center, Align.center);
             month = (month + 1) % MONTHS.length;
          }
