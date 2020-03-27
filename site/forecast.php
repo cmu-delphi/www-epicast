@@ -567,7 +567,7 @@ foreach($output['regions'] as $r) {
       var seasonIndex = seasonIndices[<?= $currentYear ?>];
       var seasonLength = seasonOffsets[seasonIndex+1] - seasonOffsets[seasonIndex];
       var x1 = getX(addEpiweeks(xRange[0], seasonLength - 1));
-      var y1 = getY(pastWili[regionID][seasonOffsets[seasonIndex + 1] - 1];
+      var y1 = getY(pastWili[regionID][seasonOffsets[seasonIndex + 1] - 1]);
       var x2 = getX(addEpiweeks(currentWeek, 1));
       var y2 = getY(forecast[regionID][0]);
       drawLine(x1, y1, x2, y2, style);
