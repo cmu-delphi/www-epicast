@@ -131,7 +131,7 @@ if($_offline) {
    //if($output['stat_completed'] >= $numRegion) {
    $missing = 0;
    foreach (get_user_forecast_regions($output['user_id']) $ri) {
-      if (!$r['completed']) { $missing++; }
+      if (!$output['regions'][$ri]['completed']) { $missing++; }
    }
    if ($missing == 0) {
       ?>
