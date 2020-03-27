@@ -1,6 +1,7 @@
 <?php
 require('common/header.php');
 require('common/navigation.php');
+require_once('common/utils.php');
 if($error) {
    return;
 }
@@ -41,13 +42,10 @@ if($_offline) {
       <div class="box_section_title">
          Post <?= formatEpiweek($output['epiweek']['round_epiweek']) ?> Forecast
 
-<!--          <div class="box_section_subtitle">
+          <div class="box_section_subtitle">
             Due by 10:00 AM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
-         </div> -->
-         
-         <div class="box_section_subtitle">
-            Due by 10:00 AM (ET) on Thursday.
          </div>
+
 
    </div>
 
@@ -66,7 +64,13 @@ if($_offline) {
          Starting this week, we will change the Crowdcast interface to provide you with more COVID-related and pandemic-related information and links.
          </div>
 
+      <?php
+            createLink('FAQ', 'FAQ.php#top');
+       ?>
+
    </div>
+
+
 
 
       <div>
