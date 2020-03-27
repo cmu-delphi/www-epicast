@@ -389,16 +389,8 @@ foreach($output['regions'] as $r) {
       curveStyles[<?= $r['id'] ?>] = {};
       <?php
       foreach($seasonYears as $year) {
-         if  ($year == 2008 || $year == $currentYear) { // why is 2008 bold? -kmm
             ?>
-            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= getColor($r['id'], $year) ?>', size: 2, dash: [], alpha: 1};
-            <?php
-         } else {
-            ?>
-            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= getColor($r['id'], $year) ?>', size: 1, dash: [], alpha: 0.4};
-            <?php
-         }
-      }
+            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= $year == $currentYear ? "#000" : getColor($r['id'], $year) ?>', size: <?= $year == $currentYear ? 2 : 1 ?>, dash: [], alpha: <?= $year == $currentYear ? 1 : 0.4 ?>};                                                                              }
    }
    ?>
    var selectedSeasons = [];
