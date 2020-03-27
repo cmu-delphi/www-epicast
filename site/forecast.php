@@ -263,85 +263,46 @@ foreach($output['regions'] as $r) {
             <div id="container_<?= $r['id'] ?>_all" class="any_hidden any_cursor_pointer" onclick="toggleAllSeasons(<?= $r['id'] ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_<?= $r['id'] ?>_all" class="fa fa-square-o"></i>&nbsp;<span class="effect_tiny effect_italics">Show all</span></div>
             <?php
             $numHHS = 11;
-            if($regionID <= $numHHS) { // for USA CDC National and Regional regions
-               foreach($seasonYears as $year) {
-	            if(($year*100+36) < $minEpiweek) { continue; }
-                  if($year == 2009 && $showPandemic !== 1) {
-                     continue;
-                  }
-                  if($r['id'] == $regionID && $year == $currentYear) {
-                     ?>
-                     <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
-                        <span class="effect_tiny"><?= sprintf('current year') ?></span>
-                     </div>
-                     <?php
-                  } else {
-                      ?>
-                          <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer"
-                               onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
-                                      id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
-                                      style="color: <?= getColor($r['id'], $year) ?>"></i>
-                    <?php
-                      if ($year == $currentYear) {
-                          ?>
-                              <span class="effect_tiny"><?= sprintf('current year') ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
-                          </div>
-                          <?php
-                    } elseif ($year > 3000) {
-                        // this indicates an international dataset. See preamble for setup.
-                        ?>
-                              <!-- [<?php foreach($sourceIDs as $y => $label) printf("%s:%s, ",$y,$label); ?>] -->
-                              <span class="effect_tiny"><?= sprintf('%s',$sourceIDs[$year]) ?></span>
-                          </div>
-                        <?php
-                      } else {
-                          ?>
-                              <span class="effect_tiny"><?= sprintf('%d-%s', $year, substr((string)($year + 1), 2, 2)) ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
-                          </div>
-                          <?php
-                      }
-                  }
-               }
-            } else { // for each states, data are only available starting 2010-2011 season
-               foreach($seasonYears as $year) {
-	          if($year*100+36 < $minEpiweek) { continue; }
-                  //if($year <= 2009) {
-                  //   continue;
-                  //} // not sure why this was here -kmm
-		  
-                  if($r['id'] == $regionID && $year == $currentYear) {
-                      ?>
-		      <!-- In theory this never happens? -kmm r['id'] <?= $r['id'] ?>; regionId <?= $regionID ?>; year <?= $year ?> -->
-                      <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
-                          <span class="effect_tiny"><?= sprintf('current year') ?></span>
-                      </div>
-                      <?php
-                  } else {
-                      if ($year == $currentYear) {
-                          ?>
-                          <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer"
-                               onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
-                                      id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
-                                      style="color: <?= getColor($r['id'], $year) ?>"></i>
-                              <span class="effect_tiny"><?= sprintf('current year') ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
-                          </div>
-                          <?php
-                      } else {
-                          ?>
-                          <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer"
-                               onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
-                                      id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
-                                      style="color: <?= getColor($r['id'], $year) ?>"></i>
-                              <span class="effect_tiny"><?= sprintf('%d-%s', $year, substr((string)($year + 1), 2, 2)) ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
-                          </div>
-                          <?php
-                      }
-                  }
-               }
+        foreach($seasonYears as $year) {
+	        if(($year*100+36) < $minEpiweek) { continue; }
+            if($year == 2009 && $showPandemic !== 1) {
+                continue;
             }
-
-         }
-         ?>
+            if($r['id'] == $regionID && $year == $currentYear) {
+                ?>
+                    <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
+                        <span class="effect_tiny"><?= sprintf('current year') ?></span>
+                    </div>
+                <?php
+            } else {
+                ?>
+                    <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer"
+                        onclick="toggleSeason(<?= $r['id'] ?>, <?= $year ?>)">&nbsp;&nbsp;&nbsp;&nbsp;<i
+                            id="checkbox_<?= $r['id'] ?>_<?= $year ?>" class="fa fa-square-o"
+                            style="color: <?= getColor($r['id'], $year) ?>"></i>
+                <?php
+                if ($year == $currentYear) {
+                    ?>
+                        <span class="effect_tiny"><?= sprintf('current year') ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
+                    </div>
+                    <?php
+                } elseif ($year > 3000) {
+                    // this indicates an international dataset. See preamble for setup.
+                    ?>
+                    <!-- [<?php foreach($sourceIDs as $y => $label) printf("%s:%s, ",$y,$label); ?>] -->
+                        <span class="effect_tiny"><?= sprintf('%s',$sourceIDs[$year]) ?></span>
+                    </div>
+                    <?php
+                } else {
+                    ?>
+                    <span class="effect_tiny"><?= sprintf('%d-%s', $year, substr((string)($year + 1), 2, 2)) ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
+                </div>
+                    <?php
+                }
+            }
+        } // end $seasonYears as $year
+    }
+    ?>
       </div></div><div id="box_canvas"><canvas id="canvas" width="800" height="400"></canvas></div>
 </div>
 <script src="js/forecast.js"></script>
