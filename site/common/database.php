@@ -3,7 +3,7 @@ require_once('utils.php');
 require_once('settings.php');
 
 define("NUM_REGIONS", 64);
-define("NUM_CURRENT_REGIONS", 14);
+define("NUM_CURRENT_REGIONS", 11);
 define("NUM_AGEGROUPS", 6);
 
 function getResult(&$output) {
@@ -333,12 +333,11 @@ Output:
    $output['regions'] - An array of regions, indexed by region ID
 */
 function getRegions(&$output, $userID) {
-//    echo "in getRegions";
    $temp = array();
    if(getEpiweekInfo($temp) !== 1) {
       return getResult($temp);
    }
-   $result = mysql_query("SELECT r.`id`, r.`name`, r.`states`, r.`population`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM active_ec_fluv_regions r LEFT JOIN ec_fluv_submissions s ON s.`user_id` = {$userID} AND s.`region_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
+   $result = mysql_query("SELECT r.`id`, r.`name`, r.`states`, r.`population`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM ec_fluv_regions r LEFT JOIN ec_fluv_submissions s ON s.`user_id` = {$userID} AND s.`region_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
    $regions = array();
    while($row = mysql_fetch_array($result)) {
       $region = array(
@@ -352,13 +351,7 @@ function getRegions(&$output, $userID) {
    }
    $output['regions'] = &$regions;
    
-//    foreach($output['regions'] as $r) {
-//       echo $r["id"];
-//       echo ' ';
-//       echo $r["completed"];
-//    }
-   
-   setResult($output, count($regions) == NUM_CURRENT_REGIONS ? 1 : 2);
+   setResult($output, count($regions) == NUM_REGIONS ? 1 : 2);
    return getResult($output);
 }
 
