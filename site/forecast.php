@@ -138,14 +138,19 @@ $sources = array(
 	"fn" => "getECDCILI",
 	"key" => "ecdc",
 	"members" => array(
-	    "Italy" => 8001,
-	    "Spain" => 8002,
-	    "France" => 8003)));
-$sourceIDs = array(
-    8001 => "CY it ECDC",
-    8002 => "CY es ECDC",
-    8003 => "CY fr ECDC");
-
+	    //"Italy" => 8001,
+	    //"Spain" => 8002,
+	    "France" => 8003,
+        "Netherlands" => 8004,
+        "Ireland" => 8005,
+        "United Kingdom - Scotland" => 8006,
+        "Belgium" => 8007,
+    )));
+$sourceIDs = array();
+foreach($sources["ECDC"]["members"] as $country => $cid) {
+    $sourceIDs[$cid] = $country.", ECDC";
+}
+$sourceIDs[8006] = "UK - Scotland, ECDC";
 // $lastOffset = $seasonOffsets[end]
 // for $src,$map in $sources {
 //   for $name,$rid in $map {
@@ -185,7 +190,7 @@ foreach ($sources as $src => $meta) {
 	    $lastOffset_i++;
 	    for($i=0;$i<$n;$i++) {
             $wili = $output[$meta["key"]][$rid]["wili"][$i];
-            $wili = ($wili - $unit_offset) / $unit_scale * $maxRegionalWILI + $minRegionalWILI;
+            $wili = ($wili - $unit_offset) / $unit_scale * $maxRegionalWILI/2 + $minRegionalWILI;
 	        $region['history']['date'][$lastHistory_i] = $output[$meta["key"]][$rid]["date"][$i];
 	        $region['history']['wili'][$lastHistory_i] = $wili;
 	        $lastHistory_i++;
@@ -254,7 +259,7 @@ foreach($output['regions'] as $r) {
          <div style="clear: both;"></div>
       </div>
 
-       <div class="box_status_line"><div style="margin:20px 180px 10px 180px; padding:5px 40px; background:white; font-weight:normal; font-size:12px; text-align:left"><p><b>Additional data for the 2019-2020 COVID-19 pandemic</b></p><p>The European Centre for Disease Control (ECDC) publishes ILI data for its member nations. COVID-19 reached Italy and several other EU nations ahead of the USA, and the ECDC ILI data for those countries may be useful to your forecasts. The ECDC metrics are different, so <b>while the shape of the curves is accurate, the y-values have been scaled to fit in the plot</b>. For more information on the ECDC data, see the methods section of <a href="https://www.ecdc.europa.eu/sites/default/files/documents/AER_for_2015-influenza-seasonal_0.pdf">the 2015 surveillance report on seasonal Influenza</a>.</p></div></div>
+       <div class="box_status_line"><div style="margin:20px 180px 10px 180px; padding:5px 40px; background:white; font-weight:normal; font-size:12px; text-align:left"><p><b>Additional data for the 2019-2020 COVID-19 pandemic</b></p><p>The European Centre for Disease Control (ECDC) publishes ILI data for its member nations. COVID-19 reached Italy and several other EU nations ahead of the USA, and the ECDC ILI data for those countries may be useful to your forecasts. This is a rapidly changing situation and not all ECDC reporting countries seem to agree on whether COVID-19 encounters count as ILI activity. We have excluded counties whose ECDC reporting is suspiciously similar to their 2018-2019 season, which unfortunately includes Italy and Spain. Germany is also ahead of us, but does not report ILI data. The ECDC ILI units are not a percent of visits, so <b>while the shape of the curves is accurate, the y-values have been scaled to fit in the plot</b>. For more information on the ECDC data, see the methods section of <a href="https://www.ecdc.europa.eu/sites/default/files/documents/AER_for_2015-influenza-seasonal_0.pdf">the 2015 surveillance report on seasonal Influenza</a>.</p></div></div>
 
    </div>
    <div id="box_side_bar">
