@@ -559,17 +559,19 @@ foreach($output['regions'] as $r) {
       g.setLineDash([]);
 	if(DRAW_POINTS) drawPoints(xs, ys, start, end, style, g);
    }
-   function stitchCurves(regionID, style) {
+    function stitchCurves(regionID, style, y2) {
       if(forecast[regionID][0] < 0) {
          return;
-     }
+      }
+	if (typeof y2 == "undefined") {
+	    y2 = getY(forecast[regionID][0]);
+	}
 
       var seasonIndex = seasonIndices[<?= $currentYear ?>];
       var seasonLength = seasonOffsets[seasonIndex+1] - seasonOffsets[seasonIndex];
       var x1 = getX(addEpiweeks(xRange[0], seasonLength - 1));
       var y1 = getY(pastWili[regionID][seasonOffsets[seasonIndex + 1] - 1]);
       var x2 = getX(addEpiweeks(currentWeek, 1));
-      var y2 = getY(forecast[regionID][0]);
       drawLine(x1, y1, x2, y2, style);
    }
    function drawTooltip(g, str) {
@@ -714,7 +716,8 @@ foreach($output['regions'] as $r) {
       var lfStyle = {color: '#aaa', size: 2, dash: DASH_STYLE};
       if(showLastForecast) {
          // shift x axis by 30 weeks.
-         drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length - 5, lfStyle);
+          drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length - 5, lfStyle);
+	  stitchCurves(r, lfStyle, lastForecast[0]);
       }
 
        //current region and latest season
