@@ -1006,7 +1006,7 @@ foreach($output['regions'] as $r) {
          
          
          <?php
-         $next = null;
+          $next = null;
 
           $regionIDs = get_user_forecast_regions($output['user_id']);
           $currentID = $region['id'];
@@ -1015,17 +1015,19 @@ foreach($output['regions'] as $r) {
 	      // once for regions will smaller ids and once for regions with larger ids - CS
 
           foreach($regionIDs as &$i) {
-              if($i > $currentListIdx && !$otherRegion['completed'] && $next === null) {
+              $otherRegion = $output['regions'][$i];
+              if($i > $currentID && !$otherRegion['completed'] && $next === null) {
                       $next = $otherRegion['id'];
                   }
           }
 
           foreach($regionIDs as &$i) {
-              if($i < $currentListIdx && !$otherRegion['completed'] && $next === null) {
+              $otherRegion = $output['regions'][$i];
+              if($i < $currentID && !$otherRegion['completed'] && $next === null) {
                       $next = $otherRegion['id'];
                   }
           }
-      
+
    
          if($next !== null) {
             ?>
