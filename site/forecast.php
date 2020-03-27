@@ -1012,18 +1012,18 @@ foreach($output['regions'] as $r) {
           $currentID = $region['id'];
 
           // why twice? -kmm
-	      // once for regions will smaller ids and once for regions with larger ids - CS
+	      // once for regions will larger ids and once for regions with smaller ids - CS
 
           foreach($regionIDs as &$i) {
               $otherRegion = $output['regions'][$i];
-              if($i > $currentID && !$otherRegion['completed'] && $next === null) {
+              if($i < $currentID && !$otherRegion['completed'] && $next === null) {
                       $next = $otherRegion['id'];
                   }
           }
 
           foreach($regionIDs as &$i) {
               $otherRegion = $output['regions'][$i];
-              if($i < $currentID && !$otherRegion['completed'] && $next === null) {
+              if($i > $currentID && !$otherRegion['completed'] && $next === null) {
                       $next = $otherRegion['id'];
                   }
           }
