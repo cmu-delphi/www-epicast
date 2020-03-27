@@ -639,6 +639,11 @@ foreach($output['regions'] as $r) {
          //label
          drawText(g, LABEL_X, canvas.width / 2, canvas.height - row1, 0, Align.center, Align.center, 1.5, ['bold', 'Calibri']);
       }
+       // COVID-19 benchmark: 100 cases in US at epiweek 202010
+       covid_us_x = getX(202010);
+       drawLine(covid_us_x, getY(yRange[0]), covid_us_x, getY(yRange[1]), {color:"#F00", size:2, dash:[], alpha:1});
+       drawText(g, "COVID-19 in USA", covid_us_x - 15, marginTop() + 12*uiScale, 0, Align.left, Align.top);
+       
       //other regions or past seasons
        function repaintSelection(r, s) {
 	   if (typeof s == "undefined") {
