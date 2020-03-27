@@ -1,7 +1,6 @@
 <?php
 require('common/header.php');
 require('common/navigation.php');
-require_once('common/utils.php');
 if($error) {
    return;
 }
