@@ -265,9 +265,12 @@ foreach($output['regions'] as $r) {
             $numHHS = 11;
         foreach($seasonYears as $year) {
 	        if(($year*100+36) < $minEpiweek) { continue; }
-            if($year == 2009 && $showPandemic !== 1) {
-                continue;
+            if($year == 2009) {
+                if ($showPandemic !== 1 or ($regionID > $numHHS)) {
+                    continue;
+                }
             }
+            
             if($r['id'] == $regionID && $year == $currentYear) {
                 ?>
                     <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
