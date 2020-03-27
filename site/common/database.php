@@ -1118,10 +1118,6 @@ function get_user_forecast_regions($user_ID) {
     $states = $states[0]['states'];
     $states = explode(",", $states);
 
-    foreach ($states as &$s) {
-        echo($s);
-    }
-
     return $states;
 }
 

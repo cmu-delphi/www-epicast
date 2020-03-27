@@ -110,8 +110,9 @@ function showNavigation($output, $regionID=-1) {
     $missing = 0;
     $submitted = 0;
     $regionIDs = get_user_forecast_regions($output['user_id']);
+    echo (count($output['regions']));
 
-   foreach ($regionIDs as $i) {
+    foreach ($regionIDs as $i) {
         $r = $output['regions'][$i];
         if($r['completed']) {
             $submitted++;
