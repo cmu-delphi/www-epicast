@@ -642,7 +642,10 @@ foreach($output['regions'] as $r) {
        // COVID-19 benchmark: 100 cases in US at epiweek 202010
        covid_us_x = getX(202010);
        drawLine(covid_us_x, getY(yRange[0]), covid_us_x, getY(yRange[1]), {color:"#F00", size:2, dash:[], alpha:1});
-       drawText(g, "COVID-19 in USA", covid_us_x - 15, marginTop() + 12*uiScale, 0, Align.left, Align.top);
+       oldFillStyle=g.fillStyle;
+       g.fillStyle="#600";
+       drawText(g, "COVID-19 in USA", covid_us_x - 15, marginTop() + 36*uiScale, 0, Align.right, Align.top);
+       g.fillStyle=oldFillStyle;
        
       //other regions or past seasons
        function repaintSelection(r, s) {
