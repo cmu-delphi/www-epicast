@@ -140,9 +140,9 @@ $sources = array(
 	    "Spain" => 8002,
 	    "France" => 8003)));
 $sourceIDs = array(
-    8001 => "2019-20 it (ECDC)",
-    8002 => "2019-20 es (ECDC)",
-    8003 => "2019-20 fr (ECDC)");
+    8001 => "CY it ECDC",
+    8002 => "CY es ECDC",
+    8003 => "CY fr ECDC");
 
 // $lastOffset = $seasonOffsets[end]
 // for $src,$map in $sources {
