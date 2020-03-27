@@ -81,11 +81,13 @@ $seasonEnd = 202035;
 $numPastWeeks = getDeltaWeeks($seasonStart, $currentWeek);
 $numFutureWeeks = getDeltaWeeks($currentWeek, $seasonEnd);
 $maxRegionalWILI = 0;
+$minRegionalWILI = 100;
 for($i = 0; $i < count($region['history']['wili']); $i++) {
    $epiweek = $region['history']['date'][$i];
    if ($epiweek < $minEpiweek) { continue; }
    if($showPandemic || $epiweek < 200940 || $epiweek > 201020) {
       $maxRegionalWILI = max($maxRegionalWILI, $region['history']['wili'][$i]);
+      $minRegionalWILI = min($minRegionalWILI, $region['history']['wili'][$i]);
    }
 }
 max($region['history']['wili']); // what is this for? -kmm
@@ -162,9 +164,10 @@ foreach ($sources as $src => $meta) {
     foreach ($meta["members"] as $name => $rid) {
 	    $fn($output, $rid, $seasonStart+5); // hard-coded for now; ECDC counts seasons from epiweek 40
         $n = count($output[$meta["key"]][$rid]["date"]);
-        // none of the international data have the same units as us,
-        // so we're scaling all data from 0 to 1 so we can display it
-        // more easily below
+        
+        // none of the international data have the same units as us.
+        // to cope, first we'll scale it from 0 to 1, then shift and scale it
+        // up to look more like the other curves in the plot.
         $unit_offset = -1;
         $unit_scale = 1;
 	    for($i=0;$i<$n;$i++) {
@@ -182,7 +185,7 @@ foreach ($sources as $src => $meta) {
 	    $lastOffset_i++;
 	    for($i=0;$i<$n;$i++) {
             $wili = $output[$meta["key"]][$rid]["wili"][$i];
-            $wili = ($wili - $unit_offset) / $unit_scale;
+            $wili = ($wili - $unit_offset) / $unit_scale * $maxRegionalWILI + $minRegionalWILI;
 	        $region['history']['date'][$lastHistory_i] = $output[$meta["key"]][$rid]["date"][$i];
 	        $region['history']['wili'][$lastHistory_i] = $wili;
 	        $lastHistory_i++;
