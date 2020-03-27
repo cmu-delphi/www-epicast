@@ -271,10 +271,10 @@ foreach($output['regions'] as $r) {
                 }
             }
             
-            if($r['id'] == $regionID && $year == $currentYear) {
+            if($r['id'] == $regionID && $year == $currentYear) { // does this ever actually happen? -kmm
                 ?>
                     <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
-                        <span class="effect_tiny"><?= sprintf('current year') ?></span>
+                        <span class="effect_tiny"><?= sprintf('current year (CY)') ?></span>
                     </div>
                 <?php
             } else {
@@ -286,13 +286,12 @@ foreach($output['regions'] as $r) {
                 <?php
                 if ($year == $currentYear) {
                     ?>
-                        <span class="effect_tiny"><?= sprintf('current year') ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
+                        <span class="effect_tiny"><?= sprintf('current year (CY)') ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
                     </div>
                     <?php
                 } elseif ($year > 3000) {
                     // this indicates an international dataset. See preamble for setup.
                     ?>
-                    <!-- [<?php foreach($sourceIDs as $y => $label) printf("%s:%s, ",$y,$label); ?>] -->
                         <span class="effect_tiny"><?= sprintf('%s',$sourceIDs[$year]) ?></span>
                     </div>
                     <?php
