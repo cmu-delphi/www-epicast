@@ -1113,16 +1113,12 @@ function get_user_forecast_regions($user_ID) {
     $task_group = $user_ID % ($num_task_groups - 1);
 
     $query = "SELECT states FROM ec_fluv_mturk_tasks WHERE `taskID` = {$task_group}";
-    $result = mysql_query($query);
-    while ($row = mysql_fetch_assoc($result)) {
-        $regionIDs = $row;
-    }
-    foreach ($regionIDs as &$i) {
-        echo($i);
-        echo gettype($i);
-    }
+    $states = array();
+    $states = readSqlResult($query, $states);
+    $states = $states[0]['states'];
+    $states = explode(",", $states);
 
-    return array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 56);
+    return $states;
 }
 
 
