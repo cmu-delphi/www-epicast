@@ -369,9 +369,7 @@ foreach($output['regions'] as $r) {
       if($r['id'] !== $regionID) continue; // what happens if we don't?
       ?>
       regionNames[<?= $r['id'] ?>] = '<?= $r['name'] ?>';
-      pastWili[<?= $r['id'] ?>] = [<?php
-         foreach($r['history']['wili'] as $v){printf('%.2f,',$v);}
-         ?>];
+      pastWili[<?= $r['id'] ?>] = [<?php foreach($r['history']['wili'] as $v){printf('%.2f,',$v);} ?>];
       pastEpiweek[<?= $r['id'] ?>] = [<?php foreach($r['history']['date'] as $v){printf('%s,',$v);}?>];
       forecast[<?= $r['id'] ?>] = [<?php
          $offset = count($r['forecast']['date']);
@@ -389,9 +387,11 @@ foreach($output['regions'] as $r) {
       curveStyles[<?= $r['id'] ?>] = {};
       <?php
       foreach($seasonYears as $year) {
-            ?>
-            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= $year == $currentYear ? "#000" : getColor($r['id'], $year) ?>', size: <?= $year == $currentYear ? 2 : 1 ?>, dash: [], alpha: <?= $year == $currentYear ? 1 : 0.4 ?>};                                                                              }
-   }
+          ?>
+            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= $year == $currentYear ? "#000" : getColor($r['id'], $year) ?>', size: <?= $year == $currentYear ? 2 : 1 ?>, dash: [], alpha: <?= $year == $currentYear ? 1 : 0.4 ?>};
+            <?php
+        }
+    } // end $output['regions'] as $r
    ?>
    var selectedSeasons = [];
    var showLastForecast = true;
