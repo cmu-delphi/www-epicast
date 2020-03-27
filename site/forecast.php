@@ -694,7 +694,7 @@ foreach($output['regions'] as $r) {
       var lfStyle = {color: '#aaa', size: 2, dash: DASH_STYLE};
       if(showLastForecast) {
          // shift x axis by 30 weeks.
-          drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length - 5, lfStyle);
+          drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length, lfStyle);
 	  stitchCurves(regionID, lfStyle, getY(lastForecast[0]), 0);
       }
 
