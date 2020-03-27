@@ -721,7 +721,7 @@ foreach($output['regions'] as $r) {
       if(showLastForecast) {
          // shift x axis by 30 weeks.
           drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length - 5, lfStyle);
-	  stitchCurves(r, lfStyle, getY(lastForecast[0]), 0);
+	  stitchCurves(regionID, lfStyle, getY(lastForecast[0]), 0);
       }
 
        //current region and latest season
