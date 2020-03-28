@@ -3,7 +3,7 @@ require_once('utils.php');
 require_once('settings.php');
 
 define("NUM_REGIONS", 64);
-define("NUM_CURRENT_REGIONS", 14);
+define("NUM_CURRENT_REGIONS", 11);
 define("NUM_AGEGROUPS", 6);
 
 function getResult(&$output) {
@@ -209,13 +209,13 @@ function getEpiweekInfo(&$output) {
         $output['epiweek']['season'] = array(
           'year' => $current_year,
           'start' => $current_year * 100 + 40,
-          'end' => ($current_year + 1) * 100 + 35,
+          'end' => ($current_year + 1) * 100 + 20,
         );
       } else {
         $output['epiweek']['season'] = array(
           'year' => $current_year - 1,
           'start' => ($current_year - 1) * 100 + 40,
-          'end' => $current_year * 100 + 35,
+          'end' => $current_year * 100 + 20,
         );
       }
       $output['epiweek']['round_epiweek'] = intval($row['round_epiweek']);
@@ -333,12 +333,11 @@ Output:
    $output['regions'] - An array of regions, indexed by region ID
 */
 function getRegions(&$output, $userID) {
-//    echo "in getRegions";
    $temp = array();
    if(getEpiweekInfo($temp) !== 1) {
       return getResult($temp);
    }
-   $result = mysql_query("SELECT r.`id`, r.`name`, r.`states`, r.`population`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM active_ec_fluv_regions r LEFT JOIN ec_fluv_submissions s ON s.`user_id` = {$userID} AND s.`region_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
+   $result = mysql_query("SELECT r.`id`, r.`name`, r.`states`, r.`population`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM ec_fluv_regions r LEFT JOIN ec_fluv_submissions s ON s.`user_id` = {$userID} AND s.`region_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
    $regions = array();
    while($row = mysql_fetch_array($result)) {
       $region = array(
@@ -352,13 +351,7 @@ function getRegions(&$output, $userID) {
    }
    $output['regions'] = &$regions;
    
-//    foreach($output['regions'] as $r) {
-//       echo $r["id"];
-//       echo ' ';
-//       echo $r["completed"];
-//    }
-   
-   setResult($output, count($regions) == NUM_CURRENT_REGIONS ? 1 : 2);
+   setResult($output, count($regions) == NUM_REGIONS ? 1 : 2);
    return getResult($output);
 }
 
@@ -1107,6 +1100,22 @@ function getNextLocation($mturkID, $regionID) {
     }
 }
 
+
+function get_user_forecast_regions($user_ID) {
+    $num_task_groups = 6;
+    $task_group = $user_ID % ($num_task_groups + 1);
+
+    $query = "SELECT states FROM ec_fluv_mturk_tasks WHERE `taskID` = {$task_group}";
+    $states = array();
+    $states = readSqlResult($query, $states);
+    $states = $states[0]['states'];
+    $states = explode(",", $states);
+
+    return $states;
+}
+
+
+
 function save_random_code_mturk($userID, $code) {
     $result = mysql_query("INSERT INTO ec_fluv_mturk_code_match (`user_id`, `code`) VALUES ({$userID}, {$code})");
   if ($result == FALSE) {
@@ -1511,4 +1520,63 @@ function resetEpicast(&$output, $year, $firstEpiweek, $lastEpiweek, $deadline, $
    return getResult($output);
 }
 
+/*
+===== getECDCILI =====
+Purpose:
+   Returns ECDC ILI history for a country
+Input:
+   $output - The array of return values (array reference)
+   $regionID - The numeric ID for the country
+   $firstWeek - The first epiweek (currently ignored; will always return data for the 2019/2020 season)
+Output:
+   $output['result'] will contain the following values:
+      1 - Success
+      1 - Failure
+   $output['history'] - Arrays of epiweeks and historical incidence (ILI per 100k) for the country
+*/
+function getECDCILI(&$output, $regionID, $firstWeek) {
+    $country = "";
+    switch($regionID) {
+    case 8001: $country = "Italy"; break;
+    case 8002: $country = "Spain"; break;
+    case 8003: $country = "France"; break;
+    case 8004: $country = "Netherlands"; break;
+    case 8005: $country = "Ireland"; break;
+    case 8006: $country = "United Kingdom - Scotland"; break;
+    case 8007: $country = "Belgium"; break;
+    default: $country = "?"; break;
+    }
+    $query = "SELECT ed.`epiweek`, ed.`incidence_rate`
+    FROM epidata.`ecdc_ili` AS ed
+    JOIN (
+            SELECT `epiweek`, max(`issue`) AS `latest`
+            FROM epidata.`ecdc_ili` AS latest_ed
+        WHERE latest_ed.`region` = \"{$country}\" AND latest_ed.`epiweek` >= {$firstWeek}
+            GROUP BY latest_ed.`epiweek`
+        ) AS issues ON ed.`epiweek` = issues.`epiweek` AND ed.`issue` = issues.`latest`
+    WHERE ed.`region` = \"{$country}\" AND ed.`epiweek` >= {$firstWeek}
+    ORDER BY ed.`epiweek` ASC";
+    $result = mysql_query($query);
+    
+    $date = array();
+    $wili = array();
+    while($row=mysql_fetch_array($result)) {
+        $ew = intval($row['epiweek']);
+        while($firstWeek < $ew) {
+            array_push($date, $firstWeek);
+            array_push($wili, -1);
+            $firstWeek = addEpiweeks($firstWeek, 1);
+        }
+        array_push($date, $ew);
+        array_push($wili, floatval($row['incidence_rate']));
+        $firstWeek = addEpiweeks($firstWeek, 1);
+    }
+    if (!array_key_exists($output,"ecdc")) {
+        $output['ecdc'] = array();
+    }
+    // leaving this as wili for now even though it's not really
+    $output['ecdc'][$regionID] = array('date' => &$date, 'wili' => &$wili);
+    setResult($output, 1);
+    return getResult($output);
+}
 ?>

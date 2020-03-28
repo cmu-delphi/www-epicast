@@ -35,21 +35,21 @@ if($_offline) {
    }
    
    ?>
+
+
    <div class="box_section">
       <div class="box_section_title">
          Post <?= formatEpiweek($output['epiweek']['round_epiweek']) ?> Forecast
-         
-<!--          <div class="box_section_subtitle">
+
+          <div class="box_section_subtitle">
             Due by 10:00 AM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
-         </div> -->
-         
-         <div class="box_section_subtitle">
-            Due by 10:00 AM (ET) on Thursday.
          </div>
-      </div>
-      <div>
-         
-    <div class="box_section">
+
+
+   </div>
+
+
+   <div class="box_section">
       <div class="box_section_title">
          <div class="box_section_subtitle">
             *** The following few paragraphs are new and important – please read them carefully ***
@@ -63,9 +63,16 @@ if($_offline) {
          Starting this week, we will change the Crowdcast interface to provide you with more COVID-related and pandemic-related information and links.
          </div>
 
+      <?php
+            createLink('FAQ', 'FAQ.php#top');
+       ?>
+
    </div>
-         
-         
+
+
+
+
+      <div>
          <?php
          $time = $output['epiweek']['remaining'];
          $value = '';
@@ -117,9 +124,19 @@ if($_offline) {
       </div>
    </div>
    <?php
-   $numRegion = 14;
-   if($output['stat_completed'] >= $numRegion) {
+   // This approach will work next week, but not for w12, because
+   // stat_competed counts regions the user may have already submitted
+   // but aren't assigned anymore :(
+   //$numRegion=11;
+   //if($output['stat_completed'] >= $numRegion) {
+   $missing = 0;
+   foreach (get_user_forecast_regions($output['user_id']) as $ri) {
+      if (!$output['regions'][$ri]['completed']) { $missing++; }
+   }
+   if ($missing == 0) {
       ?>
+      <!-- <?= $output['stat_completed'] ?> stat_completed -->
+      
       <div class="box_section">
          <div class="box_section_title">
             Nice job, you're finished!
@@ -151,18 +168,14 @@ if($_offline) {
 
    <div class="box_section">
       <div class="box_section_title">
-         COVID-19 in the News
+         Flu in the News
          <div class="box_section_subtitle">
-            Use the latest news to make better forecasts!
+            Use the latest flu news to make better forecasts!
          </div>
       </div>
       <!-- news -->
-      <div>
-         <i class="fa fa-external-link"></i>
-         <a target="_blank" href="https://coronavirus.jhu.edu/map.html">JHU's COVID-19 Page</a>
-      </div>
       <div class="center" style="width: 75%; margin-left: auto; margin-right: auto;">
-        <a target="_blank" href="https://www.google.com/search?q=COVID-19&rlz=1C5CHFA_enUS845US845&oq=COVID-19&aqs=chrome..69i57j0l5j69i61l2.2171j0j1&sourceid=chrome&ie=UTF-8">Google News</a>
+        <a target="_blank" href="https://www.google.com/search?hl=en&gl=us&tbm=nws&q=flu+news">Google News</a>
       </div>
       <!-- /news -->
    </div>
@@ -205,23 +218,15 @@ if($_offline) {
       <div class="box_section_title">
          External Resources
          <div class="box_section_subtitle">
-            Other Information and Data
+            Flu Information and Data
          </div>
       </div>
       <div class="box_list left">
          <div class="box_decision_title centered" style="width: 100%"><i class="fa fa-info-circle"></i> Information</div>
          <div>
             <i class="fa fa-external-link"></i>
-            <a target="_blank" href="https://www.cdc.gov/coronavirus/2019-ncov/index.html">CDC's COVID-19 Portal</a>
-         </div>
-         <div>
-            <i class="fa fa-external-link"></i>
-            <a target="_blank" href="https://www.who.int/emergencies/diseases/novel-coronavirus-2019">WHO's COVID-19 Page</a>
-         </div>
-<!--          <div>
-            <i class="fa fa-external-link"></i>
             <a target="_blank" href="https://www.cdc.gov/flu/index.htm">CDC's Flu Portal</a>
-         </div> -->
+         </div>
          <div>
             <i class="fa fa-external-link"></i>
             <a target="_blank" href="https://en.wikipedia.org/wiki/Influenza">Influenza on Wikipedia</a>
@@ -237,11 +242,10 @@ if($_offline) {
       </div>
       <div class="box_list left">
          <div class="box_decision_title centered" style="width: 100%"><i class="fa fa-line-chart"></i> Data</div>
-         
-<!--          <div>
+         <div>
             <i class="fa fa-external-link"></i>
             <a target="_blank" href="https://gis.cdc.gov/grasp/fluview/fluportaldashboard.html">CDC's FluView WebApp</a>
-         </div> -->
+         </div>
          <div>
             <i class="fa fa-external-link"></i>
             <a target="_blank" href="https://www.ncdc.noaa.gov/">NOAA's Climate Normals</a>
@@ -250,10 +254,10 @@ if($_offline) {
             <i class="fa fa-external-link"></i>
             <a target="_blank" href="https://www.google.org/flutrends/us/#US">Google Flu Trends</a>
          </div> -->
-<!--          <div>
+         <div>
             <i class="fa fa-external-link"></i>
             <a target="_blank" href="http://www.healthtweets.org/">Flu Nowcasting using Twitter</a>
-         </div> -->
+         </div>
       </div>
 <!--       <div class="box_list left">
          <div class="box_decision_title centered" style="width: 100%"><i class="fa fa-book"></i> Literature</div>
