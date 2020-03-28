@@ -1,9 +1,9 @@
 var DRAW_POINTS = true;
 var TICK_SIZE = 5;
 var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-var LABEL_X = 'Date (Epiweek, Month)';
-var LABEL_Y = 'Flu Activity (% of all doctors’ office visits that involve flu-like symptoms)';
-var LABEL_Y_HOSP = 'Hospitlization Rate';
+var LABEL_X = 'Date (weeks)';
+var LABEL_Y = 'Flu Activity (% of all outpatient visits that involve flu-like symptoms)';
+var LABEL_Y_HOSP = 'Hospitalization Rate';
 var MARGIN_LEFT = 60;
 var MARGIN_BOTTOM = 60;
 var MARGIN_RIGHT = 12;
@@ -45,3 +45,5 @@ function marginLeft() { return MARGIN_LEFT * uiScale; }
 function marginRight() { return MARGIN_RIGHT * uiScale; }
 function marginTop() { return MARGIN_TOP * uiScale; }
 function marginBottom() { return MARGIN_BOTTOM * uiScale; }
+function max(x1,x2) { if (x1>x2) { return x1; } return x2; }
+function min(x1,x2) { if (x1<x2) { return x1; } return x2; }

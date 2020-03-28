@@ -1540,6 +1540,10 @@ function getECDCILI(&$output, $regionID, $firstWeek) {
     case 8001: $country = "Italy"; break;
     case 8002: $country = "Spain"; break;
     case 8003: $country = "France"; break;
+    case 8004: $country = "Netherlands"; break;
+    case 8005: $country = "Ireland"; break;
+    case 8006: $country = "United Kingdom - Scotland"; break;
+    case 8007: $country = "Belgium"; break;
     default: $country = "?"; break;
     }
     $query = "SELECT ed.`epiweek`, ed.`incidence_rate`

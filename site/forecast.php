@@ -81,11 +81,13 @@ $seasonEnd = 202035;
 $numPastWeeks = getDeltaWeeks($seasonStart, $currentWeek);
 $numFutureWeeks = getDeltaWeeks($currentWeek, $seasonEnd);
 $maxRegionalWILI = 0;
+$minRegionalWILI = 100;
 for($i = 0; $i < count($region['history']['wili']); $i++) {
    $epiweek = $region['history']['date'][$i];
    if ($epiweek < $minEpiweek) { continue; }
    if($showPandemic || $epiweek < 200940 || $epiweek > 201020) {
       $maxRegionalWILI = max($maxRegionalWILI, $region['history']['wili'][$i]);
+      $minRegionalWILI = min($minRegionalWILI, $region['history']['wili'][$i]);
    }
 }
 max($region['history']['wili']); // what is this for? -kmm
@@ -127,22 +129,24 @@ $seasonYears = array_reverse($seasonYears);
 //    "UK":{"UK":60002019}
 // }
 
-?>
-<!-- breadcrumb: before setting up intl data sources -->
-<?php
 
 $sources = array(
     "ECDC" => array(
 	"fn" => "getECDCILI",
 	"key" => "ecdc",
 	"members" => array(
-	    "Italy" => 8001,
-	    "Spain" => 8002,
-	    "France" => 8003)));
-$sourceIDs = array(
-    8001 => "CY it ECDC",
-    8002 => "CY es ECDC",
-    8003 => "CY fr ECDC");
+	    //"Italy" => 8001,
+	    //"Spain" => 8002,
+	    "France" => 8003,
+        "Netherlands" => 8004,
+        "Ireland" => 8005,
+        "UK - Scotland" => 8006,
+        "Belgium" => 8007,
+    )));
+$sourceIDs = array();
+foreach($sources["ECDC"]["members"] as $country => $cid) {
+    $sourceIDs[$cid] = $country.", ECDC";
+}
 
 // $lastOffset = $seasonOffsets[end]
 // for $src,$map in $sources {
@@ -161,10 +165,15 @@ foreach ($sources as $src => $meta) {
     $fn = $meta["fn"];
     foreach ($meta["members"] as $name => $rid) {
 	    $fn($output, $rid, $seasonStart+5); // hard-coded for now; ECDC counts seasons from epiweek 40
+        
         $n = count($output[$meta["key"]][$rid]["date"]);
-        // none of the international data have the same units as us,
-        // so we're scaling all data from 0 to 1 so we can display it
-        // more easily below
+?>
+<!-- <?= $name ?>: <?= $n ?> results -->
+<?php
+
+        // none of the international data have the same units as us.
+        // to cope, first we'll scale it from 0 to 1, then shift and scale it
+        // up to look more like the other curves in the plot.
         $unit_offset = -1;
         $unit_scale = 1;
 	    for($i=0;$i<$n;$i++) {
@@ -182,7 +191,7 @@ foreach ($sources as $src => $meta) {
 	    $lastOffset_i++;
 	    for($i=0;$i<$n;$i++) {
             $wili = $output[$meta["key"]][$rid]["wili"][$i];
-            $wili = ($wili - $unit_offset) / $unit_scale;
+            $wili = ($wili - $unit_offset) / $unit_scale * $maxRegionalWILI/2 + $minRegionalWILI;
 	        $region['history']['date'][$lastHistory_i] = $output[$meta["key"]][$rid]["date"][$i];
 	        $region['history']['wili'][$lastHistory_i] = $wili;
 	        $lastHistory_i++;
@@ -251,7 +260,7 @@ foreach($output['regions'] as $r) {
          <div style="clear: both;"></div>
       </div>
 
-       <div class="box_status_line"><div style="margin:20px 180px 10px 180px; padding:5px 40px; background:white; font-weight:normal; font-size:12px; text-align:left"><p><b>Additional data for the 2019-2020 COVID-19 pandemic</b></p><p>The European Centre for Disease Control (ECDC) publishes ILI data for its member nations. COVID-19 reached Italy and several other EU nations ahead of the USA, and the ECDC ILI data for those countries may be useful to your forecasts. The ECDC metrics are different, so <b>while the shape of the curves is accurate, the y-values have been scaled to fit in the plot</b>. For more information on the ECDC data, see the methods section of <a href="https://www.ecdc.europa.eu/sites/default/files/documents/AER_for_2015-influenza-seasonal_0.pdf">the 2015 surveillance report on seasonal Influenza</a>.</p></div></div>
+       <div class="box_status_line"><div style="margin:20px 180px 10px 180px; padding:5px 40px; background:white; font-weight:normal; font-size:12px; text-align:left"><p><b>Additional data for the 2019-2020 COVID-19 pandemic</b></p><p>The European Centre for Disease Control (ECDC) publishes ILI data for its member nations. COVID-19 reached Italy and several other EU nations ahead of the USA, and the ECDC ILI data for those countries may be useful to your forecasts. This is a rapidly changing situation and not all ECDC reporting countries seem to agree on whether COVID-19 encounters count as ILI activity. We have excluded counties whose ECDC reporting is suspiciously similar to their 2018-2019 season, which unfortunately includes Italy and Spain. Germany is also ahead of us, but does not report ILI data. The ECDC ILI units are not a percent of visits, so <b>while the shape of the curves is accurate, the y-values have been scaled to fit in the plot</b>. For more information on the ECDC data, see the methods section of <a href="https://www.ecdc.europa.eu/sites/default/files/documents/AER_for_2015-influenza-seasonal_0.pdf">the 2015 surveillance report on seasonal Influenza</a>.</p></div></div>
 
    </div>
    <div id="box_side_bar">
@@ -289,7 +298,7 @@ foreach($output['regions'] as $r) {
                 <?php
                 if ($year == $currentYear) {
                     ?>
-                        <span class="effect_tiny"><?= sprintf('current year (CY)') ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
+                        <span class="effect_tiny"><?= sprintf('current year') ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
                     </div>
                     <?php
                 } elseif ($year > 3000) {
@@ -354,7 +363,7 @@ foreach($output['regions'] as $r) {
       <?php
       foreach($seasonYears as $year) {
           ?>
-            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= $year == $currentYear ? "#000" : getColor($r['id'], $year) ?>', size: <?= $year == $currentYear ? 2 : 1 ?>, dash: [], alpha: <?= $year == $currentYear ? 1 : 0.4 ?>};
+            curveStyles[<?= $r['id'] ?>][<?= $year ?>] = {color: '<?= $year == $currentYear ? "#000" : getColor($r['id'], $year) ?>', size: <?= $year == $currentYear ? 2 : $year > 3000 ? 1.5 : 1 ?>, dash: [], alpha: <?= $year == $currentYear ? 1 : 0.4 ?>};
             <?php
         }
     } // end $output['regions'] as $r
@@ -624,30 +633,44 @@ foreach($output['regions'] as $r) {
          for(var epiweek = xRange[0]; epiweek <= xRange[1]; epiweek = addEpiweeks(epiweek, 1)) {
             var x = getX(epiweek);
             if(skip == 0) {
-               drawText(g, '' + (epiweek % 100), x, canvas.height - row3, 0, Align.center, Align.center);
+               drawText(g, 'w' + (epiweek % 100), x, canvas.height - row3, 0, Align.center, Align.center);
             }
             skip = (skip + 1) % xInterval;
             drawLine(x, axisY + TICK_SIZE, x, axisY + 1, AXIS_STYLE);
          }
          //months
+	 var on = true;
          var month = Math.floor((xRange[0] % 100 - 1) / getNumWeeks(Math.floor(xRange[0] / 100)) * MONTHS.length);
          for(var epiweek = xRange[0]; epiweek <= xRange[1]; epiweek = addEpiweeks(epiweek, 4.35)) {
             var label = MONTHS[month];
             if(month == 0) {
                label += '\'' + (Math.floor(epiweek / 100) % 100);
             }
+
+	    // shade alternate months to show disjoint with weeks
+            oldFillStyle=g.fillStyle;
+            g.fillStyle = on ? '#eee' : '#fff'; on = !on;
+            x1 = max(xRange[0]-1, addEpiweeks(epiweek,-4.35/2));
+            y1 = canvas.height - row3 + row2/4;
+            x2 = min(addEpiweeks(x1, 4.35), xRange[1])
+            g.fillRect(getX(x1), y1, getX(x2)-getX(x1), row2/2);
+            g.fillStyle = oldFillStyle;
+
             drawText(g, label, getX(epiweek), canvas.height - row2, 0, Align.center, Align.center);
             month = (month + 1) % MONTHS.length;
          }
          //label
          drawText(g, LABEL_X, canvas.width / 2, canvas.height - row1, 0, Align.center, Align.center, 1.5, ['bold', 'Calibri']);
       }
-       // COVID-19 benchmark: 100 cases in US at epiweek 202010
-       covid_us_x = getX(202010);
-       drawLine(covid_us_x, getY(yRange[0]), covid_us_x, getY(yRange[1]), {color:"#F00", size:2, dash:[], alpha:1});
+       // COVID-19 benchmarks
+       covid_us_1   = getX(202005); // first cases
+       covid_us_100 = getX(202010); // 100 cases
+       drawLine(covid_us_100, getY(yRange[0]), covid_us_100, getY(yRange[1]), {color:"#F00", size:2, dash:[], alpha:1});
+       drawLine(covid_us_1, getY(yRange[0]), covid_us_1, getY(yRange[1]), {color:"#F00", size:1, dash:[], alpha:1});
        oldFillStyle=g.fillStyle;
        g.fillStyle="#600";
-       drawText(g, "COVID-19 in USA", covid_us_x - 15, marginTop() + 36*uiScale, 0, Align.right, Align.top);
+       drawText(g, "<- 100 cases in USA", covid_us_100 + 10, marginTop() + 36*uiScale, 0, Align.left, Align.top);
+       drawText(g, "First COVID-19 case in USA ->", covid_us_1 - 10, marginTop() + 36*uiScale, 0, Align.right, Align.top);
        g.fillStyle=oldFillStyle;
        
       //other regions or past seasons
