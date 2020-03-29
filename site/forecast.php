@@ -763,10 +763,10 @@ foreach($output['regions'] as $r) {
      var error = errors[regionID-1];
      var end = seasonIndices[<?= $currentYear ?>]+1 < seasonOffsets.length ? seasonOffsets[seasonIndices[<?= $currentYear ?>]+1] : pastWili[regionId].length;
          for (var i=0; i<9; i = i + 2) {
-             var currentSeasonIndex = end - i/2 - 1;
+            var currentSeasonIndex = end - i/2 - 1;
             var above = -error[i]*scale;
             var below = error[i+1]*scale;
-            var x_weekNumber = addEpiweeks(epiweek, -(i/2)-1);
+            var x_weekNumber = addEpiweeks(epiweek, -(i/2));
             var x = getX(x_weekNumber);
             var y = getY(pastWili[regionID][currentSeasonIndex]);
             g.fillStyle = 'rgba(0, 0, 0, 0.5)';
