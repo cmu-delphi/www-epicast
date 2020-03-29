@@ -1114,6 +1114,16 @@ function get_user_forecast_regions($user_ID) {
     $states = $states[0]['states'];
     $states = explode(",", $states);
 
+    if ($user_ID == 1775) {
+        array_push($states, 13);
+
+    }
+
+    if ($user_ID == 1) {
+        array_push($states, 2);
+
+    }
+
     return $states;
 }
 
