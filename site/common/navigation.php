@@ -124,6 +124,7 @@ function showNavigation($output, $regionID=-1) {
    <div class="box_section">
       <div class="bot_stat_value centered">
          <i class="fa fa-check"></i> Submitted: <?= $submitted ?>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-question"></i> Still Missing: <?= $missing ?>
+         </br> If you see a blank forecast interface, please reload the webpage.
       </div>
      
       <?php
