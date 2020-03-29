@@ -137,11 +137,11 @@ $sources = array(
 	"members" => array(
 	    //"Italy" => 8001,
 	    //"Spain" => 8002,
-	    "France" => 8003,
-        "Netherlands" => 8004,
-        "Ireland" => 8005,
-        "UK - Scotland" => 8006,
-        "Belgium" => 8007,
+	    // "France" => 8003,
+            // "Netherlands" => 8004,
+            // "Ireland" => 8005,
+            // "UK - Scotland" => 8006,
+            // "Belgium" => 8007,
     )));
 $sourceIDs = array();
 foreach($sources["ECDC"]["members"] as $country => $cid) {
