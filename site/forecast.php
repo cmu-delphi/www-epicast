@@ -241,6 +241,7 @@ foreach($output['regions'] as $r) {
 
 ?>
 <?php fail('Whoa, your screen is too small! Please visit this site on a non-mobile device, or try to expand your browser window. Sorry about that!', 'box_nocanvas', true); ?>
+<div> If your display seems erratic, please hard-reload the page (e.g. ctl-shift-I ctl-shift-R in Chrome) </div>
 <div id="box_main_ui">
    <div id="box_status" class="box_status any_neutral right">
       <div class="box_status_line">
