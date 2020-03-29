@@ -138,12 +138,12 @@ if($_offline) {
       <!-- <?= $output['stat_completed'] ?> stat_completed -->
       
       <div class="box_section">
-         <div class="box_section_subtitle">
-               If you see a blank forecast page, please reload the webpage.
          <div class="box_section_title">
             Nice job, you're finished!
             <div class="box_section_subtitle">
                But you can still edit your forecasts below!
+               </br>
+               If you see a blank forecast page, please reload the webpage.
             </div>
          </div>
       </div>
