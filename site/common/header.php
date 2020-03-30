@@ -28,7 +28,7 @@ $output = array();
       <noscript>
       			<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz:700|Alegreya+SC:700" />
       </noscript>
-      <link href="css/style.css" rel="stylesheet" />
+      <link href="css/style.php" rel="stylesheet" />
    </head>
    <body>
       <a name="top"></a>
