@@ -28,15 +28,15 @@ $map = array(
 <div class="box_article centered">
     <?php
     //Round info
-    if(getEpiweekInfo($output) != 1) {
+    if(getEpiweekInfo($dbh, $output) != 1) {
         fail('Error loading epiweek info');
     }
     //List of all regions
-    if(getRegions($output, 1) != 1) {
+    if(getRegions($dbh, $output, 1) != 1) {
         fail('Error loading region info');
     }
     //List of all age groups
-    if(getAgeGroups($output, 1) != 1) {
+    if(getAgeGroups($dbh, $output, 1) != 1) {
         fail('Error loading age group info');
     }
     ?>
@@ -112,7 +112,7 @@ $map = array(
             array_push($targets, $r);
         }
     }
-    showNavigation($targets);
+    showNavigation($dbh,$targets);
     ?>
 
 <!--    <p class="centered"><i>Hover a button above to see which states are in that region or the location of the state in the map below.</i></p>-->

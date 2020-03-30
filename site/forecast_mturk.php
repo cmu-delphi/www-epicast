@@ -6,7 +6,7 @@ if($error) {
 }
 
 
-if(getYearForCurrentSeason($output) !== 1) {
+if(getYearForCurrentSeason($dbh, $output) !== 1) {
    die('unable to get year for current season');
 } else {
    $current_season = $output['season']['year'];
@@ -21,23 +21,23 @@ function getColor($regionID, $seasonID) {
 
 $regionID = intval($_GET["id"]);
 $mturkID = $_GET['mturkId'];
-$userID = getUserIDByMturkID($mturkID);
+$userID = getUserIDByMturkID($dbh, $mturkID);
 
-loadUserPreferences_mturk($output, $userID);
+loadUserPreferences_mturk($dbh, $output, $userID);
 
 if(isset($_REQUEST['skip_instructions'])) {
    $output['user_preferences']['skip_instructions'] = 1;
-   if(saveUserPreferences_mturk($output, $userID, $output['user_preferences']) !== 1) {
+   if(saveUserPreferences_mturk($dbh, $output, $userID, $output['user_preferences']) !== 1) {
       fail('Error updating preferences');
    }
 }
 
 //Epiweek info
-if(getEpiweekInfo_mturk($output) !== 1) {
+if(getEpiweekInfo_mturk($dbh, $output) !== 1) {
    fail('Error loading epiweek info');
 }
 //List of all regions
-if(getRegionsExtended_mturk($output, $userID) !== 1) {
+if(getRegionsExtended_mturk($dbh, $output, $userID) !== 1) {
    fail('Error loading region details, history, or forecast');
 }
 ?>
@@ -49,7 +49,7 @@ if(!isset($output['regions'][$regionID])) {
 }
 
 //Forecast from last round
-if(loadForecast_mturk($output, $userID, $regionID, true) !== 1) {
+if(loadForecast_mturk($dbh, $output, $userID, $regionID, true) !== 1) {
    fail('Error loading last week forecast');
 }
 
@@ -821,7 +821,7 @@ foreach($output['regions'] as $r) {
          <?php
           //Move to the next missing region, or go home
           $next = null;
-          $unfinishedStates = getNextLocation($mturkID, $regionID);
+          $unfinishedStates = getNextLocation($dbh, $mturkID, $regionID);
 
           if (sizeof($unfinishedStates) !== 0) {
              foreach ($unfinishedStates as $i) {

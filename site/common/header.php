@@ -34,13 +34,13 @@ $output = array();
       <a name="top"></a>
 <?php
 $error = false;
-if(!$dbh) {
+if($dbh->connect_errno) {
    //Couldn't connect to the database
-   fail("Couldn't connect to the database.");
+   fail("Couldn't connect to the database: (".$dbh->connect_errno.") ".$dbh->connect_error);
    require_once('footer.php');
    $error = true;
 } else {
-   $hash = attemptLogin($output);
+   $hash = attemptLogin($dbh, $output);
    if($hash == null || (isset($fullHeader) && $fullHeader)) {
       //Big header
       ?>

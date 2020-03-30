@@ -16,17 +16,17 @@ if(!$dbh) {
       $output['action'] = $_REQUEST['action'];
       $hash = mysql_real_escape_string($_REQUEST['hash']);
       $temp = array();
-      if(getUserByHash($temp, $hash) == 1) {
+      if(getUserByHash($dbh, $temp, $hash) == 1) {
          $forecast = array();
          foreach($_REQUEST['f'] as $f) {
             array_push($forecast, floatval(mysql_real_escape_string($f)));
          }
-         if(getEpiweekInfo($temp) == 1) {
+         if(getEpiweekInfo($dbh, $temp) == 1) {
             if(count($forecast) >= 1 && count($forecast) <= 53) {
                //Save the forecast
                $group_id = intval(mysql_real_escape_string($_REQUEST['group_id']));
                $commit = ($_REQUEST['action'] == 'forecast');
-               if(saveForecast_hosp($temp, $temp['user_id'], $group_id, $forecast, $commit) == 1) {
+               if(saveForecast_hosp($dbh, $temp, $temp['user_id'], $group_id, $forecast, $commit) == 1) {
                   //Success
                   $output['result'] = 1;
                } else {

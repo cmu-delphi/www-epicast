@@ -16,7 +16,7 @@ if ($skipLogin) {
     $output['user_hash'] = '8d5e3ea4a8872002240f44cd35b0298b';
 }
 
-if(getYearForCurrentSeason($output) !== 1) {
+if(getYearForCurrentSeason($dbh, $output) !== 1) {
    die('unable to get year for current season');
 } else {
    $current_season = $output['season']['year'];
@@ -31,16 +31,16 @@ function getColor($regionID, $seasonID) {
 }
 
 //Epiweek info
-if(getEpiweekInfo($output) !== 1) {
+if(getEpiweekInfo($dbh, $output) !== 1) {
    fail('Error loading epiweek info');
 }
 //List of all regions
-if(getRegionsExtended($output, $output['user_id']) !== 1) {
+if(getRegionsExtended($dbh, $output, $output['user_id']) !== 1) {
    fail('Error loading region details, history, or forecast');
 }
 if(isset($_REQUEST['skip_instructions'])) {
    $output['user_preferences']['skip_instructions'] = 1;
-   if(saveUserPreferences($output, $output['user_id'], $output['user_preferences']) !== 1) {
+   if(saveUserPreferences($dbh, $output, $output['user_id'], $output['user_preferences']) !== 1) {
       fail('Error updating preferences');
    }
 }
@@ -56,7 +56,7 @@ if(!isset($output['regions'][$regionID])) {
    fail('Invalid region_id');
 }
 //Forecast from last round
-if(loadForecast($output, $output['user_id'], $regionID, true) !== 1) {
+if(loadForecast($dbh, $output, $output['user_id'], $regionID, true) !== 1) {
    fail('Error loading last week forecast');
 }
 $lastForecast = $output['forecast'];
@@ -106,7 +106,7 @@ if($seasonOffsets[count($seasonOffsets) - 1] != 0) {
 $seasonOffsets = array_reverse($seasonOffsets);
 $seasonYears = array_reverse($seasonYears);
 //Nowcast (may or may not be available)
-//getNowcast($output, addEpiweeks($currentWeek, 1), $regionID);
+//getNowcast($dbh, $output, addEpiweeks($currentWeek, 1), $regionID);
 //if(getPreference($output, 'skip_instructions', 'int') !== 1) {
 //   ?>
 <!--   <div class="box_section">-->

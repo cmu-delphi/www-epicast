@@ -46,21 +46,21 @@ function getMiniHash($hash) {
    return strtoupper(substr($hash, 0, 8));
 }
 
-function attemptLogin(&$output) {
+function attemptLogin($dbh, &$output) {
    $hash = null;
    if(isset($_REQUEST['user']) || isset($_SESSION['hash_fluv'])) {
       if(isset($_REQUEST['user'])) {
-         $hash = mysql_real_escape_string($_REQUEST['user']);
+         $hash = mysqli_real_escape_string($dbh, $_REQUEST['user']);
       } else {
-         $hash = mysql_real_escape_string($_SESSION['hash_fluv']);
+         $hash = mysqli_real_escape_string($dbh, $_SESSION['hash_fluv']);
       }
-      if(getUserByHash($output, $hash) === 1) {
+      if(getUserByHash($dbh, $output, $hash) === 1) {
          $hash = getMiniHash($output['user_hash']);
          $_SESSION['hash_fluv'] = $hash;
-         if(loadDefaultPreferences($output) !== 1) {
+         if(loadDefaultPreferences($dbh, $output) !== 1) {
             fail('Error loading default preferences');
          }
-         if(loadUserPreferences($output, $output['user_id']) !== 1) {
+         if(loadUserPreferences($dbh, $output, $output['user_id']) !== 1) {
             fail('Error loading user preferences');
          }
       } else {

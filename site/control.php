@@ -61,11 +61,11 @@ if(isAdmin($output)) {
          $prefValue = getSafeValue('pref_value');
          $temp = array();
          // TODO - getUserByEmail updates the "last seen" value for the user; normally that's ok, but here we don't want that
-         if(getUserByEmail($temp, $email) !== 1) {
+         if(getUserByEmail($dbh, $temp, $email) !== 1) {
             fail('Unable to load user preferences for that email.');
          } else {
             $preferences = array($prefName => $prefValue);
-            if(saveUserPreferences($temp, $temp['user_id'], $preferences) !== 1) {
+            if(saveUserPreferences($dbh, $temp, $temp['user_id'], $preferences) !== 1) {
                fail('User found, but unable to save preferences.');
             } else {
                success('User preferences have been updated.');
@@ -104,7 +104,7 @@ if(isAdmin($output)) {
       </div>
       <?php
       // get season year for sanity checking
-      if(getYearForCurrentSeason($output) !== 1) {
+      if(getYearForCurrentSeason($dbh, $output) !== 1) {
          fail('Unable to get season info.');
       }
       $minEpiweek = $output['season']['year'] * 100 + 30;
@@ -127,7 +127,7 @@ if(isAdmin($output)) {
             $ok = false;
          }
          $temp = array();
-         if(!$ok || updateSeason($temp, $firstEpiweek, $lastEpiweek) !== 1) {
+         if(!$ok || updateSeason($dbh, $temp, $firstEpiweek, $lastEpiweek) !== 1) {
             fail('Unable to update season info.');
          } else {
             success('Updated season info.');
@@ -142,7 +142,7 @@ if(isAdmin($output)) {
             $ok = false;
          }
          $temp = array();
-         if(!$ok || updateRound($temp, $currentEpiweek, $deadline) !== 1) {
+         if(!$ok || updateRound($dbh, $temp, $currentEpiweek, $deadline) !== 1) {
             fail('Unable to update round info.');
          } else {
             success('Updated round info.');
@@ -153,9 +153,9 @@ if(isAdmin($output)) {
          $dryRunForeast = getSafeValue('dry_run_forecast');
          $submitForecast = getSafeValue('submit_forecast');
          $temp = array();
-         if(setTaskDate($temp, $TASK_SEND_REMINDER_EMAILS, $emailReminders) !== 1 ||
-            setTaskDate($temp, $TASK_DRY_RUN_FORECAST, $dryRunForeast) !== 1 ||
-            setTaskDate($temp, $TASK_SUBMIT_FORECAST, $submitForecast) !== 1
+         if(setTaskDate($dbh, $temp, $TASK_SEND_REMINDER_EMAILS, $emailReminders) !== 1 ||
+            setTaskDate($dbh, $temp, $TASK_DRY_RUN_FORECAST, $dryRunForeast) !== 1 ||
+            setTaskDate($dbh, $temp, $TASK_SUBMIT_FORECAST, $submitForecast) !== 1
          ) {
             fail('Unable to update task info.');
          } else {
@@ -163,15 +163,15 @@ if(isAdmin($output)) {
          }
       }
       // get fresh values
-      if(getEpiweekInfo($output) !== 1) {
+      if(getEpiweekInfo($dbh, $output) !== 1) {
          fail('Unable to get round info.');
       }
-      if(getYearForCurrentSeason($output) !== 1) {
+      if(getYearForCurrentSeason($dbh, $output) !== 1) {
          fail('Unable to get season info.');
       }
-      if(getTaskDate($output, $TASK_SEND_REMINDER_EMAILS) !== 1 ||
-         getTaskDate($output, $TASK_DRY_RUN_FORECAST) !== 1 ||
-         getTaskDate($output, $TASK_SUBMIT_FORECAST) !== 1
+      if(getTaskDate($dbh, $output, $TASK_SEND_REMINDER_EMAILS) !== 1 ||
+         getTaskDate($dbh, $output, $TASK_DRY_RUN_FORECAST) !== 1 ||
+         getTaskDate($dbh, $output, $TASK_SUBMIT_FORECAST) !== 1
       ) {
          fail('Unable to get task info.');
       }
@@ -246,7 +246,7 @@ if(isAdmin($output)) {
             $ok = false;
          }
          $temp = array();
-         if(!$ok || resetEpicast($temp, $year1, $firstEpiweek, $lastEpiweek, $deadline, $epicastAdmin) !== 1) {
+         if(!$ok || resetEpicast($dbh, $temp, $year1, $firstEpiweek, $lastEpiweek, $deadline, $epicastAdmin) !== 1) {
             fail('Unable to reset Crowdcast.');
          } else {
             success('Crowdcast has been reset.');

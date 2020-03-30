@@ -6,7 +6,7 @@ if($error) {
    return;
 }
 
-if(getYearForCurrentSeason($output) !== 1) {
+if(getYearForCurrentSeason($dbh, $output) !== 1) {
    die('unable to get year for current season');
 } else {
    $current_season = $output['season']['year'];
@@ -20,24 +20,24 @@ function getColor($regionID, $seasonID) {
 }
 
 //Epiweek info
-if(getEpiweekInfo($output) !== 1) {
+if(getEpiweekInfo($dbh, $output) !== 1) {
    fail('Error loading epiweek info');
 }
 
 //List of all regions
-if(getRegionsExtended($output, $output['user_id']) !== 1) {
+if(getRegionsExtended($dbh, $output, $output['user_id']) !== 1) {
    fail('Error loading region details, history, or forecast');
 }
 
 if(isset($_REQUEST['skip_instructions'])) {
    $output['user_preferences']['skip_instructions'] = 1;
-   if(saveUserPreferences($output, $output['user_id'], $output['user_preferences']) !== 1) {
+   if(saveUserPreferences($dbh, $output, $output['user_id'], $output['user_preferences']) !== 1) {
       fail('Error updating preferences');
    }
 }
 
 if(isset($_REQUEST['region_id'])) {
-   $regionID = intval(mysql_real_escape_string($_REQUEST['region_id']));
+   $regionID = intval(mysqli_real_escape_string($dbh, $_REQUEST['region_id']));
 } else {
    //Default to USA National
    $regionID = 1;
@@ -45,11 +45,11 @@ if(isset($_REQUEST['region_id'])) {
 
 //Specific region
 if(!isset($output['regions'][$regionID])) {
-   fail('Invalid region_id');
+   fail('Invalid region_id '.$regionID);
 }
 
 //Forecast from last round
-if(loadForecast($output, $output['user_id'], $regionID, true) !== 1) {
+if(loadForecast($dbh, $output, $output['user_id'], $regionID, true) !== 1) {
    fail('Error loading last week forecast');
 }
 
@@ -164,7 +164,7 @@ $nextOffset = $lastHistory_i;
 foreach ($sources as $src => $meta) {
     $fn = $meta["fn"];
     foreach ($meta["members"] as $name => $rid) {
-	    $fn($output, $rid, $seasonStart+5); // hard-coded for now; ECDC counts seasons from epiweek 40
+	    $fn($dbh, $output, $rid, $seasonStart+5); // hard-coded for now; ECDC counts seasons from epiweek 40
         
         $n = count($output[$meta["key"]][$rid]["date"]);
 ?>
@@ -201,7 +201,7 @@ foreach ($sources as $src => $meta) {
 }
 
 //Nowcast (may or may not be available)
-getNowcast($output, addEpiweeks($currentWeek, 1), $regionID);
+getNowcast($dbh, $output, addEpiweeks($currentWeek, 1), $regionID);
 
 if(getPreference($output, 'skip_instructions', 'int') !== 1) {
    ?>
@@ -1031,7 +1031,7 @@ foreach($output['regions'] as $r) {
          <?php
           $next = null;
 
-          $regionIDs = get_user_forecast_regions($output['user_id']);
+          $regionIDs = get_user_forecast_regions($dbh, $output['user_id']);
           $currentID = $region['id'];
 
           // why twice? -kmm

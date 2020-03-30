@@ -49,7 +49,7 @@ $limit = 10;
          
          <div class="box_leaderboard">
             <?php
-            if(getLeaderboard($output, 'total', $limit) !== 1) {
+            if(getLeaderboard($dbh, $output, 'total', $limit) !== 1) {
                fail('Error loading total scores');
             } else {
                ?>
@@ -62,9 +62,9 @@ $limit = 10;
          
          <div class="box_leaderboard">
             <?php
-            if(getLeaderboard($output, 'last', $limit) !== 1) {
+            if(getLeaderboard($dbh, $output, 'last', $limit) !== 1) {
                fail('Error loading last scores');
-            } else if(getEpiweekInfo($output) !== 1) {
+            } else if(getEpiweekInfo($dbh, $output) !== 1) {
                fail('Error loading epiweek info');
             } else {
                ?>
