@@ -241,7 +241,7 @@ foreach($output['regions'] as $r) {
 
 ?>
 <?php fail('Whoa, your screen is too small! Please visit this site on a non-mobile device, or try to expand your browser window. Sorry about that!', 'box_nocanvas', true); ?>
-<div align="center"> If your display seems erratic, please hard-reload the page (e.g. ctl (or command on Mac)-shift-R in Chrome, for other browser please refer to <a href="https://www.hexnode.com/mobile-device-management/help/how-to-clear-cache-and-hard-reload-browsers/" target="_blank"> this website. </a>) </div>
+<div align="center"> If your display seems erratic, please hard-reload the page (e.g. ctl (or command on Mac)-shift-R in Chrome, for other browsers please refer to <a href="https://www.hexnode.com/mobile-device-management/help/how-to-clear-cache-and-hard-reload-browsers/" target="_blank"> this website. </a>) </div>
 <div id="box_main_ui">
    <div id="box_status" class="box_status any_neutral right">
       <div class="box_status_line">
