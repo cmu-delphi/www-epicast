@@ -15,22 +15,22 @@ if($_offline) {
 <div class="box_article centered">
    <?php
    //Round info
-   if(getEpiweekInfo($output) != 1) {
+   if(getEpiweekInfo($dbh, $output) != 1) {
       fail('Error loading epiweek info');
    }
    //User stats
    
 //    echo "calling getUserStats";
-   if(getUserStats($output, $output['user_id'], $output['epiweek']['round_epiweek']) != 1) {
+   if(getUserStats($dbh, $output, $output['user_id'], $output['epiweek']['round_epiweek']) != 1) {
       fail('Error loading user info');
    }
    
 // Hospitalization forecasts: turned off for this season.
-//    if(getUserStats_hosp($output, $output['user_id'], $output['epiweek']['round_epiweek']) != 1) {
+//    if(getUserStats_hosp($dbh, $output, $output['user_id'], $output['epiweek']['round_epiweek']) != 1) {
 //       fail('Error loading user info');
 //    }
    
-   if(getRegions($output, $output['user_id']) != 1) {
+   if(getRegions($dbh, $output, $output['user_id']) != 1) {
       fail('Error loading region info');
    }
    
@@ -130,7 +130,7 @@ if($_offline) {
    //$numRegion=11;
    //if($output['stat_completed'] >= $numRegion) {
    $missing = 0;
-   foreach (get_user_forecast_regions($output['user_id']) as $ri) {
+   foreach (get_user_forecast_regions($dbh, $output['user_id']) as $ri) {
       if (!$output['regions'][$ri]['completed']) { $missing++; }
    }
    if ($missing == 0) {

@@ -11,7 +11,7 @@ if ($skipLogin) {
     $output['user_hash'] = '8d5e3ea4a8872002240f44cd35b0298b';
 }
 
-if(getYearForCurrentSeason($output) !== 1) {
+if(getYearForCurrentSeason($dbh, $output) !== 1) {
    die('unable to get year for current season');
 } else {
    $current_season = $output['season']['year'];
@@ -24,18 +24,18 @@ function getColor($group_id, $seasonID) {
 }
 
 //Epiweek info
-if(getEpiweekInfo($output) !== 1) {
+if(getEpiweekInfo($dbh, $output) !== 1) {
    fail('Error loading epiweek info');
 }
 //List of all age groups
 
-if(getAgeGroupsExtended($output, $output['user_id'], 'ca') !== 1) {
+if(getAgeGroupsExtended($dbh, $output, $output['user_id'], 'ca') !== 1) {
    fail('Error loading age group details, history, or forecast');
 }
 
 $group_id = $_GET["id"];
 
-if(loadForecast_hosp($output, $output['user_id'], $group_id, true) !== 1) {
+if(loadForecast_hosp($dbh, $output, $output['user_id'], $group_id, true) !== 1) {
    fail('Error loading last week forecast');
 }
 

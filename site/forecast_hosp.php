@@ -4,7 +4,7 @@ require_once('common/navigation.php');
 if($error) {
    return;
 }
-if(getYearForCurrentSeason($output) !== 1) {
+if(getYearForCurrentSeason($dbh, $output) !== 1) {
    die('unable to get year for current season');
 } else {
    $current_season = $output['season']['year'];
@@ -17,18 +17,18 @@ function getColor($group_id, $seasonID) {
 }
 
 //Epiweek info
-if(getEpiweekInfo($output) !== 1) {
+if(getEpiweekInfo($dbh, $output) !== 1) {
    fail('Error loading epiweek info');
 }
 //List of all age groups
 
-if(getAgeGroupsExtended($output, $output['user_id']) !== 1) {
+if(getAgeGroupsExtended($dbh, $output, $output['user_id']) !== 1) {
    fail('Error loading age group details, history, or forecast');
 }
 
 // if(isset($_REQUEST['skip_instructions'])) {
 //    $output['user_preferences']['skip_instructions'] = 1;
-//    if(saveUserPreferences($output, $output['user_id'], $output['user_preferences']) !== 1) {
+//    if(saveUserPreferences($dbh, $output, $output['user_id'], $output['user_preferences']) !== 1) {
 //       fail('Error updating preferences');
 //    }
 // }
@@ -48,7 +48,7 @@ $group_id = $_GET["id"];
 // }
 //Forecast from last round, particularly for this region
 // why need this when we have already called getAgeGroupsExtended
-if(loadForecast_hosp($output, $output['user_id'], $group_id, true) !== 1) {
+if(loadForecast_hosp($dbh, $output, $output['user_id'], $group_id, true) !== 1) {
    fail('Error loading last week forecast');
 }
 

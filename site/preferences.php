@@ -3,7 +3,7 @@ require_once('common/header.php');
 if($error) {
    return;
 }
-if(getYearForCurrentSeason($output) !== 1) {
+if(getYearForCurrentSeason($dbh, $output) !== 1) {
    die('unable to get year for current season');
 } else {
    $current_season = $output['season']['year'];
@@ -70,7 +70,7 @@ $account_fields = array();
          $value = intval(mysql_real_escape_string($_REQUEST[$f]));
          $preferences['survey_' . $f] = ($value === 0 || $value === 1) ? $value : null;
       }
-      $updatedSurvey = (saveUserPreferences($output, $output['user_id'], $preferences) == 1);
+      $updatedSurvey = (saveUserPreferences($dbh, $output, $output['user_id'], $preferences) == 1);
    }
    if(allSet('action', $email_fields) && $_REQUEST['action'] == 'email') {
       $preferences = array();
@@ -78,7 +78,7 @@ $account_fields = array();
          $value = intval(mysql_real_escape_string($_REQUEST[$f]));
          $preferences['email_' . $f] = ($value === 1) ? $value : 0;
       }
-      $updatedEmail = (saveUserPreferences($output, $output['user_id'], $preferences) == 1);
+      $updatedEmail = (saveUserPreferences($dbh, $output, $output['user_id'], $preferences) == 1);
    }
    if(allSet('action', $advanced_fields) && $_REQUEST['action'] == 'advanced') {
       $preferences = array();
@@ -127,7 +127,7 @@ $account_fields = array();
          $initials = $output['default_preferences']['advanced_initials'];
       }
       $preferences['advanced_initials'] = strtoupper($initials);
-      $updatedAdvanced = (saveUserPreferences($output, $output['user_id'], $preferences) == 1);
+      $updatedAdvanced = (saveUserPreferences($dbh, $output, $output['user_id'], $preferences) == 1);
    }
    if(allSet('action', $account_fields) && $_REQUEST['action'] == 'deactivate_account') {
       $preferences = array();
@@ -135,15 +135,15 @@ $account_fields = array();
       foreach($email_fields as $f) {
          $preferences['email_' . $f] = 0;
       }
-      $updatedAccount = (saveUserPreferences($output, $output['user_id'], $preferences) == 1);
+      $updatedAccount = (saveUserPreferences($dbh, $output, $output['user_id'], $preferences) == 1);
    }
    if(allSet('action', $account_fields) && $_REQUEST['action'] == 'reactivate_account') {
       $preferences = array();
       $preferences['email_notifications'] = 1;
-      $updatedAccount = (saveUserPreferences($output, $output['user_id'], $preferences) == 1);
+      $updatedAccount = (saveUserPreferences($dbh, $output, $output['user_id'], $preferences) == 1);
    }
    if(getPreference($output, 'skip_intro', 'int') != 1) {
-      saveUserPreferences($output, $output['user_id'], array('skip_intro' => 1));
+      saveUserPreferences($dbh, $output, $output['user_id'], array('skip_intro' => 1));
       ?>
       <div class="box_section">
          <div class="box_section_title">

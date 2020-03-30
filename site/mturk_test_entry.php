@@ -31,7 +31,7 @@ if (!$_GET['mturkId']) {
 <?php
 } else {
   // If provided, set session variable and redirect to forecast_test
-  $firstLocationID = getNextLocation($_GET['mturkId'], -1)[0];
+  $firstLocationID = getNextLocation($dbh, $_GET['mturkId'], -1)[0];
 ?>
 
   <script type='text/javascript'>

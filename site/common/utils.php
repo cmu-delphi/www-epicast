@@ -54,13 +54,13 @@ function attemptLogin(&$output) {
       } else {
          $hash = mysql_real_escape_string($_SESSION['hash_fluv']);
       }
-      if(getUserByHash($output, $hash) === 1) {
+      if(getUserByHash($dbh, $output, $hash) === 1) {
          $hash = getMiniHash($output['user_hash']);
          $_SESSION['hash_fluv'] = $hash;
-         if(loadDefaultPreferences($output) !== 1) {
+         if(loadDefaultPreferences($dbh, $output) !== 1) {
             fail('Error loading default preferences');
          }
-         if(loadUserPreferences($output, $output['user_id']) !== 1) {
+         if(loadUserPreferences($dbh, $output, $output['user_id']) !== 1) {
             fail('Error loading user preferences');
          }
       } else {

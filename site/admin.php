@@ -52,14 +52,14 @@ if(isAdmin($output)) {
       }
    }
    //Round info
-   if(getEpiweekInfo($output) !== 1) {
+   if(getEpiweekInfo($dbh, $output) !== 1) {
       fail('Error loading round info');
    }
    if(isset($_REQUEST['x'])) {
       $output['epiweek']['round_epiweek'] = addEpiweeks($output['epiweek']['round_epiweek'], -1);
    }
    //Load the userbase
-   if(getUserbase($output, $sortField, $sortDir) !== 1) {
+   if(getUserbase($dbh, $output, $sortField, $sortDir) !== 1) {
       fail('Error loading userbase');
    }
    //Stats
