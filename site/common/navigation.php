@@ -125,7 +125,7 @@ function showNavigation($output, $regionID=-1) {
       <div class="bot_stat_value centered">
          <i class="fa fa-check"></i> Submitted: <?= $submitted ?>&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-question"></i> Still Missing: <?= $missing ?>
          </br> 
-     If your display seems erratic, please hard-reload the page (e.g. ctl (or command on Mac)-shift-R in Chrome, for other browser please refer to <a href="https://www.hexnode.com/mobile-device-management/help/how-to-clear-cache-and-hard-reload-browsers/" target="_blank"> this website. </a>)
+     If your display seems erratic, please hard-reload the page (e.g. ctl (or command on Mac)-shift-R in Chrome, for other browsers please refer to <a href="https://www.hexnode.com/mobile-device-management/help/how-to-clear-cache-and-hard-reload-browsers/" target="_blank"> this website. </a>)
 
 
       </div>
