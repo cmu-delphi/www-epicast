@@ -289,7 +289,7 @@ foreach($output['regions'] as $r) {
             if($r['id'] == $regionID && $year == $currentYear) { // does this ever actually happen? -kmm
                 ?>
                     <div id="container_<?= $r['id'] ?>_<?= $year ?>" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
-                        <span class="effect_tiny"><?= sprintf('current year (CY)') ?></span>
+                        <span class="effect_tiny"><?= sprintf('current year') ?></span>
                     </div>
                 <?php
             } else {
@@ -301,7 +301,7 @@ foreach($output['regions'] as $r) {
                 <?php
                 if ($year == $currentYear) {
                     ?>
-                        <span class="effect_tiny"><?= sprintf('current year') ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
+                        <span class="effect_tiny"><?= sprintf('current year') ?><?= ($year == 2009 ? ' pandemic' : '') ?></span>
                     </div>
                     <?php
                 } elseif ($year > 3000) {
@@ -312,7 +312,7 @@ foreach($output['regions'] as $r) {
                     <?php
                 } else {
                     ?>
-                    <span class="effect_tiny"><?= sprintf('%d-%s', $year, substr((string)($year + 1), 2, 2)) ?><?= ($year == 2009 ? ' pdm' : '') ?></span>
+                    <span class="effect_tiny"><?= sprintf('%d-%s', $year, substr((string)($year + 1), 2, 2)) ?><?= ($year == 2009 ? ' pandemic' : '') ?></span>
                 </div>
                     <?php
                 }

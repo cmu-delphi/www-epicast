@@ -515,7 +515,7 @@ input.padded {
 }
 #box_histories {
    text-align: left;
-   width: 142px;
+   width: 152px;
    overflow-y: scroll;
    padding: 4px;
    margin: 0px;
