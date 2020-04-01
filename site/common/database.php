@@ -348,8 +348,8 @@ function getRegions($dbh, &$output, $userID) {
 
       $region = array(
          'id' => intval($row['id']),
-         'name' => $row['name'],
-         'states' => $region_name,
+         'name' => $region_name,
+         'states' => $row['states'],
          'population' => intval($row['population']),
          'completed' => intval($row['completed']) === 1,
       );
