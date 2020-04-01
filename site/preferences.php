@@ -155,7 +155,7 @@ $account_fields = array();
                Hi, <?= $output['user_name'] ?>!
                Since this is your first time to login, we thought it might be helpful to take you to the preferences page.
                Below you will find a privacy statement, email settings, and a short survey.
-               By default, we will notify you by email every week as soon as the new weekly flu data is available (this usually happens by Friday afternoon), and provide a convenient link to your forecasting page.
+               By default, we will notify you by email every week as soon as the new weekly COVID-19 and other ILI data is available (this usually happens by Friday afternoon), and provide a convenient link to your forecasting page.
                If you like, we can also send an email reminder before each deadline.
                The survey is completely optional, but it would help us analyze the data.
                The next time you login you will be taken straight to your forecasting home page, but you can always come back to this page by clicking the "Preferences" link in the top right corner of any Crowdcast page.
@@ -240,7 +240,7 @@ $account_fields = array();
                <input type="hidden" name="action" value="email" />
                <p class="text_title left">Email Types</p>
                <p class="text_body left">
-                  Every Friday the CDC publishes new flu data, and every Monday the forecasting round ends.
+                  Every Friday the CDC publishes new data on COVID-19 and influenza-like illness (ILI), and every Monday the forecasting round ends.
                   We'll send you an email to notify you as soon as the new data is available, as long as your account is active.
                   In addition, there are a couple of additional emails you may want to receive which you can select below.
                </p>
@@ -290,7 +290,7 @@ $account_fields = array();
                   createPreference($output, 'My initials are', $prefix, 'initials', 'initials');
                   ?>
                </table>
-
+<!-- Everybody gets 2009 pandemic data, so don't ask
                <p class="text_title left">2009 Pandemic</p>
                <p class="text_body left">
                   The 2009-2010 flu season was atypical because a rare event known as a <i>Pandemic</i> occurred.
@@ -299,21 +299,23 @@ $account_fields = array();
                   For these reasons, the 2009 pandemic season is hidden by default.
                   However, forecasters who have experience in influenza epidemiology may find it helpful to display this atypical season.
                   Here you have the option to display the 2009 pandemic season on the chart alongside the more typical epidemic seasons.
-               </p>
+               </p> 
                <table cellspacing="0">
                   <?php
                   $prefix = 'advanced_';
                   createPreference($output, 'Show the 2009 pandemic', $prefix, 'pandemic', 'bool');
                   ?>
                </table>
-
+               -->
+               
+<!-- Nobody gets data earlier than 2009, so don't ask 
                <p class="text_title left">Additional Seasons --- for National and Regional Forecasts</p>
                <p class="text_body left">
                   The flu sentinel surveillance network (ILINet) has been growing and evolving since its inception in 1997.
                   However, due to the small size of the network initially, the earliest data for the U.S. nation and the 10 HHS regions is noisy and is not available during the summer months.
                   Starting around the 2004-2005 flu season, the data becomes much more stable and is available year-round.
                   For these reasons, seasons from 1997 through 2003 for national and regional level forecasts are hidden by default.
-                  However, forecasters who have experience in influenza epidemiology may find it helpful to display these additional seasons.
+                  However, forecasters who have experience in epidemiology may find it helpful to display these additional seasons.
                   Here you have the option to display the 1997-2003 seasons on the chart alongside the later seasons for which we have more reliable data.
                </p>
                <table cellspacing="0">
@@ -321,7 +323,7 @@ $account_fields = array();
                   $prefix = 'advanced_';
                   createPreference($output, 'Show seasons prior to 2004 for U.S. nation and regions', $prefix, 'prior', 'bool');
                   ?>
-
+ -->
 
                </table>
                <p class="text_title left">Default Seasons --- for National and Regional Forecasts</p>
@@ -342,7 +344,7 @@ $account_fields = array();
                      if($season == 2009 && getPreference($output, 'advanced_pandemic', 'int') !== 1) {
                        $show = false;
                      }
-                     if($show) {
+                     if($show && $season>=2009) {
                         if(($hiddenSeasons & 1) === 0) {
                            $selected = 'checked="checked"';
                         } else {

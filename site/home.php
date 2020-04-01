@@ -37,37 +37,20 @@ if($_offline) {
    ?>
 
 
-   <div class="box_section">
-      <div class="box_section_title">
-         Post <?= formatEpiweek($output['epiweek']['round_epiweek']) ?> Forecast
+    <div class="box_section">
+        <div class="box_section_title">
+            Post <?= formatEpiweek($output['epiweek']['round_epiweek']) ?> Forecast
 
-          <div class="box_section_subtitle">
-            Due by 10:00 AM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
-         </div>
-
-
-   </div>
-
-
-   <div class="box_section">
-      <div class="box_section_title">
-         <div class="box_section_subtitle">
-            *** The following few paragraphs are new and important – please read them carefully ***
-
-             </br>
-
-         Due to the coronavirus pandemic, and at the request of CDC, we will be continuing our Epicast activity (now renamed ‘Crowdcast’) for as long as needed.  We ask you to continue to forecast exactly the same thing you have been forecasting until now -- the prevalence of influenza-like- illness (ILI).  In the coming months, as flu and other winter respiratory illnesses recede, the majority of ILI is expected to be attributable to COVID-19.
-             </br>
-         One big change to expect is that a pandemic such as COVID-19 tends to be much larger than a typical flu epidemic wave, and can occur at any time of the year.  Another thing to expect is that strong mitigation efforts may dampen the pandemic wave.
-             </br>
-         Starting this week, we will change the Crowdcast interface to provide you with more COVID-related and pandemic-related information and links.
-         </div>
-
-      <?php
-            createLink('FAQ', 'FAQ.php#top');
-       ?>
-
-   </div>
+            <div class="box_section_subtitle">
+                Due by 10:00 AM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
+            </div>
+            
+    <?php
+    createLink('FAQ', 'FAQ.php#top');
+    ?>
+            
+        </div>
+    </div>
 
 
 
@@ -168,14 +151,15 @@ if($_offline) {
 
    <div class="box_section">
       <div class="box_section_title">
-         Flu in the News
+         COVID-19 in the News
          <div class="box_section_subtitle">
-            Use the latest flu news to make better forecasts!
+            Use the latest COVID-19 news to make better forecasts!
          </div>
       </div>
       <!-- news -->
       <div class="center" style="width: 75%; margin-left: auto; margin-right: auto;">
-        <a target="_blank" href="https://www.google.com/search?hl=en&gl=us&tbm=nws&q=flu+news">Google News</a>
+
+        <a target="_blank" href="https://www.google.com/search?hl=en&gl=us&tbm=nws&q=covid-19+news">Google News</a>
       </div>
       <!-- /news -->
    </div>
@@ -189,7 +173,7 @@ if($_offline) {
       </div>
       <div>
          <!-- Twitter: https://about.twitter.com/resources/buttons#tweet -->
-         <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://epicast.org" data-text="Your help is needed this flu season! Submit forecasts for science, and be featured on the leaderboard!" data-hashtags="flu,forecast">Tweet</a>
+         <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://epicast.org" data-text="Your help is needed for COVID-19! Submit forecasts for science, and be featured on the leaderboard!" data-hashtags="covid19,forecast">Tweet</a>
          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
       </div>
       <div>
@@ -218,18 +202,18 @@ if($_offline) {
       <div class="box_section_title">
          External Resources
          <div class="box_section_subtitle">
-            Flu Information and Data
+            COVID-19 Information and Data
          </div>
       </div>
       <div class="box_list left">
          <div class="box_decision_title centered" style="width: 100%"><i class="fa fa-info-circle"></i> Information</div>
          <div>
             <i class="fa fa-external-link"></i>
-            <a target="_blank" href="https://www.cdc.gov/flu/index.htm">CDC's Flu Portal</a>
+            <a target="_blank" href="https://www.cdc.gov/coronavirus/2019-ncov/index.html">CDC's COVID-19 Portal</a>
          </div>
          <div>
             <i class="fa fa-external-link"></i>
-            <a target="_blank" href="https://en.wikipedia.org/wiki/Influenza">Influenza on Wikipedia</a>
+            <a target="_blank" href="https://en.wikipedia.org/wiki/Coronavirus_disease_2019">Coronavirus Disease 2019 on Wikipedia</a>
          </div>
          <div>
             <i class="fa fa-external-link"></i>
@@ -239,7 +223,8 @@ if($_offline) {
             <i class="fa fa-external-link"></i>
             <a target="_blank" href="http://www.kdheks.gov/flu/surveillance.htm">Kansas defintion of ILI</a>
          </div>
-      </div>
+     </div>
+     
       <div class="box_list left">
          <div class="box_decision_title centered" style="width: 100%"><i class="fa fa-line-chart"></i> Data</div>
          <div>
@@ -250,22 +235,11 @@ if($_offline) {
             <i class="fa fa-external-link"></i>
             <a target="_blank" href="https://www.ncdc.noaa.gov/">NOAA's Climate Normals</a>
          </div>
-<!--          <div>
-            <i class="fa fa-external-link"></i>
-            <a target="_blank" href="https://www.google.org/flutrends/us/#US">Google Flu Trends</a>
-         </div> -->
          <div>
             <i class="fa fa-external-link"></i>
             <a target="_blank" href="http://www.healthtweets.org/">Flu Nowcasting using Twitter</a>
          </div>
       </div>
-<!--       <div class="box_list left">
-         <div class="box_decision_title centered" style="width: 100%"><i class="fa fa-book"></i> Literature</div>
-         <div>
-            <i class="fa fa-external-link"></i>
-            <a target="_blank" href="https://delphi.midas.cs.cmu.edu/bibliography.html">The Delphi Bibliography</a>
-         </div>
-      </div> -->
    </div>
 </div>
 <script>

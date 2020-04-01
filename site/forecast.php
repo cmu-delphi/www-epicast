@@ -618,8 +618,9 @@ foreach($output['regions'] as $r) {
             drawLine(getX(xRange[0]), y, getX(xRange[1]), y, GRID_STYLE);
          }
          //label
-         drawText(g, "Flu Activity", row1 - 8 * uiScale, canvas.height / 2, -Math.PI / 2, Align.center, Align.center, 1.5, ['bold', 'Calibri']);
-         drawText(g, "(% of all doctors’ office visits that involve flu-like symptoms)", row1 + 7 * uiScale, canvas.height / 2, -Math.PI / 2, Align.center, Align.center, 1.5, ['', 'Calibri']);
+         drawText(g, "ILI Activity", row1 - 8 * uiScale, canvas.height / 2, -Math.PI / 2, Align.center, Align.center, 1.5, ['bold', 'Calibri']);
+          drawText(g, "(% outpatient visits)", row1 + 7 * uiScale, canvas.height / 2, -Math.PI / 2, Align.center, Align.center, 1.5, ['', 'Calibri']);
+	  
 
          //zoom controls
          var x = 16 * uiScale;
@@ -1211,7 +1212,7 @@ foreach($output['regions'] as $r) {
     //show all seasons that are not hidden
     $hiddenSeasons = getPreference($output, 'hidden_seasons', 'int');
     foreach ($seasonYears as $season) {
-        if(($hiddenSeasons & 1) === 0) { // intl "seasons" may break hidden seasons, but that's okay for now -kmm
+        if($season == 2009 || ($hiddenSeasons & 1) === 0) { // intl "seasons" may break hidden seasons, but that's okay for now -kmm
             ?>toggleSeason(regionID, <?= $season ?>);<?php
         }
         $hiddenSeasons >>= 1;
