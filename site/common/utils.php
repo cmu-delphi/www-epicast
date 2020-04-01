@@ -50,9 +50,9 @@ function attemptLogin(&$output) {
    $hash = null;
    if(isset($_REQUEST['user']) || isset($_SESSION['hash_fluv'])) {
       if(isset($_REQUEST['user'])) {
-         $hash = mysql_real_escape_string($_REQUEST['user']);
+         $hash = mysqli_real_escape_string($dbh, $_REQUEST['user']);
       } else {
-         $hash = mysql_real_escape_string($_SESSION['hash_fluv']);
+         $hash = mysqli_real_escape_string($dbh, $_SESSION['hash_fluv']);
       }
       if(getUserByHash($dbh, $output, $hash) === 1) {
          $hash = getMiniHash($output['user_hash']);
