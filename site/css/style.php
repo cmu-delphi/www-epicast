@@ -523,6 +523,15 @@ input.padded {
    display: block;
 }
 
+#news li {
+    list-style-type:none;
+    padding-top:5px;
+}
+
+#share .social {
+    text-align: center
+    }
+
 img.age_group_img {
     height: 65px;
     width: auto;

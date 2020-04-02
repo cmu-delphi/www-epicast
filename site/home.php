@@ -157,31 +157,48 @@ if($_offline) {
          </div>
       </div>
       <!-- news -->
-      <div class="center" style="width: 75%; margin-left: auto; margin-right: auto;">
-
-        <a target="_blank" href="https://www.google.com/search?hl=en&gl=us&tbm=nws&q=covid-19+news">Google News</a>
+      <div id="news" class="center" style="width: 75%; margin-left: auto; margin-right: auto;">
+          <div class="box_list left">
+                <ul>
+                    <li><a target="_blank" href="https://www.cdc.gov/media/dpk/diseases-and-conditions/coronavirus/coronavirus-2020.html">CDC Newsroom: COVID-19</a></li>
+                    <li><a target="_blank" href="https://news.google.com/topics/CAAqBwgKMJy5lwswj-KuAw">Google News: COVID-19</a></li>
+                    <li><a target="_blank" href="https://news.yahoo.com/coronavirus">Yahoo News: Coronavirus</a></li>
+                    <li><a target="_blank" href="https://www.msn.com/en-us/news/coronavirus">MSN: Coronavirus</a></li>
+                    <li><a target="_blank" href="https://www.reuters.com/live-events/coronavirus-6-id2921484">Reuters Live: Coronavirus</a></li>
+                    <li><a target="_blank" href="https://apnews.com/VirusOutbreak">AP News: Virus Outbreak</a></li>
+                </ul>
+            </div>
+            <div class="box_list left">
+                <ul>
+                    <li><a target="_blank" href="https://graphics.reuters.com/HEALTH-CORONAVIRUS-USA/0100B5K8423/index.html">Reuters Infographic: COVID-19 case map</a></li>
+                    <li><a target="_blank" href="https://arcg.is/0fHmTX">Johns Hopkins COVID-19 Case Tracker</a></li>
+                    <li><a target="_blank" href="https://www.ft.com/coronavirus-latest">Financial Times: Coronavirus Tracker</a></li>
+                    <li><a target="_blank" href="https://ncov2019.live/">nCov2019.live COVID-19 Aggregator</a></li>
+                    <li><a target="_blank" href="https://healthweather.us/">Kinsa US Health Weather Map</a></li>
+                </ul>
+            </div>
       </div>
       <!-- /news -->
    </div>
 
-   <div class="box_section">
+   <div id="share" class="box_section">
       <div class="box_section_title">
          Help Spread The Word
          <div class="box_section_subtitle">
             Please share Crowdcast with your colleagues, friends, and family!
          </div>
       </div>
-      <div>
+      <div class="social">
          <!-- Twitter: https://about.twitter.com/resources/buttons#tweet -->
          <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://epicast.org" data-text="Your help is needed for COVID-19! Submit forecasts for science, and be featured on the leaderboard!" data-hashtags="covid19,forecast">Tweet</a>
          <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
       </div>
-      <div>
+      <div class="social">
          <!-- Facebook: https://developers.facebook.com/docs/plugins/like-button -->
          <iframe id="share_fb" src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fepicast.org&amp;width&amp;layout=button_count&amp;action=like&amp;show_faces=false&amp;share=false&amp;height=21&amp;appId=2243057286" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:21px;" allowTransparency="true"></iframe>
-         <script> document.getElementById("share_fb").style.width = "101px"; </script>
+         <script> document.getElementById("share_fb").style.width = "73px"; </script>
       </div>
-      <div>
+      <div class="social">
          <!-- Google+: https://developers.google.com/+/web/+1button/ -->
          <div class="g-plusone" data-href="https://epicast.org"></div>
          <script type="text/javascript">
@@ -192,7 +209,7 @@ if($_offline) {
             })();
          </script>
       </div>
-      <div>
+      <div class="social">
          <!-- https://www.addthis.com/dashboard -->
          <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-546288ed7b70846a" async="async"></script>
          <div class="addthis_sharing_toolbox"></div>
