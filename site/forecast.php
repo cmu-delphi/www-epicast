@@ -1,5 +1,5 @@
 <?php
-
+ 
 require_once('common/header.php');
 require_once('common/navigation.php');
 if($error) {
