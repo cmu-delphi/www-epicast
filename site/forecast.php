@@ -220,7 +220,7 @@ if(getPreference($output, 'skip_instructions', 'int') !== 1) {
             &nbsp;<i class="fa fa-angle-right"></i>&nbsp; You can edit any part of your forecast by redrawing just that part.<br />
             &nbsp;<i class="fa fa-angle-right"></i>&nbsp; You can adjust a single point by dragging it up or down.<br />
             The animation below demonstrates these actions.
-            (If you don't see the animation, click <a target="_blank" href="images/tutorial.gif">here</a>.)
+            (If you don't see the animation, click <a target="_blank" href="images/tutorial.gif">here</a>.)<!-- ' -->
          </p>
          <video width="1112" height="480" controls autoplay loop>
             <source src="images/tutorial.mp4" type="video/mp4">
@@ -323,6 +323,7 @@ foreach($output['regions'] as $r) {
       </div></div><div id="box_canvas"><canvas id="canvas" width="800" height="400"></canvas></div>
 </div>
 <script>
+<!-- was: forecast.js -->
 var DRAW_POINTS = true;
 var TICK_SIZE = 5;
 var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -427,8 +428,9 @@ function min(x1,x2) { if (x1<x2) { return x1; } return x2; }
     } // end $output['regions'] as $r
    ?>
    var selectedSeasons = [];
-   var showLastForecast = true;
-   var lastForecast = [<?php foreach($lastForecast['wili'] as $v){printf('%.3f,', $v);} ?>];
+    var showLastForecast = <?= $lastForecast['wili'] ? "true" : "false" ?>;
+    var lastForecast = [<?php foreach($lastForecast['wili'] as $v){printf('%.3f,', $v);} ?>];
+    var lastForecastEpiweek = <?= $lastForecast['date'] ? $lastForecast['date'][0] : $currentWeek ?>;
    var timeoutID;
    var lastDrag = null;
    var tooltip = null;
@@ -535,7 +537,7 @@ function min(x1,x2) { if (x1<x2) { return x1; } return x2; }
          for(var i = start; i < end; i++) {
             if(ys[i] >= 0) {
                g.beginPath();
-               var x = getX(xs[i]);
+		var x = getX(modulusEpiweek(xs[i]));
                var y = getY(ys[i]);
                g.moveTo(x, y);
                g.lineTo(x + 1, y);
@@ -544,14 +546,17 @@ function min(x1,x2) { if (x1<x2) { return x1; } return x2; }
          }
     }
     
-   function drawCurve(curve, start, end, epiweekOffset, style) {
+    function drawCurve(curve, start, end, epiweekStart, style, do_drawPoints) {
+	if (typeof do_drawPoints == "undefined") {
+	    do_drawPoints = DRAW_POINTS;
+	}
       var g = getGraphics();
       g.strokeStyle = style.color;
       g.lineWidth = style.size * uiScale;
       g.setLineDash(style.dash);
       g.beginPath();
        var first = true;
-       var epiweek = addEpiweeks(xRange[0], epiweekOffset);
+       var epiweek = epiweekStart; //addEpiweeks(xRange[0], epiweekOffset);
        var xs = []; 
       for(var i = start; i < end; i++) {
          if(curve[i] >= 0) {
@@ -569,10 +574,13 @@ function min(x1,x2) { if (x1<x2) { return x1; } return x2; }
       }
       g.stroke();
       g.setLineDash([]);
-       if(DRAW_POINTS)
+       if(do_drawPoints)
 	   drawPoints(xs, curve, start, end, style, g);
    }
-    function drawCurveXY(xs, ys, start, end, style) {
+    function drawCurveXY(xs, ys, start, end, style, do_drawPoints) {
+	if (typeof do_drawPoints == "undefined") {
+	    do_drawPoints = DRAW_POINTS;
+	}
       var g = getGraphics();
       g.strokeStyle = style.color;
       g.lineWidth = style.size * uiScale;
@@ -593,26 +601,27 @@ function min(x1,x2) { if (x1<x2) { return x1; } return x2; }
       }
       g.stroke();
       g.setLineDash([]);
-	if(DRAW_POINTS) drawPoints(xs, ys, start, end, style, g);
+	if(do_drawPoints) drawPoints(xs, ys, start, end, style, g);
    }
     function stitchCurves(regionID, style, y2, xoffset) {
-      if(forecast[regionID][0] < 0) {
-         return;
-      }
+	if(forecast[regionID][0] < 0) {
+            return;
+	}
 	if (typeof y2 == "undefined") {
 	    y2 = getY(forecast[regionID][0]);
 	}
 	if (typeof xoffset == "undefined") {
 	    xoffset = 1;
-	                
 	}
 
-      var seasonIndex = seasonIndices[<?= $currentYear ?>];
-      var seasonLength = seasonOffsets[seasonIndex+1] - seasonOffsets[seasonIndex];
-      var x1 = getX(addEpiweeks(xRange[0], seasonLength - 1));
-      var y1 = getY(pastWili[regionID][seasonOffsets[seasonIndex + 1] - 1]);
-      var x2 = getX(addEpiweeks(currentWeek, xoffset));
-      drawLine(x1, y1, x2, y2, style);
+	var seasonIndex = seasonIndices[<?= $currentYear ?>];
+	var end = ((seasonIndex+1)<seasonOffsets.length) ? seasonOffsets[seasonIndex+1] : (pastWili[regionID].length-1);
+	var seasonLength = end - seasonOffsets[seasonIndex];
+	var x1 = (addEpiweeks(xRange[0], seasonLength));
+	var y1 = getY(pastWili[regionID][end]);
+	var x2 = (addEpiweeks(currentWeek, xoffset));
+	//console.log("stitch curve:",seasonIndex,end,seasonLength,x1,y1,x2,y2);
+	drawLine(getX(x1), y1, getX(x2), y2, style);
    }
    function drawTooltip(g, str) {
       str = ' ' + str;
@@ -736,7 +745,7 @@ function min(x1,x2) { if (x1<x2) { return x1; } return x2; }
        g.fillStyle=oldFillStyle;
        
       //other regions or past seasons
-       function repaintSelection(r, s) {
+       function repaintSelection(r, s, withPoints) {
 	   if (typeof s == "undefined") {
 	       i = r;
                var r = selectedSeasons[i][0];
@@ -747,24 +756,8 @@ function min(x1,x2) { if (x1<x2) { return x1; } return x2; }
          // var length = totalWeeks;
          <?php if(!$showPandemic) { ?>if(s == 2008) { length -= 12; }<?php } ?>
          
-         
-         // re the below: nah, we stored the dates for a reason.
-         //if(start == 0) {
-         //   var nextStart = seasonOffsets[seasonIndices[s + 1]];
-         //   length = nextStart - start;
-         //   //todo: that -1 at the end should only be there if current season has 53 weeks and past season has 52 weeks
-         //   epiweekOffset = Math.max(0, totalWeeks - length -1);
-         //}
-         
            var end = seasonIndices[s]+1 < seasonOffsets.length ? seasonOffsets[seasonIndices[s]+1] : pastWili[r].length;
-           drawCurveXY(pastEpiweek[r], pastWili[r], start, end, style);
-
-           // forecast gets drawn later, no need to do it twice
-         //if(s == <?= $currentYear ?>) {
-         //   style = {color: style.color, size: style.size, dash: DASH_STYLE};
-         //   drawCurve(forecast[r], 0, 52, numPastWeeks + 1, style);
-         //   stitchCurves(r, style);
-         //}
+           drawCurveXY(pastEpiweek[r], pastWili[r], start, end, style, withPoints);
       }
       for(var i = 0; i < selectedSeasons.length; i++) {
          var isCurrentSeason = (selectedSeasons[i][1] == <?= $currentYear ?>);
@@ -772,24 +765,20 @@ function min(x1,x2) { if (x1<x2) { return x1; } return x2; }
              //Skip the current region's latest season
             continue;
          }
-	  repaintSelection(i);
+	  repaintSelection(i, undefined, false);
       }
 
       //last forecast
       var lfStyle = {color: '#aaa', size: 2, dash: DASH_STYLE};
       if(showLastForecast) {
-         // shift x axis by 30 weeks.
-          drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length, lfStyle);
+          drawCurve(lastForecast, 0, lastForecast.length, lastForecastEpiweek, lfStyle);
 	  stitchCurves(regionID, lfStyle, getY(lastForecast[0]), 0);
       }
 
        //current region and latest season
-       repaintSelection(regionID, <?= $currentYear ?>);
+       repaintSelection(regionID, <?= $currentYear ?>, true);
       var style = {color: '#000', size: 2, dash: DASH_STYLE};
-      //var start = seasonOffsets[seasonOffsets.length - 1];
-      //var end = Math.min(pastWili[regionID].length, start + totalWeeks);
-      //drawCurve(pastWili[regionID], start, end, 0, style);
-      drawCurve(forecast[regionID], 0, 52, numPastWeeks + 1, style);
+      drawCurve(forecast[regionID], 0, 52, currentWeek+1, style);
       stitchCurves(regionID, style);
       
       //nowcast
