@@ -46,10 +46,10 @@ function checkCaptcha($captcha, $ip) {
       } else {
       ?>
          <div class="box_decision" style="width: 80%;">
-            <div class="box_decision_title">This system, originally called ‘Epicast’, was designed to forecast flu-like illnesses.  We will now be using it to forecast COVID-19 because that diseases falls in the category of flu-like illnesses.  To help with our COVID-19 forecasting effort, please sign up below.  We will correct references to ‘flu’ as quickly as we can, but in the meantime they should be understood to refer to COVID-19.</div>
+            <div class="box_decision_title">This system, originally called ‘Epicast’, was designed to forecast flu-like illnesses.  We are now using it to forecast COVID-19, the flu-like illness now in global pandemic.  To help with our COVID-19 forecasting effort, please sign up below. </div>
             <div class="box_decision_title">Research Overview</div>
             <p style="text-align: left;">
-               In this research study, being conducted by Carnegie Mellon University, we ask you each Friday during the flu season to predict current and future flu activity within one or more Health and Human Services regions of the United States. You will be able to enter and submit your predictions online using any modern web browser, and we expect that the entire process will take no more than two minutes per region. There are no expected risks or benefits to participants in this study.
+               In this research study, being conducted by Carnegie Mellon University, we ask you each Friday during the COVID-19 pandemic to predict current and future COVID-19 activity within a group of states or within one or more Health and Human Services regions of the United States. You will be able to enter and submit your predictions online using any modern web browser, and we expect that the entire process will take no more than two minutes per region. There are no expected risks or benefits to participants in this study.
             </p><p style="text-align: left;">
                Your privacy and the confidentiality of your predictions will be strictly protected; we will not share your email address or your individual predictions without your prior written consent. The study is entirely voluntary, and you are free to stop participating or withdraw entirely at any time.
             </p><p style="text-align: left;">
