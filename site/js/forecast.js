@@ -1,8 +1,8 @@
 var DRAW_POINTS = true;
 var TICK_SIZE = 5;
 var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-var LABEL_X = 'Date (weeks)';
-var LABEL_Y = 'Flu Activity (% of all outpatient visits that involve flu-like symptoms)';
+var LABEL_X = '';
+var LABEL_Y = 'ILI Activity (% outpatient visits)';
 var LABEL_Y_HOSP = 'Hospitalization Rate';
 var MARGIN_LEFT = 60;
 var MARGIN_BOTTOM = 60;

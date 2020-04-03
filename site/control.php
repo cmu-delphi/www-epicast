@@ -41,8 +41,8 @@ if(isAdmin($output)) {
          </div>
       </div>
       <div class="any_warning">
-         This page allows you to modify Epicast's database and to control Epicast's scheduled execution.
-         Invalid inputs can break Epicast, <em>or worse</em>.
+         This page allows you to modify Crowdcast's database and to control Crowdcast's scheduled execution.
+         Invalid inputs can break Crowdcast, <em>or worse</em>.
          Be extra cautious.
          When in doubt, ask!
       </div>
@@ -61,11 +61,11 @@ if(isAdmin($output)) {
          $prefValue = getSafeValue('pref_value');
          $temp = array();
          // TODO - getUserByEmail updates the "last seen" value for the user; normally that's ok, but here we don't want that
-         if(getUserByEmail($temp, $email) !== 1) {
+         if(getUserByEmail($dbh, $temp, $email) !== 1) {
             fail('Unable to load user preferences for that email.');
          } else {
             $preferences = array($prefName => $prefValue);
-            if(saveUserPreferences($temp, $temp['user_id'], $preferences) !== 1) {
+            if(saveUserPreferences($dbh, $temp, $temp['user_id'], $preferences) !== 1) {
                fail('User found, but unable to save preferences.');
             } else {
                success('User preferences have been updated.');
@@ -97,18 +97,18 @@ if(isAdmin($output)) {
    </div>
    <div class="box_section">
       <div class="box_section_title">
-         Epicast Settings
+         Crowdcast Settings
          <div class="box_section_subtitle">
             Update season info, round info, and timing of emails and submission.
          </div>
       </div>
       <?php
       // get season year for sanity checking
-      if(getYearForCurrentSeason($output) !== 1) {
+      if(getYearForCurrentSeason($dbh, $output) !== 1) {
          fail('Unable to get season info.');
       }
       $minEpiweek = $output['season']['year'] * 100 + 30;
-      $maxEpiweek = ($output['season']['year'] + 1) * 100 + 35;
+      $maxEpiweek = ($output['season']['year'] + 1) * 100 + 29;
       // attempt to update
       if(hasSubmission('update_season')) {
          $firstEpiweek = intval(getSafeValue('first_contest_round'));
@@ -127,7 +127,7 @@ if(isAdmin($output)) {
             $ok = false;
          }
          $temp = array();
-         if(!$ok || updateSeason($temp, $firstEpiweek, $lastEpiweek) !== 1) {
+         if(!$ok || updateSeason($dbh, $temp, $firstEpiweek, $lastEpiweek) !== 1) {
             fail('Unable to update season info.');
          } else {
             success('Updated season info.');
@@ -142,7 +142,7 @@ if(isAdmin($output)) {
             $ok = false;
          }
          $temp = array();
-         if(!$ok || updateRound($temp, $currentEpiweek, $deadline) !== 1) {
+         if(!$ok || updateRound($dbh, $temp, $currentEpiweek, $deadline) !== 1) {
             fail('Unable to update round info.');
          } else {
             success('Updated round info.');
@@ -153,9 +153,9 @@ if(isAdmin($output)) {
          $dryRunForeast = getSafeValue('dry_run_forecast');
          $submitForecast = getSafeValue('submit_forecast');
          $temp = array();
-         if(setTaskDate($temp, $TASK_SEND_REMINDER_EMAILS, $emailReminders) !== 1 ||
-            setTaskDate($temp, $TASK_DRY_RUN_FORECAST, $dryRunForeast) !== 1 ||
-            setTaskDate($temp, $TASK_SUBMIT_FORECAST, $submitForecast) !== 1
+         if(setTaskDate($dbh, $temp, $TASK_SEND_REMINDER_EMAILS, $emailReminders) !== 1 ||
+            setTaskDate($dbh, $temp, $TASK_DRY_RUN_FORECAST, $dryRunForeast) !== 1 ||
+            setTaskDate($dbh, $temp, $TASK_SUBMIT_FORECAST, $submitForecast) !== 1
          ) {
             fail('Unable to update task info.');
          } else {
@@ -163,15 +163,15 @@ if(isAdmin($output)) {
          }
       }
       // get fresh values
-      if(getEpiweekInfo($output) !== 1) {
+      if(getEpiweekInfo($dbh, $output) !== 1) {
          fail('Unable to get round info.');
       }
-      if(getYearForCurrentSeason($output) !== 1) {
+      if(getYearForCurrentSeason($dbh, $output) !== 1) {
          fail('Unable to get season info.');
       }
-      if(getTaskDate($output, $TASK_SEND_REMINDER_EMAILS) !== 1 ||
-         getTaskDate($output, $TASK_DRY_RUN_FORECAST) !== 1 ||
-         getTaskDate($output, $TASK_SUBMIT_FORECAST) !== 1
+      if(getTaskDate($dbh, $output, $TASK_SEND_REMINDER_EMAILS) !== 1 ||
+         getTaskDate($dbh, $output, $TASK_DRY_RUN_FORECAST) !== 1 ||
+         getTaskDate($dbh, $output, $TASK_SUBMIT_FORECAST) !== 1
       ) {
          fail('Unable to get task info.');
       }
@@ -205,7 +205,7 @@ if(isAdmin($output)) {
             task. The tasks repeat on an exact interval of
             604,800 seconds, or one week&mdash;except when daylight savings time
             starts or ends, then one week plus or minus an hour. To effectively
-            disable Epicast, set these far into the future (e.g. 2030).
+            disable Crowdcast, set these far into the future (e.g. 2030).
             <span class="any_warning">If you set these values in the past, the
             corresponding tasks will be executed immediately.</span>
          </p><?php
@@ -231,7 +231,7 @@ if(isAdmin($output)) {
          $lastEpiweek = intval(getSafeValue('last_contest_round'));
          $deadline = getSafeValue('round_deadline');
          $minEpiweek = $year1 * 100 + 30;
-         $maxEpiweek = $year2 * 100 + 35;
+         $maxEpiweek = $year2 * 100 + 29;
          $ok = true;
          if($firstEpiweek < $minEpiweek || $firstEpiweek > $maxEpiweek) {
             fail('First epiweek was not in the season.');
@@ -246,10 +246,10 @@ if(isAdmin($output)) {
             $ok = false;
          }
          $temp = array();
-         if(!$ok || resetEpicast($temp, $year1, $firstEpiweek, $lastEpiweek, $deadline, $epicastAdmin) !== 1) {
-            fail('Unable to reset Epicast.');
+         if(!$ok || resetEpicast($dbh, $temp, $year1, $firstEpiweek, $lastEpiweek, $deadline, $epicastAdmin) !== 1) {
+            fail('Unable to reset Crowdcast.');
          } else {
-            success('Epicast has been reset.');
+            success('Crowdcast has been reset.');
          }
       }
       ?>
@@ -265,7 +265,7 @@ if(isAdmin($output)) {
             created. It is not easy to restore this backup, so make sure you
             really, really want to do this. Good luck!
          </p><p>
-            This will reset Epicast for the <?php printf('%d&ndash;%d', $year1, $year2); ?> season.
+            This will reset Crowdcast for the <?php printf('%d&ndash;%d', $year1, $year2); ?> season.
          </p><?php
             createInput('First Contest Round', 'first_contest_round', $year1 . '??');
             createInput('Last Contest Round', 'last_contest_round', $year2 . '??');
