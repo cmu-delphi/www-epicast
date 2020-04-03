@@ -101,8 +101,10 @@ if($dbh->connect_errno) {
             ?>
          </div>
          <div class="box_miniclear"></div>
-      </div>
-      <div class="box_content">
+     </div>
+
+     <!-- content -->
+     <div class="box_content">
       <?php
       //Account status
       if(!isActivated($output)) {
