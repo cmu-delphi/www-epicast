@@ -7,49 +7,49 @@
     {
       "type": "move",
       "src": "site/css/.htaccess",
-      "dst": "/var/www/html/epicast/css/.htaccess",
+      "dst": "/var/www/html/crowdcast/css/.htaccess",
       "add-header-comment": true
     },
     "// .htaccess file",
     {
       "type": "move",
       "src": "site/.htaccess",
-      "dst": "/var/www/html/epicast/.htaccess",
+      "dst": "/var/www/html/crowdcast/.htaccess",
       "add-header-comment": false
     },
     "// service worker",
     {
       "type": "move",
       "src": "site/sw.js",
-      "dst": "/var/www/html/epicast/sw.js",
+      "dst": "/var/www/html/crowdcast/sw.js",
       "add-header-comment": true
     },
     "// web sources",
     {
       "type": "move",
       "src": "site/",
-      "dst": "/var/www/html/epicast/",
+      "dst": "/var/www/html/crowdcast/",
       "match": "^.*\\.php$",
       "add-header-comment": true
     },
     {
       "type": "move",
       "src": "site/common/",
-      "dst": "/var/www/html/epicast/common/",
+      "dst": "/var/www/html/crowdcast/common/",
       "match": "^.*\\.php$",
       "add-header-comment": true
     },
     {
       "type": "move",
       "src": "site/css/",
-      "dst": "/var/www/html/epicast/css/",
+      "dst": "/var/www/html/crowdcast/css/",
       "match": "^.*\\.(css|php)$",
       "add-header-comment": true
     },
     {
       "type": "move",
       "src": "site/js/",
-      "dst": "/var/www/html/epicast/js/",
+      "dst": "/var/www/html/crowdcast/js/",
       "match": "^.*\\.js$",
       "add-header-comment": true
     },
@@ -58,7 +58,7 @@
     {
       "type": "move",
       "src": "site/images/flags/",
-      "dst": "/var/www/html/epicast/images/flags/",
+      "dst": "/var/www/html/crowdcast/images/flags/",
       "match": "^.*\\.png$"
     }
 
