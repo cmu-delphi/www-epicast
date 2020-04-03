@@ -390,7 +390,7 @@ function min(x1,x2) { if (x1<x2) { return x1; } return x2; }
    var xRange = [addEpiweeks(currentWeek, -numPastWeeks), addEpiweeks(currentWeek, +numFutureWeeks)];
    var yRange = [0, <?= ($maxRegionalWILI * 1.8) ?>]; // 1.8, really? -kmm
    var regionID = <?= $regionID ?>;
-   var seasonOffsets = [<?php foreach($seasonOffsets as $o){printf('%d,',$o);} ?>];
+   var seasonOffsets = [<?php foreach($seasonOffsets as $o){printf('%d,',$o);} ?><?= count($r['history']['wili']) ?>];
    var seasonYears = [<?php foreach($seasonYears as $y){printf('%d,',$y);} ?>];
    var seasonIndices = {<?php for($i = 0; $i < count($seasonYears); $i++){printf('\'%d\':%d,',$seasonYears[$i],$i);} ?>};
    var regionNames = [];
@@ -603,25 +603,23 @@ function min(x1,x2) { if (x1<x2) { return x1; } return x2; }
       g.setLineDash([]);
 	if(do_drawPoints) drawPoints(xs, ys, start, end, style, g);
    }
-    function stitchCurves(regionID, style, y2, xoffset) {
+    function stitchCurves(regionID, style, x2, y2, x1, y1) {
 	if(forecast[regionID][0] < 0) {
             return;
 	}
+    var seasonIndex = seasonIndices[<?= $currentYear ?>];
 	if (typeof y2 == "undefined") {
-	    y2 = getY(forecast[regionID][0]);
+	    y2 = forecast[regionID][0];
 	}
-	if (typeof xoffset == "undefined") {
-	    xoffset = 1;
-	}
+	if (typeof x1 == "undefined") {
+	    x1 = pastEpiweek[regionID][seasonOffsets[seasonIndex+1]-1];
+    }
+    if (typeof y1 == "undefined") {
+        y1 = pastWili[regionID][seasonOffsets[seasonIndex+1]-1];
+    }
 
-	var seasonIndex = seasonIndices[<?= $currentYear ?>];
-	var end = ((seasonIndex+1)<seasonOffsets.length) ? seasonOffsets[seasonIndex+1] : (pastWili[regionID].length-1);
-	var seasonLength = end - seasonOffsets[seasonIndex];
-	var x1 = (addEpiweeks(xRange[0], seasonLength));
-	var y1 = getY(pastWili[regionID][end]);
-	var x2 = (addEpiweeks(currentWeek, xoffset));
 	//console.log("stitch curve:",seasonIndex,end,seasonLength,x1,y1,x2,y2);
-	drawLine(getX(x1), y1, getX(x2), y2, style);
+	drawLine(getX(x1), getY(y1), getX(x2), getY(y2), style);
    }
    function drawTooltip(g, str) {
       str = ' ' + str;
@@ -772,14 +770,14 @@ function min(x1,x2) { if (x1<x2) { return x1; } return x2; }
       var lfStyle = {color: '#aaa', size: 2, dash: DASH_STYLE};
       if(showLastForecast) {
           drawCurve(lastForecast, 0, lastForecast.length, lastForecastEpiweek, lfStyle);
-	  stitchCurves(regionID, lfStyle, getY(lastForecast[0]), 0);
+	  stitchCurves(regionID, lfStyle, lastForecastEpiweek, lastForecast[0], addEpiweeks(lastForecastEpiweek,-1));
       }
 
        //current region and latest season
        repaintSelection(regionID, <?= $currentYear ?>, true);
       var style = {color: '#000', size: 2, dash: DASH_STYLE};
-      drawCurve(forecast[regionID], 0, 52, currentWeek+1, style);
-      stitchCurves(regionID, style);
+      drawCurve(forecast[regionID], 0, 52, addEpiweeks(currentWeek,1), style);
+      stitchCurves(regionID, style, addEpiweeks(currentWeek,1));
       
       //nowcast
       if(showNowcast) {
