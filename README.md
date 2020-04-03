@@ -1,10 +1,10 @@
 # Status
 
-[![Deploy Status](https://delphi.midas.cs.cmu.edu/~automation/public/github_deploy_repo/badge.php?repo=cmu-delphi/www-epicast)](#)
+[![Deploy Status](https://delphi.midas.cs.cmu.edu/~automation/public/github_deploy_repo/badge.php?repo=cmu-delphi/www-crowdcast)](#)
 
 # About
 
-The Crowdcast website for collecting flu forecasts..
+The Crowdcast website for collecting flu forecasts.
 
 The site is live at:
 - https://delphi.cmu.edu/crowdcast
