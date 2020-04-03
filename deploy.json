@@ -53,13 +53,19 @@
       "match": "^.*\\.js$",
       "add-header-comment": true
     },
-
     "// images",
     {
       "type": "move",
       "src": "site/images/flags/",
       "dst": "/var/www/html/cc-test/images/flags/",
       "match": "^.*\\.png$"
+    },
+    "// tutorials",
+    {
+      "type": "move",
+      "src": "site/images/",
+      "dst": "/var/www/html/cc-test/images/",
+      "match": "^.*\\.(gif|mp4)$"
     }
 
   ]
