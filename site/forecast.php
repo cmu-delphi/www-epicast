@@ -817,7 +817,7 @@ function min(x1,x2) { if (x1<x2) { return x1; } return x2; }
              var currentSeasonIndex = end - i/2 - 1;
             var above = -error[i]*scale;
             var below = error[i+1]*scale;
-            var x_weekNumber = addEpiweeks(epiweek, -(i/2));
+            var x_weekNumber = addEpiweeks(epiweek, -(i/2)+1);
             var x = getX(x_weekNumber);
             var y = getY(pastWili[regionID][currentSeasonIndex]);
             g.fillStyle = 'rgba(0, 0, 0, 0.5)';
