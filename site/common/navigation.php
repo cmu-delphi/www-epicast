@@ -106,7 +106,7 @@ function showNavigation_hosp($output, $getUrl) {
   <?php
 }
 
-function showNavigation($output, $regionID=-1) {
+function showNavigation($dbh, $output, $regionID=-1) {
     $missing = 0;
     $submitted = 0;
     $regionIDs = get_user_forecast_regions($dbh, $output['user_id']);

@@ -31,7 +31,7 @@ if(isset($_REQUEST['skip_instructions'])) {
 }
 
 if(isset($_REQUEST['region_id'])) {
-   $regionID = intval(mysql_real_escape_string($_REQUEST['region_id']));
+   $regionID = intval(mysqli_real_escape_string($dbh, $_REQUEST['region_id']));
 } else {
    //Default to USA National
    $regionID = 1;
@@ -39,7 +39,7 @@ if(isset($_REQUEST['region_id'])) {
 
 //Specific region
 if(!isset($output['regions'][$regionID])) {
-   fail('Invalid region_id');
+   fail('Invalid region_id '.$regionID);
 }
 
 //Forecast from last round

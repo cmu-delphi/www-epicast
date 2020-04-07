@@ -46,7 +46,7 @@ function getMiniHash($hash) {
    return strtoupper(substr($hash, 0, 8));
 }
 
-function attemptLogin(&$output) {
+function attemptLogin($dbh, &$output) {
    $hash = null;
    if(isset($_REQUEST['user']) || isset($_SESSION['hash_fluv'])) {
       if(isset($_REQUEST['user'])) {

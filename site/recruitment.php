@@ -112,7 +112,7 @@ $map = array(
             array_push($targets, $r);
         }
     }
-    showNavigation($targets);
+    showNavigation($dbh,$targets);
     ?>
 
 <!--    <p class="centered"><i>Hover a button above to see which states are in that region or the location of the state in the map below.</i></p>-->

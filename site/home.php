@@ -37,42 +37,25 @@ if($_offline) {
    ?>
 
 
-   <div class="box_section">
-      <div class="box_section_title">
-         Post <?= formatEpiweek($output['epiweek']['round_epiweek']) ?> Forecast
-
-          <div class="box_section_subtitle">
-            Due by 10:00 AM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
-         </div>
-
-
-   </div>
-
-
-   <div class="box_section">
-      <div class="box_section_title">
-         <div class="box_section_subtitle">
-            *** The following few paragraphs are new and important – please read them carefully ***
-
-             </br>
-
-         Due to the coronavirus pandemic, and at the request of CDC, we will be continuing our Epicast activity (now renamed ‘Crowdcast’) for as long as needed.  We ask you to continue to forecast exactly the same thing you have been forecasting until now -- the prevalence of influenza-like- illness (ILI).  In the coming months, as flu and other winter respiratory illnesses recede, the majority of ILI is expected to be attributable to COVID-19.
-             </br>
-         One big change to expect is that a pandemic such as COVID-19 tends to be much larger than a typical flu epidemic wave, and can occur at any time of the year.  Another thing to expect is that strong mitigation efforts may dampen the pandemic wave.
-             </br>
-         Starting this week, we will change the Crowdcast interface to provide you with more COVID-related and pandemic-related information and links.
-         </div>
-
-      <?php
-            createLink('FAQ', 'FAQ.php#top');
-       ?>
-
-   </div>
+    <div class="box_section">
+        <div class="box_section_title">
+            Post <?= formatEpiweek($output['epiweek']['round_epiweek']) ?> Forecast
+            
+            <div class="box_section_subtitle">
+                Due by 10:00 AM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
+            </div>
+            
+    <?php
+    createLink('FAQ', 'FAQ.php#top');
+    ?>
+            
+        </div>
+    </div>
 
 
 
 
-      <div>
+    <div>
          <?php
          $time = $output['epiweek']['remaining'];
          $value = '';
@@ -108,21 +91,20 @@ if($_offline) {
             $unit = 'past due';
          }
          ?>
-         <div class="box_stat">
+        <div class="box_stat">
             <div class="bot_stat_value"><?= $value ?></div>
             <div class="bot_stat_description"><?= $unit ?></div>
-         </div>
-
-         <div class="box_stat">
+        </div>
+        
+        <div class="box_stat">
             <div class="bot_stat_value"><?= formatEpiweek($output['epiweek']['data_epiweek']) ?></div>
             <div class="bot_stat_description">latest available data</div>
-         </div>
-         <div class="box_stat">
+        </div>
+        <div class="box_stat">
             <div class="bot_stat_value"><?= getDeltaWeeks($output['epiweek']['round_epiweek'], $output['epiweek']['season']['end']) ?></div>
             <div class="bot_stat_description">weeks remaining in season</div>
-         </div>
-      </div>
-   </div>
+        </div>
+    </div>
    <?php
    // This approach will work next week, but not for w12, because
    // stat_competed counts regions the user may have already submitted
@@ -148,126 +130,96 @@ if($_offline) {
       <?php
    }
    ?>
-   <?php showNavigation($output); ?>
+   <?php showNavigation($dbh,$output); ?>
 
 
    <p class="centered"><i>Hover a button above to see which states are in that region or the location of the state in the map below.</i></p>
    <div id="map_container"></div>
-
-
-<!--     <?php
-      $ifForecastHosp = getPreference($output, 'advanced_hospitalization', 'int');
-      if ($ifForecastHosp) {
-        $getUrl = 'forecast_hosp.php';
-        showNavigation_hosp($output, $getUrl);
-       }
-     ?>
- -->
    
+   <!-- news -->
    <div class="box_section">
+       <div class="box_section_title">
+           COVID-19 in the News
+           <div class="box_section_subtitle">
+               Use the latest COVID-19 news to make better forecasts!
+           </div>
+       </div>
+       <div id="news" class="center" style="width: 75%; margin-left: auto; margin-right: auto;">
+           <div class="box_list left">
+               <ul>
+                   <li><a target="_blank" href="https://www.cdc.gov/media/dpk/diseases-and-conditions/coronavirus/coronavirus-2020.html">CDC Newsroom: COVID-19</a></li>
+                   <li><a target="_blank" href="https://news.google.com/topics/CAAqBwgKMJy5lwswj-KuAw">Google News: COVID-19</a></li>
+                   <li><a target="_blank" href="https://news.yahoo.com/coronavirus">Yahoo News: Coronavirus</a></li>
+                   <li><a target="_blank" href="https://www.msn.com/en-us/news/coronavirus">MSN: Coronavirus</a></li>
+                   <li><a target="_blank" href="https://www.reuters.com/live-events/coronavirus-6-id2921484">Reuters Live: Coronavirus</a></li>
+                   <li><a target="_blank" href="https://apnews.com/VirusOutbreak">AP News: Virus Outbreak</a></li>
+               </ul>
+           </div>
+           <div class="box_list left">
+               <ul>
+                   <li><a target="_blank" href="https://graphics.reuters.com/HEALTH-CORONAVIRUS-USA/0100B5K8423/index.html">Reuters Infographic: COVID-19 case map</a></li>
+                   <li><a target="_blank" href="https://arcg.is/0fHmTX">Johns Hopkins COVID-19 Case Tracker</a></li>
+                   <li><a target="_blank" href="https://www.ft.com/coronavirus-latest">Financial Times: Coronavirus Tracker</a></li>
+                   <li><a target="_blank" href="https://ncov2019.live/">nCov2019.live COVID-19 Aggregator</a></li>
+                   <li><a target="_blank" href="https://healthweather.us/">Kinsa US Health Weather Map</a></li>
+               </ul>
+           </div>
+       </div>
+   </div>
+   <!-- /news -->
 
-   <div class="box_section">
-      <div class="box_section_title">
-         Flu in the News
-         <div class="box_section_subtitle">
-            Use the latest flu news to make better forecasts!
-         </div>
-      </div>
-      <!-- news -->
-      <div class="center" style="width: 75%; margin-left: auto; margin-right: auto;">
-        <a target="_blank" href="https://www.google.com/search?hl=en&gl=us&tbm=nws&q=flu+news">Google News</a>
-      </div>
-      <!-- /news -->
+   <!-- social -->
+   <div id="share" class="box_section">
+     <div class="box_section_title">
+       Help Spread The Word
+       <div class="box_section_subtitle">
+         Please share Crowdcast with your colleagues, friends, and family!
+       </div>
+     </div>
+     <div class="social">
+       <!-- Twitter: https://about.twitter.com/resources/buttons#tweet -->
+       <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://epicast.org" data-text="Your help is needed for COVID-19! Submit forecasts for science, and be featured on the leaderboard!" data-hashtags="covid19,forecast">Tweet</a>
+       <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+     </div>
+     <div class="social">
+       <!-- Facebook: https://developers.facebook.com/docs/plugins/like-button -->
+       <iframe id="share_fb" src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fepicast.org&amp;width&amp;layout=button_count&amp;action=like&amp;show_faces=false&amp;share=false&amp;height=21&amp;appId=2243057286" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:21px;" allowTransparency="true"></iframe>
+       <script> document.getElementById("share_fb").style.width = "73px"; </script>
+     </div>
+     <div class="social">
+       <!-- Google+: https://developers.google.com/+/web/+1button/ -->
+       <div class="g-plusone" data-href="https://epicast.org"></div>
+       <script type="text/javascript">
+         (function() {
+         var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+         po.src = 'https://apis.google.com/js/platform.js';
+         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+         })();
+       </script>
+     </div>
+     <div class="social">
+       <!-- https://www.addthis.com/dashboard -->
+       <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-546288ed7b70846a" async="async"></script>
+       <div class="addthis_sharing_toolbox"></div>
+     </div>
    </div>
-
+   <!-- /social -->
+                
+   <!-- external resources -->
    <div class="box_section">
-      <div class="box_section_title">
-         Help Spread The Word
-         <div class="box_section_subtitle">
-            Please share Crowdcast with your colleagues, friends, and family!
-         </div>
-      </div>
-      <div>
-         <!-- Twitter: https://about.twitter.com/resources/buttons#tweet -->
-         <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://epicast.org" data-text="Your help is needed this flu season! Submit forecasts for science, and be featured on the leaderboard!" data-hashtags="flu,forecast">Tweet</a>
-         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-      </div>
-      <div>
-         <!-- Facebook: https://developers.facebook.com/docs/plugins/like-button -->
-         <iframe id="share_fb" src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fepicast.org&amp;width&amp;layout=button_count&amp;action=like&amp;show_faces=false&amp;share=false&amp;height=21&amp;appId=2243057286" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:21px;" allowTransparency="true"></iframe>
-         <script> document.getElementById("share_fb").style.width = "101px"; </script>
-      </div>
-      <div>
-         <!-- Google+: https://developers.google.com/+/web/+1button/ -->
-         <div class="g-plusone" data-href="https://epicast.org"></div>
-         <script type="text/javascript">
-            (function() {
-               var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-               po.src = 'https://apis.google.com/js/platform.js';
-               var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-            })();
-         </script>
-      </div>
-      <div>
-         <!-- https://www.addthis.com/dashboard -->
-         <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-546288ed7b70846a" async="async"></script>
-         <div class="addthis_sharing_toolbox"></div>
-      </div>
+     <div class="box_section_title">
+       External Resources
+       <div class="box_section_subtitle">
+         COVID-19 Information and Data
+       </div>
+     </div>
+     
+     <p><a href="https://docs.google.com/spreadsheets/d/16Nn_3ZvSLnpxRyA2DkoMMzyrd11-AlGJXasS0owln88/edit#gid=0">DELPHI COVID-19 and ILI Data Sources</a> - spreadsheet updated continually</p>
    </div>
-   <div class="box_section">
-      <div class="box_section_title">
-         External Resources
-         <div class="box_section_subtitle">
-            Flu Information and Data
-         </div>
-      </div>
-      <div class="box_list left">
-         <div class="box_decision_title centered" style="width: 100%"><i class="fa fa-info-circle"></i> Information</div>
-         <div>
-            <i class="fa fa-external-link"></i>
-            <a target="_blank" href="https://www.cdc.gov/flu/index.htm">CDC's Flu Portal</a>
-         </div>
-         <div>
-            <i class="fa fa-external-link"></i>
-            <a target="_blank" href="https://en.wikipedia.org/wiki/Influenza">Influenza on Wikipedia</a>
-         </div>
-         <div>
-            <i class="fa fa-external-link"></i>
-            <a target="_blank" href="https://www.cdc.gov/flu/weekly/overview.htm">CDC's definition of ILI</a>
-         </div>
-         <div>
-            <i class="fa fa-external-link"></i>
-            <a target="_blank" href="http://www.kdheks.gov/flu/surveillance.htm">Kansas defintion of ILI</a>
-         </div>
-      </div>
-      <div class="box_list left">
-         <div class="box_decision_title centered" style="width: 100%"><i class="fa fa-line-chart"></i> Data</div>
-         <div>
-            <i class="fa fa-external-link"></i>
-            <a target="_blank" href="https://gis.cdc.gov/grasp/fluview/fluportaldashboard.html">CDC's FluView WebApp</a>
-         </div>
-         <div>
-            <i class="fa fa-external-link"></i>
-            <a target="_blank" href="https://www.ncdc.noaa.gov/">NOAA's Climate Normals</a>
-         </div>
-<!--          <div>
-            <i class="fa fa-external-link"></i>
-            <a target="_blank" href="https://www.google.org/flutrends/us/#US">Google Flu Trends</a>
-         </div> -->
-         <div>
-            <i class="fa fa-external-link"></i>
-            <a target="_blank" href="http://www.healthtweets.org/">Flu Nowcasting using Twitter</a>
-         </div>
-      </div>
-<!--       <div class="box_list left">
-         <div class="box_decision_title centered" style="width: 100%"><i class="fa fa-book"></i> Literature</div>
-         <div>
-            <i class="fa fa-external-link"></i>
-            <a target="_blank" href="https://delphi.midas.cs.cmu.edu/bibliography.html">The Delphi Bibliography</a>
-         </div>
-      </div> -->
-   </div>
-</div>
+   <!-- /external resources -->
+                
+</div><!-- /article -->
+</div><!-- /content -->
 <script>
 var mapStyle = {
    showLabels: false,

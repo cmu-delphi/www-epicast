@@ -31,8 +31,11 @@ Output:
    A handle to the database connection
 */
 function databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName) {
-   $dbh = new mysqli("{$dbHost}:{$dbPort}", $dbUser, $dbPass, $dbName);
-   return $dbh;
+    $dbh = new mysqli($dbHost, $dbUser, $dbPass, $dbName, $dbPort);
+    if ($dbh->connect_errno) {
+        echo "Failed to connect to MySQL: (" . $dbh->connect_errno . ") " . $dbh->connect_error;
+    }
+    return $dbh;
 }
 
 function getTargetPreference($dbh, &$output, $hash){
@@ -331,15 +334,21 @@ Output:
 */
 function getRegions($dbh, &$output, $userID) {
    $temp = array();
-   if(getEpiweekInfo($temp) !== 1) {
+   if(getEpiweekInfo($dbh, $temp) !== 1) {
       return getResult($temp);
    }
    $result = $dbh->query("SELECT r.`id`, r.`name`, r.`states`, r.`population`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM ec_fluv_regions r LEFT JOIN ec_fluv_submissions s ON s.`user_id` = {$userID} AND s.`region_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
    $regions = array();
    while($row = $result->fetch_assoc()) {
+      if ($row['name'] == "ny_minus_jfk") {
+         $region_name = 'NY (excluding NYC)';
+      } else {
+         $region_name = $row['name'];
+      }
+
       $region = array(
          'id' => intval($row['id']),
-         'name' => $row['name'],
+         'name' => $region_name,
          'states' => $row['states'],
          'population' => intval($row['population']),
          'completed' => intval($row['completed']) === 1,
@@ -389,7 +398,7 @@ Output:
 */
 function getAgeGroups($dbh, &$output, $userID) {
    $temp = array();
-   if(getEpiweekInfo($temp) !== 1) {
+   if(getEpiweekInfo($dbh, $temp) !== 1) {
       return getResult($temp);
    }
    $result = $dbh->query("SELECT r.`id`, r.`flusurv_name`, r.`name`, r.`ages`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM ec_fluv_age_groups r LEFT JOIN ec_fluv_submissions_hosp s ON s.`user_id` = {$userID} AND s.`group_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
@@ -426,11 +435,11 @@ Output:
 */
 function getRegionsExtended($dbh, &$output, $userID) {
    $temp = array();
-   if(getEpiweekInfo($temp) !== 1) {
+   if(getEpiweekInfo($dbh, $temp) !== 1) {
       return getResult($temp);
    }
    //Basic region information
-   if(getRegions($output, $userID) !== 1) {
+   if(getRegions($dbh, $output, $userID) !== 1) {
       return getResult($output);
    }
    
@@ -442,12 +451,12 @@ function getRegionsExtended($dbh, &$output, $userID) {
          $firstWeek = 200430;
       }
       
-      if(getHistory($output, $r['id'], $firstWeek) !== 1) {
+      if(getHistory($dbh, $output, $r['id'], $firstWeek) !== 1) {
          return getResult($output);
       }
       
       $r['history'] = $output['history'];
-      if(loadForecast($output, $userID, $r['id']) !== 1) {
+      if(loadForecast($dbh, $output, $userID, $r['id']) !== 1) {
          return getResult($output);
       }
       
@@ -547,7 +556,7 @@ Output:
 */
 function getAgeGroupsExtended($dbh, &$output, $userID) {
    $temp = array();
-   if(getEpiweekInfo($temp) !== 1) {
+   if(getEpiweekInfo($dbh, $temp) !== 1) {
       return getResult($temp);
    }
    //Basic region information
@@ -731,7 +740,7 @@ Output:
 function saveForecast($dbh, &$output, $userID, $regionID, $forecast, $commit) {
    
    $temp = array();
-   if(getEpiweekInfo($temp) !== 1) {
+   if(getEpiweekInfo($dbh, $temp) !== 1) {
       return getResult($temp);
    }
    $epiweek = $temp['epiweek']['round_epiweek'];
@@ -752,7 +761,7 @@ function saveForecast($dbh, &$output, $userID, $regionID, $forecast, $commit) {
    
    setResult($output, 1);
    
-   getRegions($output, $userID);
+   getRegions($dbh, $output, $userID);
    
    return getResult($output);
 }
@@ -794,7 +803,7 @@ Output:
 
 function saveForecast_hosp($dbh, &$output, $userID, $group_id, $forecast, $commit) {
    $temp = array();
-   if(getEpiweekInfo($temp) !== 1) {
+   if(getEpiweekInfo($dbh, $temp) !== 1) {
       return getResult($temp);
    }
    $epiweek = $temp['epiweek']['round_epiweek'];
@@ -836,7 +845,7 @@ function loadForecast($dbh, &$output, $userID, $regionID, $submitted=false) {
 
    if($submitted) {
       $temp = array();
-      if(getEpiweekInfo($temp) !== 1) {
+      if(getEpiweekInfo($dbh, $temp) !== 1) {
          return getResult($temp);
       }
       
@@ -939,7 +948,7 @@ Output:
 function loadForecast_hosp($dbh, &$output, $userID, $group_id, $submitted=false) {
    if($submitted) {
       $temp = array();
-      if(getEpiweekInfo($temp) !== 1) {
+      if(getEpiweekInfo($dbh, $temp) !== 1) {
          return getResult($temp);
       }
       $q = "SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_submissions_hosp WHERE `user_id` = {$userID} AND `group_id` = {$group_id} AND `epiweek_now` < {$temp['epiweek']['round_epiweek']}";
@@ -1060,7 +1069,7 @@ function getAvailableTaskSets($dbh) {
     $epiweek_now = $temp['epiweek']['round_epiweek'];
     $query = "select taskID, states from ec_fluv_mturk_tasks where numWorker < maxWorker";
     $availableTasks = array();
-    $availableTasks = readSqlResult($query, $availableTasks);
+    $availableTasks = readSqlResult($dbh, $query, $availableTasks);
     return $availableTasks;
 }
 
@@ -1090,7 +1099,7 @@ function getNextLocation($dbh, $mturkID, $regionID) {
 
         $query = "select states from ec_fluv_mturk_tasks where taskID = {$taskID}";
         $states = array();
-        $states = readSqlResult($query, $states);
+        $states = readSqlResult($dbh, $query, $states);
         $states = $states[0]['states'];
         $states = explode(",", $states);
         return $states;
@@ -1107,7 +1116,7 @@ function get_user_forecast_regions($dbh, $user_ID) {
 
     $query = "SELECT states FROM ec_fluv_mturk_tasks WHERE `taskID` = {$task_group}";
     $states = array();
-    $states = readSqlResult($query, $states);
+    $states = readSqlResult($dbh, $query, $states);
     $states = $states[0]['states'];
     $states = explode(",", $states);
 
@@ -1117,7 +1126,7 @@ function get_user_forecast_regions($dbh, $user_ID) {
     }
 
     if ($user_ID == 1) {
-        array_push($states, 2);
+        array_push($states, 24);
 
     }
 
@@ -1199,7 +1208,7 @@ function saveUserPreferences($dbh, &$output, $userID, $preferences) {
          $dbh->query("INSERT INTO ec_fluv_user_preferences (`user_id`, `name`, `value`, `date`) VALUES ({$userID}, '{$name}', '{$value}', now()) ON DUPLICATE KEY UPDATE `value` = '{$value}', `date` = now()");
       }
    }
-   return loadUserPreferences($output, $userID);
+   return loadUserPreferences($dbh, $output, $userID);
 }
 
 /*
@@ -1246,7 +1255,7 @@ function getUserbase($dbh, &$output, $sortField, $sortDir) {
          'submissions_hosp' => array()
       );
 
-      if(loadUserPreferences($user, $user['id']) !== 1) {
+      if(loadUserPreferences($dbh, $user, $user['id']) !== 1) {
          return getResult($user);
       }
 
@@ -1581,7 +1590,7 @@ function getECDCILI($dbh, &$output, $regionID, $firstWeek) {
         array_push($wili, floatval($row['incidence_rate']));
         $firstWeek = addEpiweeks($firstWeek, 1);
     }
-    if (!array_key_exists($output,"ecdc")) {
+    if (!array_key_exists("ecdc",$output)) {
         $output['ecdc'] = array();
     }
     // leaving this as wili for now even though it's not really

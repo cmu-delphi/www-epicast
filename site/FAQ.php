@@ -22,7 +22,7 @@ require_once('common/navigation.php');
     
     <p>
       <font size="5">
-	1. What data I should be basing a forecast on, is
+	1. What data should I be basing a forecast on, is
         it the situation of people in my current state?
       </font>
     </p>

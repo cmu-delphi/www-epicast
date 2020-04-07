@@ -10,7 +10,7 @@ $dbh = databaseConnect($dbHost, $dbPort, $dbUser, $dbPass, $dbName);
 //The header
 session_start();
 $output = array();
-$hash = attemptLogin($output);
+$hash = attemptLogin($dbh, $output);
 if($hash !== null) {
    if(getPreference($output, 'skip_intro', 'int') === 1) {
       $location = 'home.php';
@@ -25,7 +25,7 @@ $path = dirname($_SERVER['REQUEST_URI']);
 if($path !== '/') {
    $path .= '/';
 }
-$location = 'http://' . $_SERVER['HTTP_HOST'] . $path . $location; # TODO: Can we let the https rewrite handle this?
+$location = 'https://' . $_SERVER['HTTP_HOST'] . $path . $location; # TODO: Can we let the https rewrite handle this?
 header("Location: {$location}");
 ?>
 <html>

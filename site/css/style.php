@@ -1,5 +1,7 @@
-<? header ("Content-type: text/css");?>
-<?php require('consts.php'); ?>
+<?php
+header("Content-type: text/css");
+require('consts.php');
+?>
 ::selection {
    background: #888;
 }
@@ -513,13 +515,22 @@ input.padded {
 }
 #box_histories {
    text-align: left;
-   width: 142px;
+   width: 152px;
    overflow-y: scroll;
    padding: 4px;
    margin: 0px;
    vertical-align: top;
    display: block;
 }
+
+#news li {
+    list-style-type:none;
+    padding-top:5px;
+}
+
+#share .social {
+    text-align: center
+    }
 
 img.age_group_img {
     height: 65px;
