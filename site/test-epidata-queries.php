@@ -62,19 +62,21 @@
               <div style="clear: both;"></div>
             </div>
 	    
-            <div class="box_status_line"><div style="margin:20px 180px 10px 180px; padding:5px 40px; background:white; font-weight:normal; font-size:12px; text-align:left"><p><b>Additional data for the 2019-2020 COVID-19 pandemic</b></p><p>The European Centre for Disease Control (ECDC) publishes ILI data for its member nations. COVID-19 reached Italy and several other EU nations ahead of the USA, and the ECDC ILI data for those countries may be useful to your forecasts. This is a rapidly changing situation and not all ECDC reporting countries seem to agree on whether COVID-19 encounters count as ILI activity. We have excluded counties whose ECDC reporting is suspiciously similar to their 2018-2019 season, which unfortunately includes Italy and Spain. Germany is also ahead of us, but does not report ILI data. The ECDC ILI units are not a percent of visits, so <b>while the shape of the curves is accurate, the y-values have been scaled to fit in the plot</b>. For more information on the ECDC data, see the methods section of <a href="https://www.ecdc.europa.eu/sites/default/files/documents/AER_for_2015-influenza-seasonal_0.pdf">the 2015 surveillance report on seasonal Influenza</a>.</p></div></div>
-	    
           </div>
 	  
           <div id="box_side_bar">
             <div id="box_histories">
               <div class="box_decision_title centered" style="width: 100%;">History</div>
-	      
-              <div class="any_bold any_cursor_pointer" onclick="toggleSeasonList(34)"><i id="checkbox_region_34" class="fa fa-plus-square-o"></i>&nbsp;South Carolina</div>
+
+    <div id="current_region"></div>
+    <div id="regional_pandemic"></div>
+    <div id="ecdc"></div>
+
+<!--               <div class="any_bold any_cursor_pointer" onclick="toggleSeasonList(34)"><i id="checkbox_region_34" class="fa fa-plus-square-o"></i>&nbsp;South Carolina</div>
               <div>Seasons: </div>
               <div id="container_34_all" class="any_hidden any_cursor_pointer" onclick="toggleAllSeasons(34)">&nbsp;&nbsp;&nbsp;&nbsp;<i id="checkbox_34_all" class="fa fa-square-o"></i>&nbsp;<span class="effect_tiny effect_italics">Show all</span></div>
 
-	      <!-- typical season entry -->
+
               <div id="container_34_2010" class="any_hidden any_cursor_pointer"
                    onclick="toggleSeason(34, 2010)">&nbsp;&nbsp;&nbsp;&nbsp;<i
 									      id="checkbox_34_2010" class="fa fa-square-o"
@@ -82,11 +84,12 @@
                 <span class="effect_tiny">2010-11</span>
               </div>
 
-	      <!-- current year entry -->
+
               <div id="container_34_2019" class="any_hidden any_cursor_pointer">&nbsp;&nbsp;&nbsp;&nbsp;<i class="fa fa-check-square"></i>
                 <span class="effect_tiny">current year</span>
               </div>
-	      
+ -->
+
 	    </div>
 	  </div>
 	  <div id="box_canvas"><canvas id="canvas" width="800" height="400"></canvas></div>
@@ -95,87 +98,156 @@
       <div class="box_footer">
 	Questions/Suggestions/Feedback? Send us an <a target="_blank" href="mailto:jiaxians@andrew.cmu.edu?Subject=Epicast">email</a>!
       </div>
-      <script src="js/forecast.js"></script>
-    <script src="js/forecast_plot.js"></script>
-    <script src="js/delphi_epidata.js"></script>
+    <script id="sidebar_template" type="x-tmpl-mustache">
+    <div class="any_bold any_cursor_pointer sidebar_entry" onclick="toggleSeasonList('{{rid}}')"><i id="checkbox_region_{{rid}}" class="fa fa-minus-square-o"></i>{{title}}</div>
+<div id="container_{{rid}}_all" class="sidebar_region">
+<div class="any_cursor_pointer {{^seasons.5}}any_hidden{{/seasons.5}}" onclick="toggleAllSeasons('{{rid}}')"><i id="checkbox_{{rid}}_all" class="fa fa-square-o"></i><span class="effect_tiny effect_italics">Show all</span></div>
+    {{#seasons}}
+    <div id="container_{{rid}}_{{year}}" {{^current}}class="any_cursor_pointer" onclick="toggleSeason('{{rid}}', {{year}})"{{/current}}><i id="checkbox_{{rid}}_{{year}}" class="fa {{#current}}fa-check-square{{/current}}{{^current}}fa-square-o{{/current}}" style="color: {{color}}"></i><span class="effect_tiny">{{label}} {{#current}} current year{{/current}}</span></div>
+{{/seasons}}
+</div>
+    </script>
+    <script src="js/forecast.js?w=202014"></script>
+  <script src="js/delphi_epidata.js"></script>
+  <script src="https://unpkg.com/mustache@4.0.1"></script>
+    <script>
+    // was: forecast.js
+var DRAW_POINTS = true;
+var TICK_SIZE = 5;
+var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+var LABEL_X = '';
+var LABEL_Y = 'ILI Activity (% outpatient visits)';
+var MARGIN_LEFT = 60;
+var MARGIN_BOTTOM = 60;
+var MARGIN_RIGHT = 12;
+var MARGIN_TOP = 12;
+var DASH_STYLE = [1, 5];
+var AUTOSAVE_INTERVAL = 1;
+var AXIS_STYLE = {color: '#000', size: 1, dash: []};
+var GRID_STYLE = {color: '#bbb', size: 1, dash: DASH_STYLE};
+var ZOOM_AMOUNT = 1.1;
+var BUTTON_SIZE = 25;
+var WILI_MAX = 26;
+var WILI_MIN = 3;
+var NSEASONS_SHOW_ALL = 5;
+
+//Number of axis tick marks
+var xInterval = 2;
+var yInterval = 1;
+var uiScale = 1;
+var canvas = $('#canvas')[0];
+var dragging = false;
+var hoveringButton = null;
+
+var modifyCounter = 0;
+var submitCounter = 0;
+var modified = false;
+var zoomDownBounds;
+var zoomUpBounds;
+var showLastBounds;
+var snapLastBounds;
+var SubmitStatus = {
+   init: 0,
+   sent: 1,
+   success: 2,
+   failure: 3
+};
+var submitStatus = SubmitStatus.init;
+
+//chart bounds
+function marginLeft() { return MARGIN_LEFT * uiScale; }
+function marginRight() { return MARGIN_RIGHT * uiScale; }
+function marginTop() { return MARGIN_TOP * uiScale; }
+function marginBottom() { return MARGIN_BOTTOM * uiScale; }
+function max(x1,x2) { if (x1>x2) { return x1; } return x2; }
+function min(x1,x2) { if (x1<x2) { return x1; } return x2; }
+
+</script>
       <script>
 //globals
 //var DEBUG = false;
 //Axis range
-var currentWeek = 202013;
-var minWeek = 200936;
-var numPastWeeks = 28;
-var numFutureWeeks = 23;
-var totalWeeks = (numPastWeeks + 1 + numFutureWeeks);
-var xRange = [addEpiweeks(currentWeek, -numPastWeeks), addEpiweeks(currentWeek, +numFutureWeeks)];
-var yRange = [0, 26.34948]; // 1.8, really? -kmm
-var regionID = 34;
-var seasonOffsets = [];
-var seasonYears = [];
-var seasonIndices = {};
-var regionNames = [];
-var pastWili = [];
-var pastEpiweek = [];
-var forecast = [];
-var curveStyles = {};
-regionNames[34] = 'South Carolina';
-pastWili[34] = [];
-pastEpiweek[34] = [];
-forecast[34] = [];
-curveStyles[34] = {};
-curveStyles[34][2003] = {color: '#4e5', size: 1, dash: [], alpha: 0.4};
-curveStyles[34][2004] = {color: '#7e1', size: 1, dash: [], alpha: 0.4};
-curveStyles[34][2005] = {color: '#ab0', size: 1, dash: [], alpha: 0.4};
-curveStyles[34][2006] = {color: '#c80', size: 1, dash: [], alpha: 0.4};
-curveStyles[34][2007] = {color: '#e44', size: 1, dash: [], alpha: 0.4};
-curveStyles[34][2008] = {color: '#e18', size: 1, dash: [], alpha: 0.4};
-curveStyles[34][2009] = {color: '#e0c', size: 1, dash: [], alpha: 0.4};
-curveStyles[34][2010] = {color: '#c0e', size: 1, dash: [], alpha: 0.4};
-curveStyles[34][2011] = {color: '#a2e', size: 1, dash: [], alpha: 0.4};
-curveStyles[34][2012] = {color: '#75b', size: 1, dash: [], alpha: 0.4};
-curveStyles[34][2013] = {color: '#497', size: 1, dash: [], alpha: 0.4};
-curveStyles[34][2014] = {color: '#1c3', size: 1, dash: [], alpha: 0.4};
-curveStyles[34][2015] = {color: '#0e0', size: 1, dash: [], alpha: 0.4};
-curveStyles[34][2016] = {color: '#0e0', size: 1, dash: [], alpha: 0.4};
-curveStyles[34][2017] = {color: '#0d2', size: 1, dash: [], alpha: 0.4};
-curveStyles[34][2018] = {color: '#2a6', size: 1, dash: [], alpha: 0.4};
-curveStyles[34][2019] = {color: '#000', size: 2, dash: [], alpha: 1};
-curveStyles[34][8003] = {color: '#307', size: 1.5, dash: [], alpha: 0.4};
-curveStyles[34][8004] = {color: '#603', size: 1.5, dash: [], alpha: 0.4};
-curveStyles[34][8005] = {color: '#910', size: 1.5, dash: [], alpha: 0.4};
-curveStyles[34][8006] = {color: '#b40', size: 1.5, dash: [], alpha: 0.4};
-curveStyles[34][8007] = {color: '#d82', size: 1.5, dash: [], alpha: 0.4};
+
+//var numPastWeeks = 28;
+//var numFutureWeeks = 23;
+//var totalWeeks = (numPastWeeks + 1 + numFutureWeeks);
+//var xRange = [addEpiweeks(currentWeek, -numPastWeeks), addEpiweeks(currentWeek, +numFutureWeeks)];
+
+
+
+
+//var seasonOffsets = [];
+//var seasonYears = [];
+//var seasonIndices = {};
+//var regionNames = [];
+//var pastWili = [];
+//var pastEpiweek = [];
+//var forecast = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,];
+//var curveStyles = {};
+regionName = 'South Carolina';
 var selectedSeasons = [];
 var showLastForecast = true;
-var lastForecast = [];
+//var lastForecast = [];
 var timeoutID;
 var lastDrag = null;
 var tooltip = null;
 // nowcast
 var showNowcast = false;
-function loader(sidebarLabel) {
+
+
+var minWeek = 200936;
+var maxWeek = 202040;
+
+var currentWeek = 202013;
+var currentSeason = 2019;
+var regionID = 'sc'; // was: 34
+
+var xRange = [currentSeason*100+36, (currentSeason+1)*100+36];
+var yRange = [0, 26.34948]; // 1.8, really? -kmm
+var curves = {
+    lastForecast: [],
+    forecast: []
+};
+function loader(sidebarTitle,rid,parent) {
     return function(result, message, epidata) {
-	console.log(sidebarLabel, result, message, epidata != null ? epidata.length : void 0);
-	// add line to sidebar
-	// add data to arrays
+	console.log(sidebarTitle, result, message, epidata != null ? epidata.length : void 0);
+	var module = {}
+	module.title = sidebarTitle;
+	module.rid = rid;
+	module.data = epidata;
+	module.seasons = [];  var mi=0;
+	module.season = {};
+	var season = -1;
+	// CDC seasons run from week 36 to week 35 of the following year
+	for (var i=0; i<epidata.length; i++) {
+	    var si = Math.floor(epidata[i].epiweek / 100);
+	    if (epidata[i].epiweek % 100 < 36) si = si - 1;
+	    if (season<0 || season != si) {
+		if (season>=0) module.season[season].end = i-1;
+		season = si;
+		module.season[season] = {start:i,year:season,label:season==2009?(season+" pandemic"):season,color:getStyle(rid,season).color,current:season==currentSeason};
+		module.seasons[mi++] = module.season[season]; // ugh
+	    }
+	}
+	console.log(module);
+	curves[rid] = module;
+	$(parent).append($(Mustache.render(document.getElementById('sidebar_template').innerHTML, module)));
+	toggleAllSeasons(rid);
     };
 }
  //main
 $(document).ready(function() {
- var canvas = $('#canvas');
-    Epidata.fluview(loader("South Carolina"), ['sc'], [Epidata.range(minWeek, currentWeek)]);
-    Epidata.fluview(loader("Region HHS4"), ['hhs4'], [Epidata.range(200936,201035)]); // need to get region for state from epicast2 db
-    // etc for ECDC data
+    var canvas = $('#canvas');
     canvas.on('mousedown touchstart', function(e) { e.preventDefault(); mouseDown(mousePosition(e)); });
     canvas.on('mouseup mouseout touchend touchleave touchcancel', function(e) { e.preventDefault(); mouseUp(mousePosition(e)); });
     canvas.on('mousemove touchmove', function(e) { e.preventDefault(); mouseMove(mousePosition(e)); });
     $(window).resize(function() {
         resize();
     });
-    toggleSeasonList(regionID);
-    for (var i = 0; i < nseasons; i++) {
-	toggleSeason(season[i]);
-    }
+    resize();
+
+    Epidata.fluview(loader("South Carolina",'sc',"#current_region"), ['sc'], [Epidata.range(minWeek, currentWeek)]);
+    Epidata.fluview(loader("Region HHS4",'hhs4',"#regional_pandemic"), ['hhs4'], [Epidata.range(200936,201035)]); // need to get region for state from epicast2 db
 });
 </script>
 </body>
