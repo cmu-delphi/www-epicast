@@ -426,14 +426,15 @@ function repaint() {
     };
     
     if (errors.hasOwnProperty(regionID) && curves.hasOwnProperty(regionID)) {
-	var epiweek = currentWeek;
-	var error = errors[regionID];
 	var end = curves[regionID].season[currentSeason].end;
+	// the first error bar is for the most recent data available on the current season
+	var epiweek = curves[regionID].data[end].epiweek; // was: currentWeek;
+	var error = errors[regionID];
 	for (var i=0; i<9; i = i + 2) {
-	    var currentSeasonIndex = end - i/2 - 1;
+	    var currentSeasonIndex = end - i/2;
 	    var above = -error[i]*scale;
 	    var below = error[i+1]*scale;
-	    var x_weekNumber = addEpiweeks(epiweek, -(i/2)-1);
+	    var x_weekNumber = addEpiweeks(epiweek, -(i/2));
 	    var x = getX(x_weekNumber);
 	    var y = getY(curves[regionID].data[currentSeasonIndex].wili);
 	    g.fillStyle = 'rgba(0, 0, 0, 0.5)';
