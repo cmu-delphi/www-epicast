@@ -428,7 +428,7 @@ function repaint() {
     if (errors.hasOwnProperty(regionID) && curves.hasOwnProperty(regionID)) {
 	var epiweek = currentWeek;
 	var error = errors[regionID];
-	var end = curves[regionID].season[2019].end;
+	var end = curves[regionID].season[currentSeason].end;
 	for (var i=0; i<9; i = i + 2) {
 	    var currentSeasonIndex = end - i/2 - 1;
 	    var above = -error[i]*scale;
@@ -536,7 +536,7 @@ function adjustForecast(x, y) {
 	if(lastDrag != null && epiweek != lastDrag.epiweek) {
             var direction = (epiweek > lastDrag.epiweek) ? 1 : -1;
 	    for(var i = addEpiweeks(lastDrag.epiweek, direction); i != epiweek; i = addEpiweeks(i, direction)) {
-		curves.forecast[getDeltaWeeks(currentWeek, i) - 1] = point;
+		curves.forecast[getDeltaWeeks(currentWeek, i) - 1] = {'epiweek':i, 'wili':point.wili};
 	    }
 	}
 	lastDrag = point;//{epiweek: epiweek, wili: wili};
@@ -685,7 +685,6 @@ function submitForecast(commit) {
         'region_id': regionNo,
         'f[]': f,
     };
-    console.log(params);
     $.get("api.php", params, handleResponse, 'json');
 }
 function updateStatus() {
@@ -715,7 +714,6 @@ function handleResponse(data) {
         //don't really care what the result was unless it has to do with the submit forecast button
         return;
     }
-    console.log(data)
     clearTimeout(timeoutID);
     //$('#stat_completed').removeClass();
     $('#button_submit').removeClass('box_button_disabled');
@@ -771,9 +769,7 @@ function toggleAllSeasons(rid) {
         //Enable history
         checkbox.removeClass(uncheckedClass);
         checkbox.addClass(checkedClass);
-	console.log(rid,curves[rid].season);
 	for(var season in curves[rid].season) {
-	    console.log('#checkbox_' + rid + '_' + season);
 	    if($('#checkbox_' + rid + '_' + season).hasClass(uncheckedClass)) {
                 toggleSeason(rid, season);
             }
@@ -814,7 +810,6 @@ function toggleSeason(rid, seasonID) {
             selectedSeasons.splice(index, 1);
         }
     }
-    console.log("selected seasons: ",selectedSeasons);
     repaint();
 }
 function snapToLastForecast() {
