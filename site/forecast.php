@@ -114,9 +114,23 @@ if(getPreference($output, 'skip_instructions', 'int') !== 1) {
 } else { 
 ?>
 <?php
-// TODO: do we need a form for all regions or just the one we're looking at
-foreach($output['regions'] as $r) {
-   createForm('forecast_' . $r['id'], 'forecast.php#top', array('region_id', $r['id']));
+// Get the next missing region for this user, or go home
+$next = null;
+
+$regionIDs = get_user_forecast_regions($dbh, $output['user_id']);
+$currentID = $region['id'];
+
+foreach($regionIDs as &$i) {
+    $otherRegion = $output['regions'][$i];
+    if($i != $currentID && !$otherRegion['completed'] && $next === null) {
+        $next = $otherRegion['id'];
+    }
+}
+    if($next !== null) {
+
+createForm('forecast', 'forecast.php#top', array('region_id', $next));
+} else {
+createForm('forecast', 'home.php');
 }
 
 ?>
@@ -161,7 +175,7 @@ foreach($output['regions'] as $r) {
 {{/seasons}}
 </div>
     </script>
-    <script src="js/forecast.js?w=202014.a"></script>
+    <script src="js/forecast.js?w=202014.c"></script>
   <script src="js/delphi_epidata.js"></script>
   <script src="https://unpkg.com/mustache@4.0.1"></script>
     <script>
@@ -251,13 +265,14 @@ var curves = {
     forecast: [<?php
     $n = count($region['forecast']['date']);
     for ($i=0; $i<$n; $i++) {
-        if ($region['forecast']['date'][$i] < $currentWeek) { continue; }
+        if ($region['forecast']['date'][$i] < $currentWeek+1) { continue; }
         printf('{epiweek:%d, wili:%.3f},',
             $region['forecast']['date'][$i],
             $region['forecast']['wili'][$i]);
     }
     // NB this will need to be fixed before we start showing 2021 in the display
-    for ($w=$region['forecast']['date'][$n-1]+1; $w<$maxEpiweek; $w++) {
+    $start = ($n > 0) ? $region['forecast']['date'][$n-1] + 1 : $currentWeek + 1;
+    for ($w=$start; $w<$maxEpiweek; $w++) {
         printf('{epiweek:%d, wili:0},',$w);
     }
     ?>],

@@ -685,6 +685,7 @@ function submitForecast(commit) {
         'region_id': regionID,
         'f[]': f,
     };
+    console.log(params);
     $.get("api.php", params, handleResponse, 'json');
 }
 function updateStatus() {
@@ -698,9 +699,7 @@ function updateStatus() {
 	$('#status_message').html('Forecast submitted successfully!');
 	$('#box_status').addClass('any_success');
 	//Move to the next missing region, or go home
-	
-	
-	submit('forecast_48');
+	submit('forecast');
     } else if(submitStatus == SubmitStatus.failure) {
 	$('#status_icon').html('<i class="fa fa-times-circle"></i>');
 	$('#status_message').html('Uh oh, something went wrong. Please try again later.');
@@ -716,6 +715,7 @@ function handleResponse(data) {
         //don't really care what the result was unless it has to do with the submit forecast button
         return;
     }
+    console.log(data)
     clearTimeout(timeoutID);
     //$('#stat_completed').removeClass();
     $('#button_submit').removeClass('box_button_disabled');
@@ -818,9 +818,9 @@ function toggleSeason(rid, seasonID) {
     repaint();
 }
 function snapToLastForecast() {
-    var extra = lastForecast.length - forecast.length;
-    for(var i = 0; i < Math.min(forecast.length, lastForecast.length - extra); i++) {
-        forecast[i] = lastForecast[i + extra];
+    var extra = curves.lastForecast.length - curves.forecast.length;
+    for(var i = 0; i < Math.min(curves.forecast.length, curves.lastForecast.length - extra); i++) {
+        curves.forecast[i] = curves.lastForecast[i + extra];
     }
     repaint();
     ++modifyCounter;
