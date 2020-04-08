@@ -662,15 +662,16 @@ function submitForecast(commit) {
     var foundZero = false;
     var f = [];
     for(var i = 0; i < 52; i++) {
-	if (typeof curves.forecast[i] == "undefined" || curves.forecast[i].wili == 0) {
-	    foundZero = true;
+	if (!curves.forecast[i]) { continue; }
+	if (curves.forecast[i].wili == 0) {
+	    foundZero = curves.forecast[i].epiweek;
 	    break;
 	}
         f[i] = curves.forecast[i].wili;
     }
     if(commit) {
         if(foundZero) {
-            alert('Some points are still at zero. Please double check your forecast and try again.');
+            alert('Some points are still at zero (for epiweek "+foundZero+"; maybe others). Please double check your forecast and try again.');
             return;
         }
         timeoutID = setTimeout(submitTimeout, 10000);

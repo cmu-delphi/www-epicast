@@ -161,7 +161,7 @@ foreach($output['regions'] as $r) {
 {{/seasons}}
 </div>
     </script>
-    <script src="js/forecast.js?w=202014.8"></script>
+    <script src="js/forecast.js?w=202014.a"></script>
   <script src="js/delphi_epidata.js"></script>
   <script src="https://unpkg.com/mustache@4.0.1"></script>
     <script>
@@ -223,7 +223,7 @@ var regionName = '<?= $region['name'] ?>';
 var regionID = '<?= $region['fluview_name'] ?>'; // was: 34
 
 var selectedSeasons = [];
-var showLastForecast = true;
+
 var timeoutID;
 var lastDrag = null;
 var tooltip = null;
@@ -257,11 +257,13 @@ var curves = {
             $region['forecast']['wili'][$i]);
     }
     // NB this will need to be fixed before we start showing 2021 in the display
-    for ($w=$region['forecast']['date'][$n-1]; $w<$maxEpiweek; $w++) {
+    for ($w=$region['forecast']['date'][$n-1]+1; $w<$maxEpiweek; $w++) {
         printf('{epiweek:%d, wili:0},',$w);
     }
     ?>],
 };
+var showLastForecast = curves.lastForecast.length>0;
+
 function loader(sidebarTitle,rid,parent,whitelist) {
     return function(result, message, epidata) {
 	console.log(sidebarTitle, result, message, epidata != null ? epidata.length : void 0);
