@@ -59,8 +59,8 @@ $num = count($output['regions']);
 // We only want history back to 2009
 $minEpiweek = 200936;
 
-// ...and we're going forward to wk 40
-$maxEpiweek = 202040;
+// ...and we're going forward to wk 41
+$maxEpiweek = 202041;
 
 //User's previous forecast for this region
 $output['forecast'] = &$output['regions'][$regionID]['forecast'];
@@ -290,7 +290,8 @@ function loader(sidebarTitle,rid,parent,whitelist) {
 	module.seasons = [];  var mi=0;
 	module.season = {};
 	var season = -1;
-	// CDC seasons run from week 36 to week 35 of the following year
+
+	// mark start and end of each season found in the data
 	for (var i=0; i<epidata.length; i++) {
         var modweek = epidata[i].epiweek % 100;
 
@@ -302,6 +303,7 @@ function loader(sidebarTitle,rid,parent,whitelist) {
         // check for new season
 	    var si = Math.floor(epidata[i].epiweek / 100);        
 	    if (modweek < seasonDefn[0]) si = si - 1;
+	    // whitelist: don't create an extra new season for 2009-2010 week 201036-40
 	    if (season<0 || (season != si && (!whitelist || si in whitelist))) {
 
 		season = si;
