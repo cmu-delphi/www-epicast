@@ -321,24 +321,39 @@ function repaint() {
             drawLine(x, axisY + TICK_SIZE, x, axisY + 1, AXIS_STYLE);
         }
         //months
-        var month = Math.floor((xRange[0] % 100 - 1) / getNumWeeks(Math.floor(xRange[0] / 100)) * MONTHS.length);
         var on = true;
-        for(var epiweek = xRange[0]; epiweek <= xRange[1]; epiweek = addEpiweeks(epiweek, 4.35)) {
-            var label = MONTHS[month];
-            if(month == 0) {
-                label += '\'' + (Math.floor(epiweek / 100) % 100);
+	var decStart = epiweekToDecimal(xRange[0]-1);
+	var decEnd = epiweekToDecimal(xRange[1]);
+	// run through the year twice so we get everybody no matter how long our current season goes on
+	for (var si = 0; si<2; si++) {
+	    for (var li=0; li<MONTHS.length; li++) {
+		var label = MONTHS[li];
+		var epiDecimal = currentSeason + si + li/12.;		
+		
+		x1 = epiDecimal;
+		x2 = epiDecimal + 1./12;
+		
+		// skip months that won't show up
+		if (x1 > decEnd || x2 < decStart) {
+		    continue;
+		}
+		x1 = decimalToFEpiweek(max(decStart,x1));
+		x2 = decimalToFEpiweek(min(decEnd,x2));
+
+		// skip truncated months that are too short for their label
+		if (x2-x1<1.5) { continue; } 
+		
+		x1 = getX(x1);
+		x2 = getX(x2);
+		y1 = canvas.height - row3 + row2/4;
+		oldFillStyle=g.fillStyle;
+		g.fillStyle = on ? '#eee' : '#fff'; on = !on;
+		g.fillRect(x1, y1, x2-x1, row2/2);
+		g.fillStyle = oldFillStyle;
+		
+		drawText(g, label, 0.5*(x1 + x2), canvas.height - row2, 0, Align.center, Align.center);
             }
-            oldFillStyle=g.fillStyle;
-            g.fillStyle = on ? '#eee' : '#fff'; on = !on;
-            x1 = max(xRange[0]-1, addEpiweeks(epiweek,-4.35/2));
-            y1 = canvas.height - row3 + row2/4;
-            x2 = min(addEpiweeks(x1, 4.35), xRange[1])
-            g.fillRect(getX(x1), y1, getX(x2)-getX(x1), row2/2);
-            g.fillStyle = oldFillStyle;
-            
-            drawText(g, label, getX(epiweek), canvas.height - row2, 0, Align.center, Align.center);
-            month = (month + 1) % MONTHS.length;
-        }
+	}
         //label
         drawText(g, LABEL_X, canvas.width / 2, canvas.height - row1, 0, Align.center, Align.center, 1.5, ['bold', 'Calibri']);
     }
@@ -513,6 +528,13 @@ function epiweekToDecimal(ew) {
     var week = ew % 100;
     return year + (week - 1) / getNumWeeks(year);
 }
+function decimalToFEpiweek(yr) {
+    yr += 0.5 / 52;
+    var year = Math.floor(yr);
+    var wk = yr - year;
+    var week = wk * getNumWeeks(year);
+    return year * 100 + week;
+}   
 function decimalToEpiweek(yr) {
     yr += 0.5 / 52;
     var year = Math.floor(yr);
