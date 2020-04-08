@@ -250,18 +250,19 @@ var maxWeek = <?= $maxEpiweek ?>;
 
 var currentWeek = <?= $currentWeek ?>;
 var currentSeason = <?= $current_season ?>;
-var seasonDefn = [36,40];
+var seasonDefn = [ <?= $minEpiweek ?> % 100, <?= $maxEpiweek ?> % 100];
 
-var xRange = [currentSeason*100+seasonDefn[0], (currentSeason+1)*100+seasonDefn[1]];
-var yRange = [0, 25];
 var curves = {
     lastForecast: [<?php
+    $maxILI = 0; $maxILIfactor = 1.3;
     $n = count($lastForecast['date']);
     for ($i=0; $i<$n; $i++) {
         printf('{epiweek:%d, wili:%.3f},',
             $lastForecast['date'][$i],
             $lastForecast['wili'][$i]);
+        $maxILI = max($maxILI, $maxILIfactor*$lastForecast['wili'][$i]);
         }
+
     ?>],
     forecast: [<?php
     $n = count($region['forecast']['date']);
@@ -270,6 +271,8 @@ var curves = {
         printf('{epiweek:%d, wili:%.3f},',
             $region['forecast']['date'][$i],
             $region['forecast']['wili'][$i]);
+        $maxILI = max($maxILI, $maxILIfactor*$region['forecast']['wili'][$i]);
+
     }
     // NB this will need to be fixed before we start showing 2021 in the display
     $start = ($n > 0) ? $region['forecast']['date'][$n-1] + 1 : $currentWeek + 1;
@@ -279,6 +282,9 @@ var curves = {
     ?>],
 };
 var showLastForecast = curves.lastForecast.length>0;
+
+var xRange = [currentSeason*100+seasonDefn[0], (currentSeason+1)*100+seasonDefn[1]];
+var yRange = [0, <?= $maxILI ?>];
 
 function loader(sidebarTitle,rid,parent,whitelist) {
     return function(result, message, epidata) {
@@ -292,6 +298,7 @@ function loader(sidebarTitle,rid,parent,whitelist) {
 
 	// mark start and end of each season found in the data
 	for (var i=0; i<epidata.length; i++) {
+        yRange[1] = max(yRange[1], 1.5*epidata[i].wili); // Fit plot to curves
         var modweek = epidata[i].epiweek % 100;
 
         // end of last season overlaps with this one
