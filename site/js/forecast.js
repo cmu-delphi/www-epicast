@@ -428,7 +428,7 @@ function repaint() {
     if (errors.hasOwnProperty(regionID) && curves.hasOwnProperty(regionID)) {
 	var epiweek = currentWeek;
 	var error = errors[regionID];
-	var end = curves[regionID].season[2019].end;
+	var end = curves[regionID].season[currentSeason].end;
 	for (var i=0; i<9; i = i + 2) {
 	    var currentSeasonIndex = end - i/2 - 1;
 	    var above = -error[i]*scale;
