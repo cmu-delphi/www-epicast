@@ -17,10 +17,9 @@ if(getEpiweekInfo($dbh, $output) !== 1) {
    fail('Error loading epiweek info');
 }
 
-// TODO - just need forecast and region ID for state
 //List of all regions
-if(getRegionsExtended($dbh, $output, $output['user_id']) !== 1) {
-   fail('Error loading region details, history, or forecast');
+if(getRegions($dbh, $output, $output['user_id']) !== 1) {
+   fail('Error loading region details');
 }
 
 if(isset($_REQUEST['skip_instructions'])) {
@@ -41,6 +40,12 @@ if(isset($_REQUEST['region_id'])) {
 if(!isset($output['regions'][$regionID])) {
    fail('Invalid region_id '.$regionID);
 }
+
+//Forecast for this round
+if (loadForecast($dbh, $output, $output['user_id'], $regionID) !== 1) {
+    fail('Error loading current forecast');
+}
+$output['regions'][$regionID]['forecast'] = $output['forecast'];
 
 //Forecast from last round
 if(loadForecast($dbh, $output, $output['user_id'], $regionID, true) !== 1) {
@@ -156,7 +161,7 @@ foreach($output['regions'] as $r) {
 {{/seasons}}
 </div>
     </script>
-    <script src="js/forecast.js?w=202014"></script>
+    <script src="js/forecast.js?w=202014.8"></script>
   <script src="js/delphi_epidata.js"></script>
   <script src="https://unpkg.com/mustache@4.0.1"></script>
     <script>
@@ -214,7 +219,7 @@ function min(x1,x2) { if (x1<x2) { return x1; } return x2; }
 </script>
 <script>
 //globals
-var regionName = <?= $region['name'] ?>;
+var regionName = '<?= $region['name'] ?>';
 var regionID = '<?= $region['fluview_name'] ?>'; // was: 34
 
 var selectedSeasons = [];
@@ -230,14 +235,15 @@ var maxWeek = <?= $maxEpiweek ?>;
 
 var currentWeek = <?= $currentWeek ?>;
 var currentSeason = <?= $current_season ?>;
+var seasonDefn = [36,40];
 
-var xRange = [currentSeason*100+36, maxWeek];
+var xRange = [currentSeason*100+seasonDefn[0], (currentSeason+1)*100+seasonDefn[1]];
 var yRange = [0, 25];
 var curves = {
     lastForecast: [<?php
     $n = count($lastForecast['date']);
     for ($i=0; $i<$n; $i++) {
-        printf('{epiweek:$d, wili:$.3f},',
+        printf('{epiweek:%d, wili:%.3f},',
             $lastForecast['date'][$i],
             $lastForecast['wili'][$i]);
         }
@@ -254,9 +260,9 @@ var curves = {
     for ($w=$region['forecast']['date'][$n-1]; $w<$maxEpiweek; $w++) {
         printf('{epiweek:%d, wili:0},',$w);
     }
-    ?>];
+    ?>],
 };
-function loader(sidebarTitle,rid,parent) {
+function loader(sidebarTitle,rid,parent,whitelist) {
     return function(result, message, epidata) {
 	console.log(sidebarTitle, result, message, epidata != null ? epidata.length : void 0);
 	var module = {}
@@ -268,15 +274,26 @@ function loader(sidebarTitle,rid,parent) {
 	var season = -1;
 	// CDC seasons run from week 36 to week 35 of the following year
 	for (var i=0; i<epidata.length; i++) {
-	    var si = Math.floor(epidata[i].epiweek / 100);
-	    if (epidata[i].epiweek % 100 < 36) si = si - 1;
-	    if (season<0 || season != si) {
-		if (season>=0) module.season[season].end = i-1;
+        var modweek = epidata[i].epiweek % 100;
+
+        // end of last season overlaps with this one
+        if (modweek > seasonDefn[1] && module.season[season-1] && !module.season[season-1].end) {
+            module.season[season-1].end = i-1;
+        }
+
+        // check for new season
+	    var si = Math.floor(epidata[i].epiweek / 100);        
+	    if (modweek < seasonDefn[0]) si = si - 1;
+	    if (season<0 || (season != si && (!whitelist || si in whitelist))) {
+
 		season = si;
 		module.season[season] = {start:i,year:season,label:season==2009?(season+" pandemic"):season,color:getStyle(rid,season).color,current:season==currentSeason};
-		module.seasons[mi++] = module.season[season]; // ugh
+        // the templating engine needs a list, so we make a list
+		module.seasons[mi++] = module.season[season]; 
 	    }
 	}
+    module.season[season].end = epidata.length-1;
+    
 	console.log(module);
 	curves[rid] = module;
 	$(parent).append($(Mustache.render(document.getElementById('sidebar_template').innerHTML, module)));
@@ -294,8 +311,24 @@ $(document).ready(function() {
     });
     resize();
 
-    Epidata.fluview(loader("South Carolina",'sc',"#current_region"), ['sc'], [Epidata.range(minWeek, currentWeek)]);
-    Epidata.fluview(loader("Region HHS4",'hhs4',"#regional_pandemic"), ['hhs4'], [Epidata.range(200936,201035)]); // need to get region for state from epicast2 db
+    Epidata.fluview(loader(regionName,regionID,"#current_region"), [regionID], [Epidata.range(minWeek, currentWeek)]);
+    <?php
+    if ($region['id'] >= 11) {
+        $regionForState = 1;
+        foreach ($output['regions'] as $r) {
+            printf("<!-- region %d states: %s -->\n",$r['id'],$r['states']);
+            $pos = strpos($r['states'],strtoupper($region['fluview_name']));
+            printf("<!-- %s pos: %s -->\n",strtoupper($region['fluview_name']),$pos);
+            if ($pos or $pos === 0) {
+                $regionForState = $r['id'];
+                break;
+            }
+        }
+        ?>
+        Epidata.fluview(loader('<?= $output['regions'][$regionForState]['name'] ?>','<?= $output['regions'][$regionForState]['fluview_name'] ?>',"#regional_pandemic",[2009]), ['<?= $output['regions'][$regionForState]['fluview_name'] ?>'], [Epidata.range(200936,201000+(maxWeek%100))]);
+        <?php
+    } // end if $region['id'] >= 11
+    ?>
 });
 </script>
 <?php

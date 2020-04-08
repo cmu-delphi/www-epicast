@@ -2,7 +2,10 @@
 function getChartWidth() {
     return canvas.width - marginLeft() - marginRight();
 }
-function getX(epiweek) {
+function getX(epiweek, season) {
+    if (season) {
+	epiweek = epiweek + 100*(currentSeason - season);
+    }
     var ew = epiweekToDecimal(epiweek);
     var left = epiweekToDecimal(xRange[0]);
     var right = epiweekToDecimal(xRange[1]);
@@ -38,6 +41,24 @@ var Align = {
     top: 3,
     center: 4
 };
+function findPoint(region, epiweek, interp) {
+    var year = Math.floor(epiweek/100);
+    if (epiweek % 100 < seasonDefn[1]) { year--; }
+    var season = curves[region].season[year];
+    // we usually are finding something near the end, so start
+    // there and work backwards
+    // (if we ever need true random-access, convert this to binary search)
+    for (var i = season.end; i >= season.start; i--) {
+	var point =  curves[region].data[i];
+	if (point.epiweek == epiweek) {
+	    return point;
+	}
+	if (point.epiweek < epiweek && interp) {
+	    return point;
+	}
+    }
+    return false;
+}
 function drawText(g, str, x, y, angle, alignX, alignY, scale, font) {
     scale = typeof scale !== 'undefined' ? scale : 1;
     font = typeof font !== 'undefined' ? font : ['', 'Calibri'];
@@ -103,9 +124,9 @@ function drawPoints(xs, ys, style, g) {
     }
 }
 
-function drawCurveData(curve, style, do_drawPoints, key) {
-    if (typeof do_drawPoints == "undefined") {
-	do_drawPoints = DRAW_POINTS;
+function drawCurveData(curve, style, do_drawPoints, season, key) {
+    if (typeof season == "undefined") {
+	season = currentSeason;
     }
     if (typeof key == "undefined") {
 	key = "wili";
@@ -118,7 +139,7 @@ function drawCurveData(curve, style, do_drawPoints, key) {
     var first = true;
     for(var i = 0; i < curve.length; i++) {
 	if (curve[i][key] < 0) { continue; }
-	var x = getX(curve[i].epiweek < currentWeek?modulusEpiweek(curve[i].epiweek):curve[i].epiweek);
+	var x = getX(curve[i].epiweek, season);
 	var y = getY(curve[i][key]);
 	if(first) {
 	    first = false;
@@ -131,8 +152,8 @@ function drawCurveData(curve, style, do_drawPoints, key) {
     g.stroke();
     if(do_drawPoints) {
 	g.setLineDash([]);
-	drawPoints(curve.map(function (item) { return modulusEpiweek(item.epiweek); }),
-		   curve.map(function (item) { return item[key];}),
+	drawPoints(curve.map(function (item) { return item.epiweek; }),
+		   curve.map(function (item) { return item[key]; }),
 		   style, g);
     }
 }
@@ -185,7 +206,7 @@ function drawCurveXY(xs, ys, start, end, style) {
     g.setLineDash([]);
     if(DRAW_POINTS) drawPoints(xs, ys, start, end, style, g);
 }
-function stitchCurves(regionID, style, y2, xoffset) {
+function stitchCurves(rid, style, y2, xoffset) {
     if(forecast[0] < 0) {
         return;
     }
@@ -331,7 +352,7 @@ function repaint() {
 	    do_drawPoints = false;
         } 
         var style = getStyle(r, s); //curveStyles[r][s];
-
+	
 	if (typeof curves[r] == "undefined") {
 	    console.log("repaint:",r,"not yet available");
 	    return;
@@ -339,7 +360,7 @@ function repaint() {
 	drawCurveData(
 	    curves[r].data.slice(
 		curves[r].season[s].start,
-		curves[r].season[s].end), style, do_drawPoints);
+		curves[r].season[s].end+1), style, do_drawPoints, s);
     }
     for(var i = 0; i < selectedSeasons.length; i++) {
         var isCurrentSeason = (selectedSeasons[i][1] == 2019);
@@ -351,29 +372,33 @@ function repaint() {
 	repaintSeason(i);
     }
     
-    //last forecast
     var lfStyle = {color: '#aaa', size: 2, dash: DASH_STYLE};
-    if(showLastForecast) {
-	// shift x axis by 30 weeks.
-	// drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length, lfStyle);
-	drawCurveData(curves.lastForecast, lfStyle, true);
-	//stitchCurves(regionID, lfStyle, getY(lastForecast[0]), 0);
-    }
-    
-    //current region and latest season
-    repaintSeason(regionID, 2019, true);
     var style = {color: '#000', size: 2, dash: DASH_STYLE};
-    //var start = seasonOffsets[seasonOffsets.length - 1];
-    //var end = Math.min(pastWili.length, start + totalWeeks);
-    //drawCurve(pastWili, start, end, 0, style);
-    //drawCurve(forecast, 0, 52, numPastWeeks + 1, style);
-    drawCurveData(curves.forecast, style, true);
-    //stitchCurves(regionID, style);
+    if (regionID in curves) {
+	//last forecast
+
+	if(showLastForecast) {
+	    // shift x axis by 30 weeks.
+	    // drawCurve(lastForecast, 0, lastForecast.length, totalWeeks - lastForecast.length, lfStyle);
+	    drawCurveData([findPoint(regionID, curves.lastForecast[0].epiweek -1)].concat(curves.lastForecast), lfStyle, true);
+	    
+	    //stitchCurves(regionID, lfStyle, getY(lastForecast[0]), 0);
+	}
+	
+	//current region and latest season
+	repaintSeason(regionID, 2019, true);
+	//var start = seasonOffsets[seasonOffsets.length - 1];
+	//var end = Math.min(pastWili.length, start + totalWeeks);
+	//drawCurve(pastWili, start, end, 0, style);
+	//drawCurve(forecast, 0, 52, numPastWeeks + 1, style);
+	drawCurveData([findPoint(regionID, currentWeek, true)].concat(curves.forecast), style, true);
+	//stitchCurves(regionID, style);
+    }
     
     //nowcast
     if(showNowcast) {
 	g.fillStyle = 'rgba(0, 0, 0, 0.5)';
-	var epiweek = addEpiweeks(xRange[0], numPastWeeks + 1);
+	var epiweek = addEpiweeks(currentWeek, 1);
 	var x = getX(epiweek);
 	var y1 = getY(nowcast[0] - 2 * nowcast[1]);
 	var y2 = getY(nowcast[0] + 2 * nowcast[1]);
@@ -386,29 +411,31 @@ function repaint() {
     }
     
     //error bars // what the actual what is this??? -kmm
-    var errors = [[-0.24705835, 0.26585897, -0.15209838, 0.19588030, -0.12080783, 0.14845500, -0.10822840, 0.13591350, -0.10105576, 0.11903400],
-		  [-0.37140890, 0.28183701, -0.22718089, 0.22283626, -0.17166020, 0.15932419, -0.15244192, 0.13857609, -0.13520489, 0.12653161],
-		  [-0.53510369, 0.89618800, -0.29194798, 0.65376200, -0.13691200, 0.53989966, -0.12287200, 0.46070700, -0.07438098, 0.41997600],
-		  [-0.37340794, 0.40633099, -0.28260333, 0.17494332, -0.22924145, 0.12111835, -0.18220829, 0.09744193, -0.15922900, 0.08408102],
-		  [-0.20515699, 0.30015400, -0.11709100, 0.25312400, -0.08401870, 0.22570893, -0.06906100, 0.20316300, -0.06395200, 0.17931200],
-		  [-0.25007300, 0.20134411, -0.13535207, 0.12399100, -0.13027507, 0.10968548, -0.12658071, 0.09060300, -0.12210600, 0.09081896],
-		  [-0.57142423, 0.64259200, -0.26681298, 0.44821271, -0.17997876, 0.42294960, -0.18924163, 0.40526105, -0.18486160, 0.41010436],
-		  [-0.31905190, 0.53929610, -0.28534067, 0.25807903, -0.18014395, 0.17609501, -0.09770261, 0.15003601, -0.06749161, 0.11253900],
-		  [-0.34997449, 0.16271156, -0.30672299, 0.11085698, -0.28115293, 0.08104906, -0.24976742, 0.07652170, -0.27224423, 0.07954395],
-		  [-1.35720500, 0.36575900, -0.83282601, 0.33934500, -0.57508135, 0.29297430, -0.25338298, 0.25961193, -0.22189758, 0.23839696],
-		  [-0.27577982, 0.67580001, -0.13440096, 0.51631755, -0.08888274, 0.42762205, -0.08109139, 0.37271498, -0.05693280, 0.26734400]];
+    var errors = {
+	'nat':[-0.24705835, 0.26585897, -0.15209838, 0.19588030, -0.12080783, 0.14845500, -0.10822840, 0.13591350, -0.10105576, 0.11903400],
+	'hhs1':[-0.37140890, 0.28183701, -0.22718089, 0.22283626, -0.17166020, 0.15932419, -0.15244192, 0.13857609, -0.13520489, 0.12653161],
+	'hhs2':[-0.53510369, 0.89618800, -0.29194798, 0.65376200, -0.13691200, 0.53989966, -0.12287200, 0.46070700, -0.07438098, 0.41997600],
+	'hhs3':[-0.37340794, 0.40633099, -0.28260333, 0.17494332, -0.22924145, 0.12111835, -0.18220829, 0.09744193, -0.15922900, 0.08408102],
+	'hhs4':[-0.20515699, 0.30015400, -0.11709100, 0.25312400, -0.08401870, 0.22570893, -0.06906100, 0.20316300, -0.06395200, 0.17931200],
+	'hhs5':[-0.25007300, 0.20134411, -0.13535207, 0.12399100, -0.13027507, 0.10968548, -0.12658071, 0.09060300, -0.12210600, 0.09081896],
+	'hhs6':[-0.57142423, 0.64259200, -0.26681298, 0.44821271, -0.17997876, 0.42294960, -0.18924163, 0.40526105, -0.18486160, 0.41010436],
+	'hhs7':[-0.31905190, 0.53929610, -0.28534067, 0.25807903, -0.18014395, 0.17609501, -0.09770261, 0.15003601, -0.06749161, 0.11253900],
+	'hhs8':[-0.34997449, 0.16271156, -0.30672299, 0.11085698, -0.28115293, 0.08104906, -0.24976742, 0.07652170, -0.27224423, 0.07954395],
+	'hhs9':[-1.35720500, 0.36575900, -0.83282601, 0.33934500, -0.57508135, 0.29297430, -0.25338298, 0.25961193, -0.22189758, 0.23839696],
+	'hhs10':[-0.27577982, 0.67580001, -0.13440096, 0.51631755, -0.08888274, 0.42762205, -0.08109139, 0.37271498, -0.05693280, 0.26734400]
+    };
     
-    if (regionID <= 11) {
-	var epiweek = addEpiweeks(xRange[0], numPastWeeks);
-	var error = errors[regionID-1];
-	var end = seasonIndices[2019]+1 < seasonOffsets.length ? seasonOffsets[seasonIndices[2019]+1] : pastWili[regionId].length;
+    if (errors.hasOwnProperty(regionID) && curves.hasOwnProperty(regionID)) {
+	var epiweek = currentWeek;
+	var error = errors[regionID];
+	var end = curves[regionID].season[2019].end;
 	for (var i=0; i<9; i = i + 2) {
 	    var currentSeasonIndex = end - i/2 - 1;
 	    var above = -error[i]*scale;
 	    var below = error[i+1]*scale;
 	    var x_weekNumber = addEpiweeks(epiweek, -(i/2)-1);
 	    var x = getX(x_weekNumber);
-	    var y = getY(pastWili[currentSeasonIndex]);
+	    var y = getY(curves[regionID].data[currentSeasonIndex].wili);
 	    g.fillStyle = 'rgba(0, 0, 0, 0.5)';
 	    var bar_width = 5;
 	    g.fillRect(x-(bar_width/2.), y-above, bar_width, above);
@@ -435,7 +462,7 @@ function repaint() {
     drawLine(x1, y - 3, x2, y + 3, style);
     
     //       error bar legend
-    if (regionID <= 11) {
+    if (errors.hasOwnProperty(regionID)) {
 	// error bar legend
 	drawText(g, '90% Confidence Interval', x2 - 3, y+25, 0, Align.right, Align.center);
 	g.fillStyle = 'rgba(0, 0, 0, 0.5)';
@@ -718,66 +745,66 @@ function resize() {
     //Finally, repaint the canvas
     repaint();
 }
-function toggleSeasonList(regionID) {
+function toggleSeasonList(rid) {
     var closedClass = 'fa-plus-square-o';
     var openedClass = 'fa-minus-square-o';
-    var checkbox = $('#checkbox_region_' + regionID);
+    var checkbox = $('#checkbox_region_' + rid);
     if(checkbox.hasClass(closedClass)) {
         //Expand region
         checkbox.removeClass(closedClass);
         checkbox.addClass(openedClass);
-        $('#container_' + regionID + '_all').removeClass('any_hidden');
+        $('#container_' + rid + '_all').removeClass('any_hidden');
     } else {
         //Shrink region
         checkbox.removeClass(openedClass);
         checkbox.addClass(closedClass);
-        $('#container_' + regionID + '_all').addClass('any_hidden');
+        $('#container_' + rid + '_all').addClass('any_hidden');
     }
     repaint();
 }
-function toggleAllSeasons(regionID) {
+function toggleAllSeasons(rid) {
     var uncheckedClass = 'fa-square-o';
     var checkedClass = 'fa-check-square-o';
-    var checkbox = $('#checkbox_' + regionID + '_all');
+    var checkbox = $('#checkbox_' + rid + '_all');
     if(checkbox.hasClass(uncheckedClass)) {
         //Enable history
         checkbox.removeClass(uncheckedClass);
         checkbox.addClass(checkedClass);
-	console.log(regionID,curves[regionID].season);
-	for(var season in curves[regionID].season) {
-	    console.log('#checkbox_' + regionID + '_' + season);
-	    if($('#checkbox_' + regionID + '_' + season).hasClass(uncheckedClass)) {
-                toggleSeason(regionID, season);
+	console.log(rid,curves[rid].season);
+	for(var season in curves[rid].season) {
+	    console.log('#checkbox_' + rid + '_' + season);
+	    if($('#checkbox_' + rid + '_' + season).hasClass(uncheckedClass)) {
+                toggleSeason(rid, season);
             }
         }
     } else {
         //Disable history
         checkbox.removeClass(checkedClass);
         checkbox.addClass(uncheckedClass);
-	for(var season in curves[regionID].season) {
-            if($('#checkbox_' + regionID + '_' + season).hasClass(checkedClass)) {
-                toggleSeason(regionID, season);
+	for(var season in curves[rid].season) {
+            if($('#checkbox_' + rid + '_' + season).hasClass(checkedClass)) {
+                toggleSeason(rid, season);
             }
         }
     }
     repaint();
 }
-function toggleSeason(regionID, seasonID) {
+function toggleSeason(rid, seasonID) {
     var uncheckedClass = 'fa-square-o';
     var checkedClass = 'fa-check-square-o';
-    var checkbox = $('#checkbox_' + regionID + '_' + seasonID);
+    var checkbox = $('#checkbox_' + rid + '_' + seasonID);
     if(checkbox.hasClass(uncheckedClass)) {
         //Enable history
         checkbox.removeClass(uncheckedClass);
         checkbox.addClass(checkedClass);
-        selectedSeasons.push([regionID, seasonID]);
+        selectedSeasons.push([rid, seasonID]);
     } else {
         //Disable history
 	checkbox.removeClass(checkedClass);
 	checkbox.addClass(uncheckedClass);
 	var index = -1;
         for(var i = 0; i < selectedSeasons.length; i++) {
-            if(selectedSeasons[i][0] == regionID && selectedSeasons[i][1] == seasonID) {
+            if(selectedSeasons[i][0] == rid && selectedSeasons[i][1] == seasonID) {
                 index = i;
                 break;
             }
