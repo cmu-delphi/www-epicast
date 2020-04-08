@@ -175,7 +175,7 @@ createForm('forecast', 'home.php');
 {{/seasons}}
 </div>
     </script>
-    <script src="js/forecast.js?w=202014.c"></script>
+    <script src="js/forecast.js?w=202014.e"></script>
   <script src="js/delphi_epidata.js"></script>
   <script src="https://unpkg.com/mustache@4.0.1"></script>
     <script>
@@ -282,7 +282,6 @@ var showLastForecast = curves.lastForecast.length>0;
 
 function loader(sidebarTitle,rid,parent,whitelist) {
     return function(result, message, epidata) {
-	console.log(sidebarTitle, result, message, epidata != null ? epidata.length : void 0);
 	var module = {}
 	module.title = sidebarTitle;
 	module.rid = rid;
@@ -314,7 +313,6 @@ function loader(sidebarTitle,rid,parent,whitelist) {
 	}
     module.season[season].end = epidata.length-1;
     
-	console.log(module);
 	curves[rid] = module;
 	$(parent).append($(Mustache.render(document.getElementById('sidebar_template').innerHTML, module)));
 	toggleAllSeasons(rid);
