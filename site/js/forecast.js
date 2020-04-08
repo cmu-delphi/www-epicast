@@ -682,7 +682,7 @@ function submitForecast(commit) {
     var params = {
         'action': commit ? 'forecast' : 'autosave',
         'hash': 'c569b530c3d7361f2fcc73641a9b0f44',
-        'region_id': regionID,
+        'region_id': regionNo,
         'f[]': f,
     };
     console.log(params);

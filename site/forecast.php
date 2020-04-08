@@ -234,7 +234,8 @@ function min(x1,x2) { if (x1<x2) { return x1; } return x2; }
 <script>
 //globals
 var regionName = '<?= $region['name'] ?>';
-var regionID = '<?= $region['fluview_name'] ?>'; // was: 34
+var regionID = '<?= $region['fluview_name'] ?>'; // needed for epidata
+var regionNo = <?= $regionID ?>; // needed for saving forecasts
 
 var selectedSeasons = [];
 
