@@ -351,6 +351,11 @@ div.box_status_info {
    padding-top: 10px;
    float: right;
 }
+
+div.sidebar_entry i.fa {margin-right:5px}
+div.sidebar_region {margin-left:15px}
+div.sidebar_region i.fa {margin-right:5px}
+
 div.box_scroll_test {
    width: 100%;
    height: 100%;
