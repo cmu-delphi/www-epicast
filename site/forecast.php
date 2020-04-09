@@ -171,7 +171,7 @@ createForm('forecast', 'home.php', array());
 <div id="container_{{rid}}_all" class="sidebar_region">
 <div class="any_cursor_pointer {{^seasons.5}}any_hidden{{/seasons.5}}" onclick="toggleAllSeasons('{{rid}}')"><i id="checkbox_{{rid}}_all" class="fa fa-square-o"></i><span class="effect_tiny effect_italics">Show all</span></div>
     {{#seasons}}
-    <div id="container_{{rid}}_{{year}}" {{^current}}class="any_cursor_pointer" onclick="toggleSeason('{{rid}}', {{year}})"{{/current}}><i id="checkbox_{{rid}}_{{year}}" class="fa {{#current}}fa-check-square{{/current}}{{^current}}fa-square-o{{/current}}" style="color: {{color}}"></i><span class="effect_tiny">{{label}} {{#current}} current year{{/current}}</span></div>
+    <div id="container_{{rid}}_{{year}}" {{^current}}class="any_cursor_pointer" onclick="toggleSeason('{{rid}}', {{year}})"{{/current}} onmouseenter="hoverCurveOn('{{rid}}', {{year}})" onmouseleave="hoverCurveOff('{{rid}}', {{year}})"><i id="checkbox_{{rid}}_{{year}}" class="fa {{#current}}fa-check-square{{/current}}{{^current}}fa-square-o{{/current}}" style="color: {{color}}"></i><span class="effect_tiny">{{label}} {{#current}} current year{{/current}}</span></div>
 {{/seasons}}
 </div>
     </script>
