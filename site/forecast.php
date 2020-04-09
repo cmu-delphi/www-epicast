@@ -130,7 +130,7 @@ foreach($regionIDs as &$i) {
 
 createForm('forecast', 'forecast.php#top', array('region_id', $next));
 } else {
-createForm('forecast', 'home.php');
+createForm('forecast', 'home.php', array());
 }
 
 ?>
