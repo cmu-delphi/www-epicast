@@ -130,7 +130,7 @@ foreach($regionIDs as &$i) {
 
 createForm('forecast', 'forecast.php#top', array('region_id', $next));
 } else {
-createForm('forecast', 'home.php');
+createForm('forecast', 'home.php', array());
 }
 
 ?>
@@ -171,11 +171,11 @@ createForm('forecast', 'home.php');
 <div id="container_{{rid}}_all" class="sidebar_region">
 <div class="any_cursor_pointer {{^seasons.5}}any_hidden{{/seasons.5}}" onclick="toggleAllSeasons('{{rid}}')"><i id="checkbox_{{rid}}_all" class="fa fa-square-o"></i><span class="effect_tiny effect_italics">Show all</span></div>
     {{#seasons}}
-    <div id="container_{{rid}}_{{year}}" {{^current}}class="any_cursor_pointer" onclick="toggleSeason('{{rid}}', {{year}})"{{/current}}><i id="checkbox_{{rid}}_{{year}}" class="fa {{#current}}fa-check-square{{/current}}{{^current}}fa-square-o{{/current}}" style="color: {{color}}"></i><span class="effect_tiny">{{label}} {{#current}} current year{{/current}}</span></div>
+    <div id="container_{{rid}}_{{year}}" {{^current}}class="any_cursor_pointer" onclick="toggleSeason('{{rid}}', {{year}})"{{/current}} onmouseenter="hoverCurveOn('{{rid}}', {{year}})" onmouseleave="hoverCurveOff('{{rid}}', {{year}})"><i id="checkbox_{{rid}}_{{year}}" class="fa {{#current}}fa-check-square{{/current}}{{^current}}fa-square-o{{/current}}" style="color: {{color}}"></i><span class="effect_tiny">{{label}} {{#current}} current year{{/current}}</span></div>
 {{/seasons}}
 </div>
     </script>
-    <script src="js/forecast.js?w=202014.e"></script>
+    <script src="js/forecast.js?w=202014.g"></script>
   <script src="js/delphi_epidata.js"></script>
   <script src="https://unpkg.com/mustache@4.0.1"></script>
     <script>
@@ -233,6 +233,8 @@ function min(x1,x2) { if (x1<x2) { return x1; } return x2; }
 </script>
 <script>
 //globals
+var userID = <?= $output['user_id'] ?>;
+var userHash = '<?= $output['user_hash'] ?>';
 var regionName = '<?= $region['name'] ?>';
 var regionID = '<?= $region['fluview_name'] ?>'; // needed for epidata
 var regionNo = <?= $regionID ?>; // needed for saving forecasts

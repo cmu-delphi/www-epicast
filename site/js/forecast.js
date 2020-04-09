@@ -242,13 +242,22 @@ function drawTooltip(g, str) {
     drawText(g, "\uf05a", bt.x, cy, 0, Align.right, Align.center, 1.5, ['', 'FontAwesome']);
 }
 function getStyle(region, season) {
+    var ret;
     
     if (region==regionID && season==currentSeason) {
-	return {color: '#000', size: 2, dash: [], alpha: 1};
+	ret = {color: '#000', size: 2, dash: [], alpha: 1};
     } else if (region.startsWith("hhs")) {
-	return {color: '#66f', size: 1, dash: [], alpha: 0.4};
+	ret = {color: '#66f', size: 1, dash: [], alpha: 0.4};
+    } else if (season==2009) { //pandemic
+	ret = {color: '#666', size: 1, dash: [], alpha: 0.4};
+    } else {
+	ret = {color: '#aaa', size: 0.5, dash: [], alpha: 0.4};
     }
-    var ret =  {color: '#999', size: 0.5, dash: [], alpha: 0.4};
+    
+    if (hoverCurve(region,season)) {
+	ret.size++;
+    }
+    
     return ret;
 }
 function repaint() {
@@ -694,7 +703,7 @@ function submitForecast(commit) {
     }
     if(commit) {
         if(foundZero) {
-            alert('Some points are still at zero (for epiweek "+foundZero+"; maybe others). Please double check your forecast and try again.');
+            alert('Some points are still at zero (for '+Math.floor(foundZero/100)+' w'+foundZero%100+'; maybe others). Please double check your forecast and try again.');
             return;
         }
         timeoutID = setTimeout(submitTimeout, 10000);
@@ -704,7 +713,7 @@ function submitForecast(commit) {
     }
     var params = {
         'action': commit ? 'forecast' : 'autosave',
-        'hash': 'c569b530c3d7361f2fcc73641a9b0f44',
+        'hash': userHash,
         'region_id': regionNo,
         'f[]': f,
     };
@@ -765,6 +774,20 @@ function resize() {
     $('#box_side_bar').height(h);
     $('#box_histories').height(h - 8);
     //Finally, repaint the canvas
+    repaint();
+}
+function hoverCurve(rid, season) {
+    return curves[rid]
+	&& curves[rid].season
+	&& curves[rid].season[season]
+	&& curves[rid].season[season].hover;
+}
+function hoverCurveOn(rid, season) {
+    curves[rid].season[season].hover = true;
+    repaint();
+}
+function hoverCurveOff(rid, season) {
+    curves[rid].season[season].hover = false;
     repaint();
 }
 function toggleSeasonList(rid) {
