@@ -175,7 +175,7 @@ createForm('forecast', 'home.php', array());
 {{/seasons}}
 </div>
     </script>
-    <script src="js/forecast.js?w=202014.f"></script>
+    <script src="js/forecast.js?w=202014.g"></script>
   <script src="js/delphi_epidata.js"></script>
   <script src="https://unpkg.com/mustache@4.0.1"></script>
     <script>
@@ -233,6 +233,8 @@ function min(x1,x2) { if (x1<x2) { return x1; } return x2; }
 </script>
 <script>
 //globals
+var userID = <?= $output['user_id'] ?>;
+var userHash = '<?= $output['user_hash'] ?>';
 var regionName = '<?= $region['name'] ?>';
 var regionID = '<?= $region['fluview_name'] ?>'; // needed for epidata
 var regionNo = <?= $regionID ?>; // needed for saving forecasts
