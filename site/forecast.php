@@ -175,7 +175,7 @@ createForm('forecast', 'home.php', array());
 {{/seasons}}
 </div>
     </script>
-    <script src="js/forecast.js?w=202014.e"></script>
+    <script src="js/forecast.js?w=202014.f"></script>
   <script src="js/delphi_epidata.js"></script>
   <script src="https://unpkg.com/mustache@4.0.1"></script>
     <script>
