@@ -694,7 +694,7 @@ function submitForecast(commit) {
     }
     if(commit) {
         if(foundZero) {
-            alert('Some points are still at zero (for epiweek "+foundZero+"; maybe others). Please double check your forecast and try again.');
+            alert('Some points are still at zero (for '+Math.floor(foundZero/100)+' w'+foundZero%100+'; maybe others). Please double check your forecast and try again.');
             return;
         }
         timeoutID = setTimeout(submitTimeout, 10000);
