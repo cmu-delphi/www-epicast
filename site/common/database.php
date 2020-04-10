@@ -337,7 +337,7 @@ function getRegions($dbh, &$output, $userID) {
    if(getEpiweekInfo($dbh, $temp) !== 1) {
       return getResult($temp);
    }
-   $result = $dbh->query("SELECT r.`id`, r.`name`, r.`states`, r.`population`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM ec_fluv_regions r LEFT JOIN ec_fluv_submissions s ON s.`user_id` = {$userID} AND s.`region_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
+   $result = $dbh->query("SELECT r.`id`, r.`fluview_name`, r.`name`, r.`states`, r.`population`, CASE WHEN s.`user_id` IS NULL THEN FALSE ELSE TRUE END `completed` FROM ec_fluv_regions r LEFT JOIN ec_fluv_submissions s ON s.`user_id` = {$userID} AND s.`region_id` = r.`id` AND s.`epiweek_now` = {$temp['epiweek']['round_epiweek']} ORDER BY r.`id` ASC");
    $regions = array();
    while($row = $result->fetch_assoc()) {
       if ($row['name'] == "ny_minus_jfk") {
@@ -347,7 +347,8 @@ function getRegions($dbh, &$output, $userID) {
       }
 
       $region = array(
-         'id' => intval($row['id']),
+          'id' => intval($row['id']),
+          'fluview_name' => $row['fluview_name'],
          'name' => $region_name,
          'states' => $row['states'],
          'population' => intval($row['population']),

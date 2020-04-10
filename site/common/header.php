@@ -52,7 +52,7 @@ if($dbh->connect_errno) {
                <span class="effect_fluv">&lt;COVID-19 Edition&gt;</span>
             </a>
          </div>
-         <div class="box_subtitle">Epidemiological Forecasting by <span class="effect_delphi"><a class="delphi" target="_blank" rel="noopener" href="https://delphi.midas.cs.cmu.edu/">DELPHI</a></span></div>
+         <div class="box_subtitle">Epidemiological Forecasting by <span class="effect_delphi"><a class="delphi" target="_blank" rel="noopener" href="https://delphi.cmu.edu/">DELPHI</a></span></div>
       </div>
       <?php
       if(!isset($skipLogin) || !$skipLogin) {
@@ -96,7 +96,7 @@ if($dbh->connect_errno) {
                createDivider('|');
             }
             print('<span class="effect_delphi">');
-            createLink('DELPHI', 'https://delphi.midas.cs.cmu.edu/', true, 'delphi');
+            createLink('DELPHI', 'https://delphi.cmu.edu/', true, 'delphi');
             print('</span>');
             ?>
          </div>
