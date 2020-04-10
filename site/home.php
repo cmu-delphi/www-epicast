@@ -100,10 +100,6 @@ if($_offline) {
             <div class="bot_stat_value"><?= formatEpiweek($output['epiweek']['data_epiweek']) ?></div>
             <div class="bot_stat_description">latest available data</div>
         </div>
-        <div class="box_stat">
-            <div class="bot_stat_value"><?= getDeltaWeeks($output['epiweek']['round_epiweek'], $output['epiweek']['season']['end']) ?></div>
-            <div class="bot_stat_description">weeks remaining in season</div>
-        </div>
     </div>
    <?php
    // This approach will work next week, but not for w12, because
