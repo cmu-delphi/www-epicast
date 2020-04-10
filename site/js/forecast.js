@@ -366,6 +366,22 @@ function repaint() {
         //label
         drawText(g, LABEL_X, canvas.width / 2, canvas.height - row1, 0, Align.center, Align.center, 1.5, ['bold', 'Calibri']);
     }
+
+    //covid-19 benchmarks
+    oldFillStyle=g.fillStyle;
+    if (covidBenchmarks.first) {
+	covid_1   = getX(decimalToFEpiweek(covidBenchmarks.first*1.)); // first cases
+	drawLine(covid_1, getY(yRange[0]), covid_1, getY(yRange[1]), {color:"#F00", size:0.5, dash:[], alpha:0.4});
+	g.fillStyle="#600";
+	drawText(g, "First COVID-19 case in "+regionName+" ->", covid_1 - 10, marginTop() + 36*uiScale, 0, Align.right, Align.top);
+    }
+    if (covidBenchmarks.hundred) {
+	covid_100 = getX(decimalToFEpiweek(covidBenchmarks.hundred*1.)); // 100 cases
+	drawLine(covid_100, getY(yRange[0]), covid_100, getY(yRange[1]), {color:"#F00", size:1.5, dash:[], alpha:0.4});
+	g.fillStyle="#600";
+	drawText(g, "<- 100 cases in "+regionName, covid_100 + 10, marginTop() + 36*uiScale, 0, Align.left, Align.top);
+    }
+    g.fillStyle=oldFillStyle;
     
     //other regions or past seasons
     function repaintSeason(r, s, do_drawPoints) {

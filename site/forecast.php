@@ -56,6 +56,20 @@ $lastForecast = $output['forecast'];
 $region = &$output['regions'][$regionID]; // reference because having two copies is not great
 $num = count($output['regions']);
 
+// grab covid-19 case data
+if (($covidcases = fopen("data/covid19_benchmarks_us.csv",'r')) !== FALSE) {
+    $row=0;
+    while (($data = fgetcsv($covidcases, 1000, ",")) !== FALSE) {
+        if ($row++==0) { continue; }
+        if (count($data) != 3) { fail("Bad covid case benchmarks file: ".count($data)." at line ".$row); break; }
+        if ($data[0] != $region['name']) { continue; }
+        $region['covid'] = array('first' => explode("/",$data[1]), 'hundred' => explode("/",$data[2]));
+        break;
+    }
+    fclose($covidcases);
+} else { printf("<!-- no covid19 benchmarks file -->"); }
+
+
 // We only want history back to 2009
 $minEpiweek = 200936;
 
@@ -175,7 +189,7 @@ createForm('forecast', 'home.php', array());
 {{/seasons}}
 </div>
     </script>
-    <script src="js/forecast.js?w=202014.g"></script>
+    <script src="js/forecast.js?w=202014.h"></script>
   <script src="js/delphi_epidata.js"></script>
   <script src="https://unpkg.com/mustache@4.0.1"></script>
     <script>
@@ -232,12 +246,15 @@ function min(x1,x2) { if (x1<x2) { return x1; } return x2; }
 
 </script>
 <script>
-//globals
+//globals - these are set by PHP; do not copy
 var userID = <?= $output['user_id'] ?>;
 var userHash = '<?= $output['user_hash'] ?>';
 var regionName = '<?= $region['name'] ?>';
 var regionID = '<?= $region['fluview_name'] ?>'; // needed for epidata
 var regionNo = <?= $regionID ?>; // needed for saving forecasts
+var covidBenchmarks = {<?php foreach ($region['covid'] as $key => $value) { printf("'%s': '%s', ",$key, (20*100 + $value[2]) + ($value[0] - 1 + $value[1]/31.)/12.); } ?>}; // epi-decimals
+// \globals
+
 
 var selectedSeasons = [];
 
