@@ -74,7 +74,7 @@ if (($covidcases = fopen("data/covid19_benchmarks_us.csv",'r')) !== FALSE) {
 $minEpiweek = 200936;
 
 // ...and we're going forward to wk 41
-$maxEpiweek = 202041;
+$maxEpiweek = 202040;
 
 //User's previous forecast for this region
 $output['forecast'] = &$output['regions'][$regionID]['forecast'];
@@ -91,7 +91,6 @@ if(($currentWeek % 100) >= $firstWeekOfChart) {
    $yearStart = intval($currentWeek / 100) - 1;
 }
 $seasonStart = 201936;
-$seasonEnd = 202035;
 
 //Nowcast (may or may not be available)
 getNowcast($dbh, $output, addEpiweeks($currentWeek, 1), $regionID);
@@ -253,7 +252,9 @@ var regionName = '<?= $region['name'] ?>';
 var regionID = '<?= $region['fluview_name'] ?>'; // needed for epidata
 var regionNo = <?= $regionID ?>; // needed for saving forecasts
 var covidBenchmarks = {<?php foreach ($region['covid'] as $key => $value) { printf("'%s': '%s', ",$key, (20*100 + $value[2]) + ($value[0] - 1 + $value[1]/31.)/12.); } ?>}; // epi-decimals
-// \globals
+// \end php globals
+var benchmarksName = (regionName == "National")?"USA":regionName;
+
 
 
 var selectedSeasons = [];

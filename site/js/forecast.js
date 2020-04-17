@@ -318,7 +318,7 @@ function repaint() {
         var row2 = 1.75 * (marginBottom() / 3);
         var row3 = 2.5 * (marginBottom() / 3);
         var axisY = canvas.height - marginBottom();
-        //flu season
+        //pandemic season
         //ticks
         var skip = 0;
         for(var epiweek = xRange[0]; epiweek <= xRange[1]; epiweek = addEpiweeks(epiweek, 1)) {
@@ -373,13 +373,13 @@ function repaint() {
 	covid_1   = getX(decimalToFEpiweek(covidBenchmarks.first*1.)); // first cases
 	drawLine(covid_1, getY(yRange[0]), covid_1, getY(yRange[1]), {color:"#F00", size:0.5, dash:[], alpha:0.4});
 	g.fillStyle="#600";
-	drawText(g, "First COVID-19 case in "+regionName+" ->", covid_1 - 10, marginTop() + 36*uiScale, 0, Align.right, Align.top);
+	drawText(g, "First COVID-19 case in "+benchmarksName+" ->", covid_1 - 10, marginTop() + 36*uiScale, 0, Align.right, Align.top);
     }
     if (covidBenchmarks.hundred) {
 	covid_100 = getX(decimalToFEpiweek(covidBenchmarks.hundred*1.)); // 100 cases
 	drawLine(covid_100, getY(yRange[0]), covid_100, getY(yRange[1]), {color:"#F00", size:1.5, dash:[], alpha:0.4});
 	g.fillStyle="#600";
-	drawText(g, "<- 100 cases in "+regionName, covid_100 + 10, marginTop() + 36*uiScale, 0, Align.left, Align.top);
+	drawText(g, "<- 100 cases in "+benchmarksName, covid_100 + 10, marginTop() + 36*uiScale, 0, Align.left, Align.top);
     }
     g.fillStyle=oldFillStyle;
     
