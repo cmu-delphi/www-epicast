@@ -1,5 +1,13 @@
 RewriteEngine On
 
+## Resrtict access to known users ##
+AuthType Basic
+AuthName "Restricted Site: Crowdcast"
+AuthBasicProvider file
+AuthUserFile /var/www/passwords
+Require user cctest
+## Resrtict access to known users ##
+
 ## Compress Files ##
 <IfModule mod_deflate.c>
     <filesMatch "\.(js|css|html|php|svg|htm|xml|json)$">
