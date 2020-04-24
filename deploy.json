@@ -7,64 +7,65 @@
     {
       "type": "move",
       "src": "site/.htaccess",
-      "dst": "/var/www/html/cc-test/.htaccess",
+      "dst": "/var/www/html/crowdcast/.htaccess",
       "add-header-comment": false
     },
     "// service worker",
     {
       "type": "move",
       "src": "site/sw.js",
-      "dst": "/var/www/html/cc-test/sw.js",
+      "dst": "/var/www/html/crowdcast/sw.js",
       "add-header-comment": true
     },
     "// web sources",
     {
       "type": "move",
       "src": "site/",
-      "dst": "/var/www/html/cc-test/",
+      "dst": "/var/www/html/crowdcast/",
       "match": "^.*\\.php$",
       "add-header-comment": true
     },
     {
       "type": "move",
       "src": "site/common/",
-      "dst": "/var/www/html/cc-test/common/",
+      "dst": "/var/www/html/crowdcast/common/",
       "match": "^.*\\.php$",
       "add-header-comment": true
     },
     {
       "type": "move",
       "src": "site/css/",
-      "dst": "/var/www/html/cc-test/css/",
+      "dst": "/var/www/html/crowdcast/css/",
       "match": "^.*\\.(css|php)$",
       "add-header-comment": true
     },
     {
       "type": "move",
       "src": "site/js/",
-      "dst": "/var/www/html/cc-test/js/",
+      "dst": "/var/www/html/crowdcast/js/",
       "match": "^.*\\.js$",
       "add-header-comment": true
     },
+
     "// images",
     {
       "type": "move",
       "src": "site/images/flags/",
-      "dst": "/var/www/html/cc-test/images/flags/",
+      "dst": "/var/www/html/crowdcast/images/flags/",
       "match": "^.*\\.png$"
     },
     "// tutorials",
     {
       "type": "move",
       "src": "site/images/",
-      "dst": "/var/www/html/cc-test/images/",
+      "dst": "/var/www/html/crowdcast/images/",
       "match": "^.*\\.(gif|mp4)$"
     },
     "// benchmark data",
     {
       "type":"move",
       "src":"site/data/",
-      "dst":"/var/www/html/cc-test/data/",
+      "dst":"/var/www/html/crowdcast/data/",
       "match":"^.*\\.csv$"
     }
   ]
