@@ -1,12 +1,17 @@
 # Status
 
-[![Deploy Status](https://delphi.midas.cs.cmu.edu/~automation/public/github_deploy_repo/badge.php?repo=cmu-delphi/www-crowdcast)](#)
+[![Deploy Status](https://delphi.midas.cs.cmu.edu/~automation/public/github_deploy_repo/badge.php?repo=cmu-delphi/www-epicast)](#)
 
 # About
 
-The Crowdcast website for collecting flu forecasts.
+This is the **development** version of the website.
 
-The site is live at:
-- https://delphi.cmu.edu/crowdcast
+1. it is generally safe to make changes here at any time, as they will not
+affect the production environment
+2. changes should be merged from this branch into
+[the prod branch](https://github.com/cmu-delphi/www-epicast/tree/prod),
+except for production-specific configuration
 
-A live demo is available at http://demo.epicast.net/ (User ID is `00000000`)
+See
+[the master branch README.md](https://github.com/cmu-delphi/www-epicast/blob/master/README.md)
+for more information.
