@@ -78,6 +78,52 @@ require_once('common/navigation.php');
       another project (not crowdsourced) we are forecasting future
       demand on hospitals.
     </p>
+
+               </br>
+		
+    <p>
+      <font size="5">
+	5. “Can you only see your score if you’re one of the top 10? / Can you see more than just last weeks forecast? I’m having trouble figuring out if my prior forecasts were any good. "
+      </font>
+    </p>
+    <p>
+      Answer: Unfortunately we can only show the top 10 scores.  However, your own score each week is always sent you you in the email you receive the following week.
+    </p>
+
+            </br>
+		
+    <p>
+      <font size="5">
+	6. “I only have an iPhone. I do not have a computer to work on. Should I withdraw from the study or is there a way I can use my iPhone? "
+      </font>
+    </p>
+    <p>
+      Answer: Unfortunately we do not yet have a way to support smooth participation by phone.
+    </p>
+
+            </br>
+		
+    <p>
+      <font size="5">
+	7. “On forecasting methodologies: Would you like us to forecast the following week, two weeks out, or the rest of the dates on the graph? Do you want us to use a method we can communicate to others? Do you want us to use a statistical method or just look at the data in the context of what you know from public information?"
+      </font>
+    </p>
+    <p>
+      Answer: Please forecast the rest of the time period shown on the Crowdcast display.  You may use any method you wish, including qualitative reasoning and personal judgement, using whatever data you have and anything else that you believe is relevant.  Your goal is to be as accurate as possible, regardless of the method you use.
+    </p>
+
+            </br>
+		
+    <p>
+      <font size="5">
+	8. “On forecasting assumptions: Now that there is a pandemic, people are being asked to self-isolate if they have symptoms, instead of seeing a doctor, because of shortage of testing. Would you have to take that into consideration when making your forecasts? (i.e. it would be lower then you may predict because of lack of doctor’s visits, and lack of testing). Is it based on what I see around my area? People sheltering or using social distancing base not doing those things?"
+      </font>
+    </p>
+    <p>
+      Answer: You should take into account all considerations that you believe are relevant to what will eventually be measured and reported in the location for which you are forecasting.
+    </p>
+
+
   </div>
 </div>
 <?php
