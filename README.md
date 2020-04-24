@@ -1,6 +1,8 @@
 # Status
 
-[![Deploy Status](https://delphi.midas.cs.cmu.edu/~automation/public/github_deploy_repo/badge.php?repo=cmu-delphi/www-epicast)](#)
+| **dev** | **prod** |
+|:-------:|:--------:|
+| [![Dev Deploy Status](https://delphi.midas.cs.cmu.edu/~automation/public/github_deploy_repo/badge.php?repo=cmu-delphi/www-epicast/dev)](#) | [![Prod Deploy Status](https://delphi.midas.cs.cmu.edu/~automation/public/github_deploy_repo/badge.php?repo=cmu-delphi/www-epicast/prod)](#) |
 
 # About
 
