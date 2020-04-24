@@ -3,13 +3,6 @@
   "version": 1,
   "actions": [
 
-    "// css is actually php",
-    {
-      "type": "move",
-      "src": "site/css/.htaccess",
-      "dst": "/var/www/html/crowdcast/css/.htaccess",
-      "add-header-comment": true
-    },
     "// .htaccess file",
     {
       "type": "move",
@@ -60,7 +53,20 @@
       "src": "site/images/flags/",
       "dst": "/var/www/html/crowdcast/images/flags/",
       "match": "^.*\\.png$"
+    },
+    "// tutorials",
+    {
+      "type": "move",
+      "src": "site/images/",
+      "dst": "/var/www/html/crowdcast/images/",
+      "match": "^.*\\.(gif|mp4)$"
+    },
+    "// benchmark data",
+    {
+      "type":"move",
+      "src":"site/data/",
+      "dst":"/var/www/html/crowdcast/data/",
+      "match":"^.*\\.csv$"
     }
-
   ]
 }
