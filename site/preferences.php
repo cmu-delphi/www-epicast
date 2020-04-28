@@ -55,7 +55,7 @@ function createPreference(&$output, $label, $prefix, $name, $type) {
 $survey_fields = array('flu', 'vir', 'epi', 'ph', 'sml');
 $email_fields = array('reminders');
 // $advanced_fields = array('pandemic', 'leaderboard', 'initials', 'prior', 'hospitalization');
-$advanced_fields = array('pandemic', 'leaderboard', 'initials', 'prior');
+$advanced_fields = array('leaderboard', 'initials');
 $account_fields = array();
 ?>
 <div class="box_article centered">
@@ -299,7 +299,7 @@ $account_fields = array();
                   For these reasons, the 2009 pandemic season is hidden by default.
                   However, forecasters who have experience in influenza epidemiology may find it helpful to display this atypical season.
                   Here you have the option to display the 2009 pandemic season on the chart alongside the more typical epidemic seasons.
-               </p> 
+               </p>
                <table cellspacing="0">
                   <?php
                   $prefix = 'advanced_';
@@ -307,8 +307,8 @@ $account_fields = array();
                   ?>
                </table>
                -->
-               
-<!-- Nobody gets data earlier than 2009, so don't ask 
+
+<!-- Nobody gets data earlier than 2009, so don't ask
                <p class="text_title left">Additional Seasons --- for National and Regional Forecasts</p>
                <p class="text_body left">
                   The flu sentinel surveillance network (ILINet) has been growing and evolving since its inception in 1997.
