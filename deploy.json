@@ -29,7 +29,7 @@
       "type": "move",
       "src": "site/css/",
       "dst": "/var/www/html/cc-test/css/",
-      "match": "^.*\\.(css|php)$",
+      "match": "^.*\\.(php)$",
       "add-header-comment": true
     },
     {
