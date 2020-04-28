@@ -93,7 +93,7 @@ if(($currentWeek % 100) >= $firstWeekOfChart) {
 $seasonStart = 201936;
 
 //Nowcast (may or may not be available)
-getNowcast($dbh, $output, addEpiweeks($currentWeek, 1), $regionID);
+// getNowcast($dbh, $output, addEpiweeks($currentWeek, 1), $regionID);
 
 if(getPreference($output, 'skip_instructions', 'int') !== 1) {
    ?>
@@ -124,7 +124,7 @@ if(getPreference($output, 'skip_instructions', 'int') !== 1) {
       </div>
    </div>
    <?php
-} else { 
+} else {
 ?>
 <?php
 // Get the next missing region for this user, or go home
@@ -171,7 +171,7 @@ createForm('forecast', 'home.php', array());
    <div id="box_side_bar">
       <div id="box_histories">
           <div class="box_decision_title centered" style="width: 100%;">History</div>
-          
+
     <div id="current_region"></div>
     <div id="regional_pandemic"></div>
     <div id="ecdc"></div>
@@ -327,7 +327,7 @@ function loader(sidebarTitle,rid,parent,whitelist) {
         }
 
         // check for new season
-	    var si = Math.floor(epidata[i].epiweek / 100);        
+	    var si = Math.floor(epidata[i].epiweek / 100);
 	    if (modweek < seasonDefn[0]) si = si - 1;
 	    // whitelist: don't create an extra new season for 2009-2010 week 201036-40
 	    if (season<0 || (season != si && (!whitelist || si in whitelist))) {
@@ -335,11 +335,11 @@ function loader(sidebarTitle,rid,parent,whitelist) {
 		season = si;
 		module.season[season] = {start:i,year:season,label:season==2009?(season+" pandemic"):season,color:getStyle(rid,season).color,current:season==currentSeason};
         // the templating engine needs a list, so we make a list
-		module.seasons[mi++] = module.season[season]; 
+		module.seasons[mi++] = module.season[season];
 	    }
 	}
     module.season[season].end = epidata.length-1;
-    
+
 	curves[rid] = module;
 	$(parent).append($(Mustache.render(document.getElementById('sidebar_template').innerHTML, module)));
 	toggleAllSeasons(rid);
