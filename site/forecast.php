@@ -189,7 +189,6 @@ createForm('forecast', 'home.php', array());
 </div>
     </script>
     <script src="js/forecast.js?w=202015"></script>
-  <script src="js/delphi_epidata.js"></script>
   <script src="https://unpkg.com/mustache@4.0.1"></script>
     <script>
     // was: forecast.js
