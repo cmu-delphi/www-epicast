@@ -1,12 +1,13 @@
 RewriteEngine On
 
-## Resrtict access to known users ##
+## Restrict access to known users or docker development ##
 AuthType Basic
 AuthName "Restricted Site: Crowdcast"
 AuthBasicProvider file
 AuthUserFile /var/www/passwords
 Require user cctest
-## Resrtict access to known users ##
+Require ip 172.16.0.0/12
+## Restrict access to known users or docker development ##
 
 ## Compress Files ##
 <IfModule mod_deflate.c>
