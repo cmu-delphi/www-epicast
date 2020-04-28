@@ -19,36 +19,36 @@ if($_offline) {
       fail('Error loading epiweek info');
    }
    //User stats
-   
+
 //    echo "calling getUserStats";
    if(getUserStats($dbh, $output, $output['user_id'], $output['epiweek']['round_epiweek']) != 1) {
       fail('Error loading user info');
    }
-   
+
 // Hospitalization forecasts: turned off for this season.
 //    if(getUserStats_hosp($dbh, $output, $output['user_id'], $output['epiweek']['round_epiweek']) != 1) {
 //       fail('Error loading user info');
 //    }
-   
+
    if(getRegions($dbh, $output, $output['user_id']) != 1) {
       fail('Error loading region info');
    }
-   
+
    ?>
 
 
     <div class="box_section">
         <div class="box_section_title">
             Post <?= formatEpiweek($output['epiweek']['round_epiweek']) ?> Forecast
-            
+
             <div class="box_section_subtitle">
                 Due by 10:00 AM (ET) on <?= date('l, M j, Y', $output['epiweek']['deadline_timestamp']) ?>.
             </div>
-            
+
     <?php
     createLink('FAQ', 'FAQ.php#top');
     ?>
-            
+
         </div>
     </div>
 
@@ -95,9 +95,10 @@ if($_offline) {
             <div class="bot_stat_value"><?= $value ?></div>
             <div class="bot_stat_description"><?= $unit ?></div>
         </div>
-        
+
         <div class="box_stat">
-            <div class="bot_stat_value"><?= formatEpiweek($output['epiweek']['data_epiweek']) ?></div>
+            <div id="fluview_issue" class="bot_stat_value"><i class="fa fa-spinner fa-spin"></i></div>
+            <script>getLatestIssueFormatted(week => $('#fluview_issue').text(week))</script>
             <div class="bot_stat_description">latest available data</div>
         </div>
     </div>
@@ -114,7 +115,7 @@ if($_offline) {
    if ($missing == 0) {
       ?>
       <!-- <?= $output['stat_completed'] ?> stat_completed -->
-      
+
       <div class="box_section">
          <div class="box_section_title">
             Nice job, you're finished!
@@ -131,7 +132,7 @@ if($_offline) {
 
    <p class="centered"><i>Hover a button above to see which states are in that region or the location of the state in the map below.</i></p>
    <div id="map_container"></div>
-   
+
    <!-- news -->
    <div class="box_section">
        <div class="box_section_title">
@@ -200,7 +201,7 @@ if($_offline) {
      </div>
    </div>
    <!-- /social -->
-                
+
    <!-- external resources -->
    <div class="box_section">
      <div class="box_section_title">
@@ -209,11 +210,11 @@ if($_offline) {
          COVID-19 Information and Data
        </div>
      </div>
-     
+
      <p><a href="https://docs.google.com/spreadsheets/d/16Nn_3ZvSLnpxRyA2DkoMMzyrd11-AlGJXasS0owln88/edit#gid=0">DELPHI COVID-19 and ILI Data Sources</a> - spreadsheet updated continually</p>
    </div>
    <!-- /external resources -->
-                
+
 </div><!-- /article -->
 </div><!-- /content -->
 <script>
