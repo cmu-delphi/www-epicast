@@ -10,13 +10,6 @@
       "dst": "/var/www/html/crowdcast/.htaccess",
       "add-header-comment": false
     },
-    "// service worker",
-    {
-      "type": "move",
-      "src": "site/sw.js",
-      "dst": "/var/www/html/crowdcast/sw.js",
-      "add-header-comment": true
-    },
     "// web sources",
     {
       "type": "move",
