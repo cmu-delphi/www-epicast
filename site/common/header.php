@@ -20,6 +20,7 @@ $output = array();
       <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
       <script src="js/utils.js"></script>
       <script src="js/rAF.js"></script>
+      <script src="https://delphi.cmu.edu/epidata/lib/delphi_epidata.js"></script>
       <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" media="none" onload="if(media!='all')media='all'" />
       <noscript>
       			<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
