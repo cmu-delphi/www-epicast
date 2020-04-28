@@ -25,7 +25,12 @@ $path = dirname($_SERVER['REQUEST_URI']);
 if($path !== '/') {
    $path .= '/';
 }
-$location = 'https://' . $_SERVER['HTTP_HOST'] . $path . $location; # TODO: Can we let the https rewrite handle this?
+if (stripos($_SERVER['SERVER_PROTOCOL'],'https') === 0) {
+  $protocol = 'https://';
+} else {
+  $protocol = 'http://';
+}
+$location = $protocol . $_SERVER['HTTP_HOST'] . $path . $location; # TODO: Can we let the https rewrite handle this?
 header("Location: {$location}");
 ?>
 <html>
