@@ -39,14 +39,14 @@ $limit = 10;
             The best of the best.
          </div>
       </div>
-      
-      
+
+
       <div>
 <!--          <div class="box_section_title">
             We are working to fix a bug in the scoring algorithm.  We will be back soon with corrected scores!
          </div> -->
-         
-         
+
+
          <div class="box_leaderboard">
             <?php
             if(getLeaderboard($dbh, $output, 'total', $limit) !== 1) {
@@ -59,7 +59,7 @@ $limit = 10;
             }
             ?>
          </div>
-         
+
          <div class="box_leaderboard">
             <?php
             if(getLeaderboard($dbh, $output, 'last', $limit) !== 1) {
@@ -68,18 +68,18 @@ $limit = 10;
                fail('Error loading epiweek info');
             } else {
                ?>
-               <h1 style="margin-bottom: 0px;"><?= formatEpiweek(addEpiweeks($output['epiweek']['data_epiweek'],-1)) ?> Score</h1>
+               <h1 style="margin-bottom: 0px;">Last Week Score</h1>
                <?php
                createTable($output['leaderboard']);
             }
             ?>
          </div>
-         
-         
-      </div>
-      
 
-      
+
+      </div>
+
+
+
    </div>
 </div>
 <?php
