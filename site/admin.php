@@ -151,7 +151,8 @@ if(isAdmin($output)) {
       </div>
       <div>
          <div class="box_stat">
-            <div class="bot_stat_value"><?= formatEpiweek($output['epiweek']['data_epiweek']) ?></div>
+            <div id="fluview_issue1" class="bot_stat_value"><i class="fa fa-spinner fa-spin"></i></div>
+            <script>getLatestIssueFormatted(week => $('#fluview_issue1').text(week))</script>
             <div class="bot_stat_description">Most Recent Report</div>
          </div>
          <div class="box_stat">
@@ -174,7 +175,8 @@ if(isAdmin($output)) {
       </div>
       <div>
          <div class="box_stat">
-            <div class="bot_stat_value"><?= formatEpiweek($output['epiweek']['data_epiweek']) ?></div>
+            <div id="fluview_issue2" class="bot_stat_value"><i class="fa fa-spinner fa-spin"></i></div>
+            <script>getLatestIssueFormatted(week => $('#fluview_issue2').text(week))</script>
             <div class="bot_stat_description">Most Recent Report</div>
          </div>
          <div class="box_stat">

@@ -191,9 +191,7 @@ Output:
    $output['result'] will contain the following values:
       1 - Success
       2 - Failure (table ec_fluv_round)
-      3 - Failure (table epidata.fluview)
-   $output['epiweek']['round_epiweek'] - This round's identifier (can be ahead of data_epiweek)
-   $output['epiweek']['data_epiweek'] - The most recently published issue (from epidata.fluview)
+   $output['epiweek']['round_epiweek'] - This round's identifier (can be ahead of latest issue)
    $output['epiweek']['deadline'] - Deadline timestamp as a string (YYYY-MM-DD HH:MM:SS)
    $output['epiweek']['deadline_timestamp'] - Unix timestamp of deadline
    $output['epiweek']['remaining'] - An array containing days/hours/minutes/seconds remaining
@@ -244,14 +242,6 @@ function getEpiweekInfo($dbh, &$output) {
       setResult($output, 1);
    } else {
       setResult($output, 2);
-      return getResult($output);
-   }
-   $result = $dbh->query('SELECT max(`issue`) AS `data_epiweek` FROM epidata.`fluview`');
-   if($row = $result->fetch_assoc()) {
-      $output['epiweek']['data_epiweek'] = intval($row['data_epiweek']);
-      setResult($output, 1);
-   } else {
-      setResult($output, 3);
       return getResult($output);
    }
    return getResult($output);
@@ -357,7 +347,7 @@ function getRegions($dbh, &$output, $userID) {
       $regions[$region['id']] = $region;
    }
    $output['regions'] = &$regions;
-   
+
    setResult($output, count($regions) == NUM_REGIONS ? 1 : 2);
    return getResult($output);
 }
@@ -443,7 +433,7 @@ function getRegionsExtended($dbh, &$output, $userID) {
    if(getRegions($dbh, $output, $userID) !== 1) {
       return getResult($output);
    }
-   
+
    //History and forecast for every region
    foreach($output['regions'] as &$r) {
       if(getPreference($output, 'advanced_prior', 'int') === 1) {
@@ -451,16 +441,16 @@ function getRegionsExtended($dbh, &$output, $userID) {
       } else {
          $firstWeek = 200430;
       }
-      
+
       if(getHistory($dbh, $output, $r['id'], $firstWeek) !== 1) {
          return getResult($output);
       }
-      
+
       $r['history'] = $output['history'];
       if(loadForecast($dbh, $output, $userID, $r['id']) !== 1) {
          return getResult($output);
       }
-      
+
       $r['forecast'] = $output['forecast'];
    }
    setResult($output, 1);
@@ -596,7 +586,7 @@ Output:
       2 - Failure
    $output['history'] - Arrays of epiweeks and historical incidence (wILI) for the region
 */
-function getHistory($dbh, &$output, $regionID, $firstWeek) {   
+function getHistory($dbh, &$output, $regionID, $firstWeek) {
    $result = $dbh->query("SELECT fv.`epiweek`, fv.`wili` FROM epidata.`fluview` AS fv JOIN ( SELECT `epiweek`, max(`issue`) AS `latest` FROM epidata.`fluview` AS fv JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} GROUP BY fv.`epiweek` ) AS issues ON fv.`epiweek` = issues.`epiweek` AND fv.`issue` = issues.`latest` JOIN ec_fluv_regions AS reg ON reg.`fluview_name` = fv.`region` WHERE reg.`id` = {$regionID} AND fv.`epiweek` >= {$firstWeek} ORDER BY fv.`epiweek` ASC");
    $date = array();
    $wili = array();
@@ -739,7 +729,7 @@ Output:
       2 - Failure
 */
 function saveForecast($dbh, &$output, $userID, $regionID, $forecast, $commit) {
-   
+
    $temp = array();
    if(getEpiweekInfo($dbh, $temp) !== 1) {
       return getResult($temp);
@@ -752,18 +742,18 @@ function saveForecast($dbh, &$output, $userID, $regionID, $forecast, $commit) {
    if($commit) {
       $dbh->query("INSERT INTO ec_fluv_submissions (`user_id`, `region_id`, `epiweek_now`, `date`) VALUES ({$userID}, {$regionID}, {$temp['epiweek']['round_epiweek']}, now())");
    }
-   
+
    $debug = false;
    if ($debug) {
       echo "-------saveForecast----\n";
       echo $commit;
    }
-   
-   
+
+
    setResult($output, 1);
-   
+
    getRegions($dbh, $output, $userID);
-   
+
    return getResult($output);
 }
 
@@ -840,7 +830,7 @@ function loadForecast($dbh, &$output, $userID, $regionID, $submitted=false) {
       echo "-----inside loadForecast------\n";
       echo "user ID, region ID, submitted:  ";
       echo $userID;
-      echo $regionID; 
+      echo $regionID;
       echo $submitted;
    }
 
@@ -849,7 +839,7 @@ function loadForecast($dbh, &$output, $userID, $regionID, $submitted=false) {
       if(getEpiweekInfo($dbh, $temp) !== 1) {
          return getResult($temp);
       }
-      
+
       $result = $dbh->query("SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_submissions WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` < {$temp['epiweek']['round_epiweek']}");
    } else {
       $result = $dbh->query("SELECT coalesce(max(`epiweek_now`), 0) `epiweek` FROM ec_fluv_forecast WHERE `user_id` = {$userID} AND `region_id` = {$regionID}");
@@ -863,17 +853,17 @@ function loadForecast($dbh, &$output, $userID, $regionID, $submitted=false) {
    $date = array();
    $wili = array();
    $result = $dbh->query("SELECT `epiweek_now`, `epiweek`, `wili` FROM ec_fluv_forecast f WHERE `user_id` = {$userID} AND `region_id` = {$regionID} AND `epiweek_now` = {$epiweek} ORDER BY f.`epiweek` ASC");
-   
+
    if ($debug and ($regionID == 1 or $regionID == 8)) {
       echo "epiweek: ";
       echo $epiweek;
       echo "\n";
    }
-   
+
    while($row = $result->fetch_assoc()) {
       array_push($date, intval($row['epiweek']));
       array_push($wili, floatval($row['wili']));
-      
+
       if ($debug and ($regionID == 1 or $regionID == 8)) {
          echo intval($row['epiweek']);
          echo ", ";
@@ -1041,7 +1031,7 @@ function registerUser_mturk_2019($dbh, $mturkID, $taskID) {
         $query = "INSERT INTO ec_fluv_users_mturk_2019 (`hash`, `name`, `email`, `first_seen`, `last_seen`, `taskID`)
               VALUES ('{$hash}', '{$escapedInput}', '{$email}', now(), now(), {$taskID})";
         $dbh->query($query);
-       
+
         $temp = array();
         if(getEpiweekInfo_mturk($temp) !== 1) {
             return getResult($temp);
@@ -1577,7 +1567,7 @@ function getECDCILI($dbh, &$output, $regionID, $firstWeek) {
     WHERE ed.`region` = \"{$country}\" AND ed.`epiweek` >= {$firstWeek}
     ORDER BY ed.`epiweek` ASC";
     $result = $dbh->query($query);
-    
+
     $date = array();
     $wili = array();
     while($row=$result->fetch_assoc()) {
