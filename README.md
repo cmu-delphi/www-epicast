@@ -38,3 +38,8 @@ Friday through Monday), except in case of a critical bugfix.
 In any case, all code commits to `prod` should only consist of merges from
 `dev`, rather than direct commits. (An exception to this is configuration,
 which differs between environments.)
+
+# Development
+
+For developing the website, see the
+[epicast development guide](docs/epicast_development.md).
