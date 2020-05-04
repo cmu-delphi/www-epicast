@@ -99,7 +99,7 @@ Output:
       3 - Failure
    See getUserByHash
 */
-function getUserByEmail($dbh, &$output, $email) {
+function getUserByEmail($dbh, $output, $email) {
    $result = $dbh->query("SELECT `hash` FROM ec_fluv_users WHERE `email` = '{$email}'");
    if($row = $result->fetch_assoc()) {
       return getUserByHash($output, $row['hash']);
