@@ -987,12 +987,12 @@ Output:
 */
 function registerUser($dbh, &$output, $name, $email, $adminEmail) {
    //Find, or create, the user
-   if(getUserByEmail($output, $email) === 1) {
+   if(getUserByEmail($dbh, $output, $email) === 1) {
       $output['user_new'] = false;
    } else {
       $dbh->query("INSERT INTO ec_fluv_users (`hash`, `name`, `email`, `first_seen`, `last_seen`) VALUES (md5(rand()), '{$name}', '{$email}', now(), now())");
       $output['user_new'] = true;
-      if(getUserByEmail($output, $email) !== 1) {
+      if(getUserByEmail($dbh, $output, $email) !== 1) {
          return getResult($output);
       }
    }
