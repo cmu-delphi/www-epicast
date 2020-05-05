@@ -1006,7 +1006,7 @@ function registerUser($dbh, &$output, $name, $email, $adminEmail) {
 
 function registerUser_mturk($dbh, $mturkID) {
     //Find, or create, the user
-  if (userAlreadyExist($mturkID) === 1) {
+  if (userAlreadyExist($dbh, $mturkID) === 1) {
     return;
   } else {
     $email = md5(rand());
@@ -1021,7 +1021,7 @@ function registerUser_mturk($dbh, $mturkID) {
 
 function registerUser_mturk_2019($dbh, $mturkID, $taskID) {
     //Find, or create, the user
-    if (userAlreadyExist($mturkID) === 1) {
+    if (userAlreadyExist($dbh, $mturkID) === 1) {
         return;
     } else {
         $email = md5(rand());
@@ -1065,7 +1065,7 @@ function getAvailableTaskSets($dbh) {
 
 
 function getNextLocation($dbh, $mturkID, $regionID) {
-    if ($regionID === -1 && !userAlreadyExist($mturkID)) {
+    if ($regionID === -1 && !userAlreadyExist($dbh, $mturkID)) {
         // return the state with the smallest region ID in this task group
         $availableTasks = getAvailableTaskSets();
         $task = $availableTasks[array_rand($availableTasks)];
