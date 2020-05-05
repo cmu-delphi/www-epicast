@@ -1,15 +1,15 @@
 # Status
 
-[![Deploy Status](https://delphi.midas.cs.cmu.edu/~automation/public/github_deploy_repo/badge.php?repo=cmu-delphi/www-epicast/dev)](#)
+[![Deploy Status](https://delphi.midas.cs.cmu.edu/~automation/public/github_deploy_repo/badge.php?repo=cmu-delphi/www-epicast/prod)](#)
 
 # About
 
-This is the **development** version of the website.
+This is the **production** version of the website.
 
-1. it is generally safe to make changes here at any time, as they will not
-affect the production environment
-2. changes should be merged from this branch into
-[the prod branch](https://github.com/cmu-delphi/www-epicast/tree/prod),
+1. there shouldn't be any code changes while forecasting is happening (Friday
+through Monday), except for critical bugfixes
+2. changes should be merged into this branch from
+[the dev branch](https://github.com/cmu-delphi/www-epicast/tree/dev),
 except for production-specific configuration
 
 See
