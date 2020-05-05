@@ -119,12 +119,12 @@ function getUserIDByMturkID($dbh, $mturkID) {
 }
 
 function userAlreadyExist($dbh, $mturkID) {
-    $result = $dbh->query("SELECT `name` FROM ec_fluv_users_mturk_2019 WHERE `name` = '{$mturkID}'");
-  if($row = $result->fetch_assoc()) {
-     return 1;
-  } else {
-     return 0;
-  }
+   $result = $dbh->query("SELECT `name` FROM ec_fluv_users_mturk_2019 WHERE `name` = '{$mturkID}'");
+   if($row = $result->fetch_assoc()) {
+      return 1;
+   } else {
+      return 0;
+   }
 }
 
 
