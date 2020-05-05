@@ -109,7 +109,6 @@ function getUserByEmail($dbh, &$output, $email) {
    }
 }
 
-/*
 function getUserIDByMturkID($dbh, $mturkID) {
    $result = $dbh->query("SELECT `id` FROM ec_fluv_users_mturk_2019 WHERE `name` = '{$mturkID}'");
    if($row = $result->fetch_assoc()) {
@@ -118,7 +117,6 @@ function getUserIDByMturkID($dbh, $mturkID) {
       return -1;
    }
 }
-*/
 
 function userAlreadyExist($dbh, $mturkID) {
     $result = $dbh->query("SELECT `name` FROM ec_fluv_users_mturk_2019 WHERE `name` = '{$mturkID}'");
