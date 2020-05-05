@@ -102,7 +102,7 @@ Output:
 function getUserByEmail($dbh, &$output, $email) {
    $result = $dbh->query("SELECT `hash` FROM ec_fluv_users WHERE `email` = '{$email}'");
    if($row = $result->fetch_assoc()) {
-      return getUserByHash($output, $row['hash']);
+      return getUserByHash($dbh, $output, $row['hash']);
    } else {
       setResult($output, 2);
       return getResult($output);
