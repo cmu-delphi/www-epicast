@@ -102,7 +102,7 @@ Output:
 function getUserByEmail($dbh, &$output, $email) {
    $result = $dbh->query("SELECT `hash` FROM ec_fluv_users WHERE `email` = '{$email}'");
    if($row = $result->fetch_assoc()) {
-      return getUserByHash($output, $row['hash']);
+      return getUserByHash($dbh, $output, $row['hash']);
    } else {
       setResult($output, 2);
       return getResult($output);
@@ -110,22 +110,21 @@ function getUserByEmail($dbh, &$output, $email) {
 }
 
 function getUserIDByMturkID($dbh, $mturkID) {
-    $result = $dbh->query("SELECT `id` FROM ec_fluv_users_mturk_2019 WHERE `name` = '{$mturkID}'");
-  if($row = $result->fetch_assoc()) {
-     return $row['id'];
-  } else {
-     return -1;
-  }
-
+   $result = $dbh->query("SELECT `id` FROM ec_fluv_users_mturk_2019 WHERE `name` = '{$mturkID}'");
+   if($row = $result->fetch_assoc()) {
+      return $row['id'];
+   } else {
+      return -1;
+   }
 }
 
 function userAlreadyExist($dbh, $mturkID) {
-    $result = $dbh->query("SELECT `name` FROM ec_fluv_users_mturk_2019 WHERE `name` = '{$mturkID}'");
-  if($row = $result->fetch_assoc()) {
-     return 1;
-  } else {
-     return 0;
-  }
+   $result = $dbh->query("SELECT `name` FROM ec_fluv_users_mturk_2019 WHERE `name` = '{$mturkID}'");
+   if($row = $result->fetch_assoc()) {
+      return 1;
+   } else {
+      return 0;
+   }
 }
 
 
@@ -986,12 +985,12 @@ Output:
 */
 function registerUser($dbh, &$output, $name, $email, $adminEmail) {
    //Find, or create, the user
-   if(getUserByEmail($output, $email) === 1) {
+   if(getUserByEmail($dbh, $output, $email) === 1) {
       $output['user_new'] = false;
    } else {
       $dbh->query("INSERT INTO ec_fluv_users (`hash`, `name`, `email`, `first_seen`, `last_seen`) VALUES (md5(rand()), '{$name}', '{$email}', now(), now())");
       $output['user_new'] = true;
-      if(getUserByEmail($output, $email) !== 1) {
+      if(getUserByEmail($dbh, $output, $email) !== 1) {
          return getResult($output);
       }
    }
@@ -1007,7 +1006,7 @@ function registerUser($dbh, &$output, $name, $email, $adminEmail) {
 
 function registerUser_mturk($dbh, $mturkID) {
     //Find, or create, the user
-  if (userAlreadyExist($mturkID) === 1) {
+  if (userAlreadyExist($dbh, $mturkID) === 1) {
     return;
   } else {
     $email = md5(rand());
@@ -1022,7 +1021,7 @@ function registerUser_mturk($dbh, $mturkID) {
 
 function registerUser_mturk_2019($dbh, $mturkID, $taskID) {
     //Find, or create, the user
-    if (userAlreadyExist($mturkID) === 1) {
+    if (userAlreadyExist($dbh, $mturkID) === 1) {
         return;
     } else {
         $email = md5(rand());
@@ -1066,7 +1065,7 @@ function getAvailableTaskSets($dbh) {
 
 
 function getNextLocation($dbh, $mturkID, $regionID) {
-    if ($regionID === -1 && !userAlreadyExist($mturkID)) {
+    if ($regionID === -1 && !userAlreadyExist($dbh, $mturkID)) {
         // return the state with the smallest region ID in this task group
         $availableTasks = getAvailableTaskSets();
         $task = $availableTasks[array_rand($availableTasks)];
