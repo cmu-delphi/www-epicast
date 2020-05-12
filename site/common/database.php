@@ -996,8 +996,8 @@ function registerUser($dbh, &$output, $name, $email, $adminEmail) {
    }
    //Send an email to the user
    $hash = strtoupper(substr($output['user_hash'], 0, 8));
-   $subject = mysqli_real_escape_string('Welcome to Crowdcast!');
-   $body = mysqli_real_escape_string(sprintf("Hi %s,\r\n\r\nWelcome to Crowdcast (formerly known as Epicast)! Here's your User ID: %s\r\nYou can login and begin forecasting here: https://delphi.cmu.edu/epicast/launch.php?user=%s\r\n\r\nThank you,\r\nThe Delphi Team\r\n\r\n[This is an automated message. Please direct all replies to: %s. Unsubscribe: https://delphi.cmu.edu/epicast/preferences.php?user=%s]", $name, $hash, $hash, $adminEmail, $hash));
+   $subject = mysqli_real_escape_string($dbh, 'Welcome to Crowdcast!');
+   $body = mysqli_real_escape_string($dbh, sprintf("Hi %s,\r\n\r\nWelcome to Crowdcast (formerly known as Epicast)! Here's your User ID: %s\r\nYou can login and begin forecasting here: https://delphi.cmu.edu/epicast/launch.php?user=%s\r\n\r\nThank you,\r\nThe Delphi Team\r\n\r\n[This is an automated message. Please direct all replies to: %s. Unsubscribe: https://delphi.cmu.edu/epicast/preferences.php?user=%s]", $name, $hash, $hash, $adminEmail, $hash));
    $dbh->query("INSERT INTO automation.email_queue (`from`, `to`, `subject`, `body`, `priority`, `timestamp`) VALUES ('delphi@epicast.net', '{$email}', '{$subject}', '{$body}', 0.9, UNIX_TIMESTAMP(NOW()))");
    $dbh->query("CALL automation.RunStep(2)");
    setResult($output, 1);
@@ -1011,7 +1011,7 @@ function registerUser_mturk($dbh, $mturkID) {
   } else {
     $email = md5(rand());
     $hash = md5(rand());
-    $escapedInput = mysqli_real_escape_string($mturkID);
+    $escapedInput = mysqli_real_escape_string($dbh, $mturkID);
     $query = "INSERT INTO ec_fluv_users_mturk (`hash`, `name`, `email`, `first_seen`, `last_seen`)
               VALUES ('{$hash}', '{$escapedInput}', '{$email}', now(), now())";
     $result = $dbh->query($query);
@@ -1026,7 +1026,7 @@ function registerUser_mturk_2019($dbh, $mturkID, $taskID) {
     } else {
         $email = md5(rand());
         $hash = md5(rand());
-        $escapedInput = mysqli_real_escape_string($mturkID);
+        $escapedInput = mysqli_real_escape_string($dbh, $mturkID);
         $query = "INSERT INTO ec_fluv_users_mturk_2019 (`hash`, `name`, `email`, `first_seen`, `last_seen`, `taskID`)
               VALUES ('{$hash}', '{$escapedInput}', '{$email}', now(), now(), {$taskID})";
         $dbh->query($query);
@@ -1079,7 +1079,7 @@ function getNextLocation($dbh, $mturkID, $regionID) {
 
     } else {
         // return an array of unfinished states
-        $escapedInput = mysqli_real_escape_string($mturkID);
+        $escapedInput = mysqli_real_escape_string($dbh, $mturkID);
         $query = "select taskID from ec_fluv_users_mturk_2019 where name = '{$escapedInput}'";
         $result = $dbh->query($query);
 //         $taskID = intval($result->fetch_assoc());
