@@ -8,7 +8,7 @@ $dbPass = Secrets::$db['epi'][1];
 $dbName = 'epicast2';
 
 $epicastAdmin = array(
-   "name" => "Jiaxian Sheng",
-   "email" => "jiaxians@andrew.cmu.edu",
+   "name" => "Brian Clark",
+   "email" => "briancla@andrew.cmu.edu",
 );
 ?>
