@@ -102,7 +102,7 @@ Output:
 function getUserByEmail($dbh, &$output, $email) {
    $result = $dbh->query("SELECT `hash` FROM ec_fluv_users WHERE `email` = '{$email}'");
    if($row = $result->fetch_assoc()) {
-      return getUserByHash($output, $row['hash']);
+      return getUserByHash($dbh, $output, $row['hash']);
    } else {
       setResult($output, 2);
       return getResult($output);
@@ -110,22 +110,21 @@ function getUserByEmail($dbh, &$output, $email) {
 }
 
 function getUserIDByMturkID($dbh, $mturkID) {
-    $result = $dbh->query("SELECT `id` FROM ec_fluv_users_mturk_2019 WHERE `name` = '{$mturkID}'");
-  if($row = $result->fetch_assoc()) {
-     return $row['id'];
-  } else {
-     return -1;
-  }
-
+   $result = $dbh->query("SELECT `id` FROM ec_fluv_users_mturk_2019 WHERE `name` = '{$mturkID}'");
+   if($row = $result->fetch_assoc()) {
+      return $row['id'];
+   } else {
+      return -1;
+   }
 }
 
 function userAlreadyExist($dbh, $mturkID) {
-    $result = $dbh->query("SELECT `name` FROM ec_fluv_users_mturk_2019 WHERE `name` = '{$mturkID}'");
-  if($row = $result->fetch_assoc()) {
-     return 1;
-  } else {
-     return 0;
-  }
+   $result = $dbh->query("SELECT `name` FROM ec_fluv_users_mturk_2019 WHERE `name` = '{$mturkID}'");
+   if($row = $result->fetch_assoc()) {
+      return 1;
+   } else {
+      return 0;
+   }
 }
 
 
@@ -986,19 +985,19 @@ Output:
 */
 function registerUser($dbh, &$output, $name, $email, $adminEmail) {
    //Find, or create, the user
-   if(getUserByEmail($output, $email) === 1) {
+   if(getUserByEmail($dbh, $output, $email) === 1) {
       $output['user_new'] = false;
    } else {
       $dbh->query("INSERT INTO ec_fluv_users (`hash`, `name`, `email`, `first_seen`, `last_seen`) VALUES (md5(rand()), '{$name}', '{$email}', now(), now())");
       $output['user_new'] = true;
-      if(getUserByEmail($output, $email) !== 1) {
+      if(getUserByEmail($dbh, $output, $email) !== 1) {
          return getResult($output);
       }
    }
    //Send an email to the user
    $hash = strtoupper(substr($output['user_hash'], 0, 8));
-   $subject = mysqli_real_escape_string('Welcome to Crowdcast!');
-   $body = mysqli_real_escape_string(sprintf("Hi %s,\r\n\r\nWelcome to Crowdcast (formerly known as Epicast)! Here's your User ID: %s\r\nYou can login and begin forecasting here: https://delphi.cmu.edu/epicast/launch.php?user=%s\r\n\r\nThank you,\r\nThe Delphi Team\r\n\r\n[This is an automated message. Please direct all replies to: %s. Unsubscribe: https://delphi.cmu.edu/epicast/preferences.php?user=%s]", $name, $hash, $hash, $adminEmail, $hash));
+   $subject = mysqli_real_escape_string($dbh, 'Welcome to Crowdcast!');
+   $body = mysqli_real_escape_string($dbh, sprintf("Hi %s,\r\n\r\nWelcome to Crowdcast (formerly known as Epicast)! Here's your User ID: %s\r\nYou can login and begin forecasting here: https://delphi.cmu.edu/epicast/launch.php?user=%s\r\n\r\nThank you,\r\nThe Delphi Team\r\n\r\n[This is an automated message. Please direct all replies to: %s. Unsubscribe: https://delphi.cmu.edu/epicast/preferences.php?user=%s]", $name, $hash, $hash, $adminEmail, $hash));
    $dbh->query("INSERT INTO automation.email_queue (`from`, `to`, `subject`, `body`, `priority`, `timestamp`) VALUES ('delphi@epicast.net', '{$email}', '{$subject}', '{$body}', 0.9, UNIX_TIMESTAMP(NOW()))");
    $dbh->query("CALL automation.RunStep(2)");
    setResult($output, 1);
@@ -1007,12 +1006,12 @@ function registerUser($dbh, &$output, $name, $email, $adminEmail) {
 
 function registerUser_mturk($dbh, $mturkID) {
     //Find, or create, the user
-  if (userAlreadyExist($mturkID) === 1) {
+  if (userAlreadyExist($dbh, $mturkID) === 1) {
     return;
   } else {
     $email = md5(rand());
     $hash = md5(rand());
-    $escapedInput = mysqli_real_escape_string($mturkID);
+    $escapedInput = mysqli_real_escape_string($dbh, $mturkID);
     $query = "INSERT INTO ec_fluv_users_mturk (`hash`, `name`, `email`, `first_seen`, `last_seen`)
               VALUES ('{$hash}', '{$escapedInput}', '{$email}', now(), now())";
     $result = $dbh->query($query);
@@ -1022,12 +1021,12 @@ function registerUser_mturk($dbh, $mturkID) {
 
 function registerUser_mturk_2019($dbh, $mturkID, $taskID) {
     //Find, or create, the user
-    if (userAlreadyExist($mturkID) === 1) {
+    if (userAlreadyExist($dbh, $mturkID) === 1) {
         return;
     } else {
         $email = md5(rand());
         $hash = md5(rand());
-        $escapedInput = mysqli_real_escape_string($mturkID);
+        $escapedInput = mysqli_real_escape_string($dbh, $mturkID);
         $query = "INSERT INTO ec_fluv_users_mturk_2019 (`hash`, `name`, `email`, `first_seen`, `last_seen`, `taskID`)
               VALUES ('{$hash}', '{$escapedInput}', '{$email}', now(), now(), {$taskID})";
         $dbh->query($query);
@@ -1066,7 +1065,7 @@ function getAvailableTaskSets($dbh) {
 
 
 function getNextLocation($dbh, $mturkID, $regionID) {
-    if ($regionID === -1 && !userAlreadyExist($mturkID)) {
+    if ($regionID === -1 && !userAlreadyExist($dbh, $mturkID)) {
         // return the state with the smallest region ID in this task group
         $availableTasks = getAvailableTaskSets();
         $task = $availableTasks[array_rand($availableTasks)];
@@ -1080,7 +1079,7 @@ function getNextLocation($dbh, $mturkID, $regionID) {
 
     } else {
         // return an array of unfinished states
-        $escapedInput = mysqli_real_escape_string($mturkID);
+        $escapedInput = mysqli_real_escape_string($dbh, $mturkID);
         $query = "select taskID from ec_fluv_users_mturk_2019 where name = '{$escapedInput}'";
         $result = $dbh->query($query);
 //         $taskID = intval($result->fetch_assoc());
