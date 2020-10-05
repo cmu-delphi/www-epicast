@@ -25,3 +25,6 @@ COPY repos/delphi/www-epicast/site/*.php /var/www/html/
 
 # point to the local development database (overwrites `common/settings.php`)
 COPY repos/delphi/www-epicast/dev/docker/web/epicast/assets/settings.php /var/www/html/common/
+
+# ensure files are readable at runtime
+RUN chmod o+r -R /var/www/html
