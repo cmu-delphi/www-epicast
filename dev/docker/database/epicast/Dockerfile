@@ -14,3 +14,6 @@ ENV MYSQL_PASSWORD pass
 # data insertions
 COPY repos/delphi/www-epicast/src/ddl/epicast2.sql /docker-entrypoint-initdb.d/0_epicast2.sql
 COPY repos/delphi/www-epicast/src/ddl/development_data.sql /docker-entrypoint-initdb.d/1_development_data.sql
+
+# ensure files are readable at runtime
+RUN chmod o+r /docker-entrypoint-initdb.d/*
