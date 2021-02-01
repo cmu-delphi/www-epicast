@@ -15,6 +15,12 @@ RUN ln -s -f /usr/share/zoneinfo/America/New_York /etc/localtime && \
 # enable mod_rewrite, aka RewriteEngine
 RUN a2enmod rewrite && a2enmod headers
 
+ENV EPICAST_DB_HOST 'localhost'
+ENV EPICAST_DB_PORT '3306'
+ENV EPICAST_DB_USER 'user'
+ENV EPICAST_DB_PASSWORD 'pass'
+ENV EPICAST_DB_NAME 'epicast2'
+
 COPY ./site/ /var/www/html/
 # ensure files are readable at runtime
 RUN chmod o+r -R /var/www/html
