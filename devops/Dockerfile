@@ -1,6 +1,8 @@
 # start with a standard php7+apache image
 # based on https://github.com/cmu-delphi/operations
 FROM php:7-apache
+LABEL org.opencontainers.image.source = "https://github.com/cmu-delphi/www-epicast"
+
 
 # use PHP's recommended configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
