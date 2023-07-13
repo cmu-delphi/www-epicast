@@ -80,7 +80,7 @@ if($dbh->connect_errno) {
       ?>
       <div class="box_header box_header_narrow box_header_fixed0"></div>
       <div class="box_header box_header_narrow box_header_fixed1">
-         <div class="box_title box_title_mini"><span class="effect_delphi">Crowdcast</span>&nbsp;<span class="effect_fluv">COVID-19</span>&nbsp;<span class="effect_fluv">- This site is in ARCHIVE mode and is not currently being updated regularly</span></div>
+         <div class="box_title box_title_mini"><span class="effect_delphi">Crowdcast</span>&nbsp;<span class="effect_fluv">COVID-19</span>&nbsp;<span class="effect_delphi"> [ This site is in ARCHIVE mode and is not currently being updated regularly ]</span></div>
          <div class="box_mininav">
             <span class="effect_tiny_header">Crowdcaster: <?= $output['user_name'] ?> [<?= $hash ?>]<br /></span>
             <?php
