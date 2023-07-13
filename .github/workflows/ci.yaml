@@ -1,8 +1,7 @@
+name: CI
 on:
-  push
-
-name: ci
-
+  pull_request:
+  push:
 jobs:
   build-tag-push-deploy:
       runs-on: ubuntu-latest
