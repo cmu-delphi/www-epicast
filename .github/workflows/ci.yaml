@@ -4,41 +4,41 @@ on:
   push:
 jobs:
   build-tag-push-deploy:
-      runs-on: ubuntu-latest
-      if: >
-        github.ref == 'refs/heads/main' ||
-        github.ref == 'refs/heads/dev' ||
-        github.ref == 'refs/update-and-archive-epicast'
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v2
-        - name: Login to GitHub Container Registry
-          uses: docker/login-action@v1
-          with:
-            registry: ghcr.io
-            username: cmu-delphi-deploy-machine
-            password: ${{ secrets.CMU_DELPHI_DEPLOY_MACHINE_PAT }}
-        - name: Build, tag, and push image to GitHub Container Registry
-          id: image
-          run: |
-            baseRef="${GITHUB_REF#*/}"
-            baseRef="${baseRef#*/}"
-            case "${baseRef}" in
-            main)
-              image_tag="latest"
-              ;;
-            *)
-              image_tag="${baseRef//\//_}" # replace `/` with `_` in branch name
-              ;;
-            esac
-            cd ${{ github.workspace }}
-            echo "using tag: --${image-tag}--"
-            docker build -t ghcr.io/${{ github.repository }}:${image_tag} --file Dockerfile .
-            docker push ghcr.io/${{ github.repository }}:${image_tag}
-            echo "IMAGE_TAG=${image_tag}" >> $GITHUB_OUTPUT
-        - name: Trigger smee.io webhook to deploy new container image
-          run: |
-            curl -H "Authorization: Bearer ${{ secrets.DELPHI_DEPLOY_WEBHOOK_TOKEN }}" \
-                 -X POST ${{ secrets.DELPHI_DEPLOY_WEBHOOK_URL }} \
-                 -H "Content-Type: application/x-www-form-urlencoded" \
-                 -d "repository=ghcr.io/${{ github.repository }}&tag=${{ steps.image.outputs.IMAGE_TAG }}"
+    runs-on: ubuntu-latest
+    if: >
+      github.ref == 'refs/heads/main' ||
+      github.ref == 'refs/heads/dev' ||
+      github.ref == 'refs/update-and-archive-epicast'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: cmu-delphi-deploy-machine
+          password: ${{ secrets.CMU_DELPHI_DEPLOY_MACHINE_PAT }}
+      - name: Build, tag, and push image to GitHub Container Registry
+        id: image
+        run: |
+          baseRef="${GITHUB_REF#*/}"
+          baseRef="${baseRef#*/}"
+          case "${baseRef}" in
+          main)
+            image_tag="latest"
+            ;;
+          *)
+            image_tag="${baseRef//\//_}" # replace `/` with `_` in branch name
+            ;;
+          esac
+          cd ${{ github.workspace }}
+          echo "using tag: --${image-tag}--"
+          docker build -t ghcr.io/${{ github.repository }}:${image_tag} --file Dockerfile .
+          docker push ghcr.io/${{ github.repository }}:${image_tag}
+          echo "IMAGE_TAG=${image_tag}" >> $GITHUB_OUTPUT
+      - name: Trigger smee.io webhook to deploy new container image
+        run: |
+          curl -H "Authorization: Bearer ${{ secrets.DELPHI_DEPLOY_WEBHOOK_TOKEN }}" \
+               -X POST ${{ secrets.DELPHI_DEPLOY_WEBHOOK_URL }} \
+               -H "Content-Type: application/x-www-form-urlencoded" \
+               -d "repository=ghcr.io/${{ github.repository }}&tag=${{ steps.image.outputs.IMAGE_TAG }}"
