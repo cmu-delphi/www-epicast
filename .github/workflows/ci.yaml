@@ -33,7 +33,7 @@ jobs:
           esac
           cd ${{ github.workspace }}
           echo "using tag: --${image-tag}--"
-          docker build -t /devops ghcr.io/${{ github.repository }}:${image_tag} --file Dockerfile .
+          docker build -t ghcr.io/${{ github.repository }}:${image_tag} --file ./devops/Dockerfile .
           docker push ghcr.io/${{ github.repository }}:${image_tag}
           echo "IMAGE_TAG=${image_tag}" >> $GITHUB_OUTPUT
       - name: Trigger smee.io webhook to deploy new container image
