@@ -8,7 +8,7 @@ jobs:
     if: >
       github.ref == 'refs/heads/main' ||
       github.ref == 'refs/heads/dev' ||
-      github.ref == 'refs/update-and-archive-epicast'
+      github.ref == 'refs/heads/update-and-archive-epicast'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
