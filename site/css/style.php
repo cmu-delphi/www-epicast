@@ -386,7 +386,7 @@ span.effect_delphi {
 
 span.effect_archive {
    font-family: <?= $delphiFont ?>;
-   font-size: 0.5em;
+   font-size: 1em;
    color: #c44;
 }
 
