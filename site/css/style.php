@@ -384,9 +384,15 @@ span.effect_delphi {
    font-family: <?= $delphiFont ?>;
 }
 
-span.effect_archive {
+span.effect_archive_header {
    font-family: <?= $delphiFont ?>;
    font-size: 0.5em;
+   color: #c44;
+}
+
+span.effect_archive_index {
+   font-family: <?= $delphiFont ?>;
+   font-size: 1em;
    color: #c44;
 }
 
