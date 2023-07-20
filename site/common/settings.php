@@ -7,6 +7,6 @@ $dbName = getenv('EPICAST_DB_NAME') ?: 'epicast2';
 
 $epicastAdmin = array(
    "name" => "Delphi Support",
-   "email" => "delphi+crowdcast@andrew.cmu.edu",
+   "email" => "delphi-support+crowdcast@andrew.cmu.edu",
 );
 ?>
