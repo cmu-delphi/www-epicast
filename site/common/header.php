@@ -20,7 +20,7 @@ $output = array();
       <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
       <script src="js/utils.js"></script>
       <script src="js/rAF.js"></script>
-      <script src="https://delphi.cmu.edu/epidata/lib/delphi_epidata.js"></script>
+      <script src="js/delphi_epidata.js"></script>
       <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" media="none" onload="if(media!='all')media='all'" />
       <noscript>
       			<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" />
@@ -53,7 +53,11 @@ if($dbh->connect_errno) {
                <span class="effect_fluv">&lt;COVID-19 Edition&gt;</span>
             </a>
          </div>
-         <div class="box_subtitle">Epidemiological Forecasting by <span class="effect_delphi"><a class="delphi" target="_blank" rel="noopener" href="https://delphi.cmu.edu/">DELPHI</a></span></div>
+         <div class="box_subtitle">Epidemiological Forecasting by <span class="effect_delphi"><a class="delphi" target="_blank" rel="noopener" href="https://delphi.cmu.edu/">DELPHI</a></span>
+             <br /> 
+             <span class="effect_archive_index"> [ This site is in ARCHIVE mode and will not be updated or maintained!!! ]</span>
+         </div>
+      </div>
       </div>
       <?php
       if(!isset($skipLogin) || !$skipLogin) {
@@ -80,7 +84,7 @@ if($dbh->connect_errno) {
       ?>
       <div class="box_header box_header_narrow box_header_fixed0"></div>
       <div class="box_header box_header_narrow box_header_fixed1">
-         <div class="box_title box_title_mini"><span class="effect_delphi">Crowdcast</span>&nbsp;<span class="effect_fluv">COVID-19</span></div>
+         <div class="box_title box_title_mini"><span class="effect_delphi">Crowdcast</span>&nbsp;<span class="effect_fluv">COVID-19</span>&nbsp;<span class="effect_archive_header"> [ This site is in ARCHIVE mode and will not be updated or maintained!!! ]</span></div>
          <div class="box_mininav">
             <span class="effect_tiny_header">Crowdcaster: <?= $output['user_name'] ?> [<?= $hash ?>]<br /></span>
             <?php

@@ -6,7 +6,7 @@ $dbPass = getenv('EPICAST_DB_PASSWORD') ?: 'pass';
 $dbName = getenv('EPICAST_DB_NAME') ?: 'epicast2';
 
 $epicastAdmin = array(
-   "name" => "Brian Clark",
-   "email" => "briancla@andrew.cmu.edu",
+   "name" => "Delphi Support",
+   "email" => "delphi-support+crowdcast@andrew.cmu.edu",
 );
 ?>
