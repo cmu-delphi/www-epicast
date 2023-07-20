@@ -27,7 +27,7 @@ should contain only tested and reliable code.
 **`main` should not be updated while a forecasting round is active** (i.e.
 Friday through Monday), except in case of a critical bugfix.
 
-Basic develop changes/review in staging/release to production workflow:
+Basic develop changes -> deploy/review in staging -> release to production workflow:
 
 - Start by creating a **[bug|fix|feature|etc]** branch based on `dev`.
 - Make a PR and tag a reviewer with your changes against `dev`. Once apporved and merged this will trigger CI to deploy the application at https://staging.delphi.cmu.edu/crowdcast.
